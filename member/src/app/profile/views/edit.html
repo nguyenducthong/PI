@@ -1,0 +1,61 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-head">
+    <h3 class="page-title"><i class="icon-equalizer margin-right-10"></i> Cập nhật thông tin đơn vị</h3>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="tabbable-line">
+                    <ul class="nav nav-tabs ">
+                        <li ng-class="{'active' : vm.tab == 1}">
+                            <a href="#" ng-click="vm.changeTab(1)" data-toggle="tab"> Thông tin chung </a>
+                        </li>
+                        <li ng-class="{'active' : vm.tab == 2}">
+                            <a href="#" ng-click="vm.changeTab(2)" data-toggle="tab"> Nhân sự phòng xét nghiệm </a>
+                        </li>
+                        <li ng-class="{'active' : vm.tab == 3}">
+                            <a href="#" ng-click="vm.changeTab(3)" data-toggle="tab"> Cơ sở hạ tầng </a>
+                        </li>
+                        <li ng-class="{'active' : vm.tab == 4}">
+                            <a href="#" ng-click="vm.changeTab(4)" data-toggle="tab"> Dịch vụ xét nghiệm HIV </a>
+                        </li>
+                        <li ng-class="{'active' : vm.tab == 5}">
+                            <a href="#" ng-click="vm.changeTab(5)" data-toggle="tab"> Phương cách xét nghiệm chẩn đoán HIV </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content entry-screen" id="sticky-header-container">
+                        <div class="buttons margin-bottom-10" hl-sticky="" sticky-class="is-sticky custom" container="sticky-header-container">
+                            <button class="btn btn-default margin-right-10" data-ng-click="vm.cancel()"><i class="icon-close"></i> Hủy bỏ</button>
+                            <button class="btn btn-primary" data-ng-click="vm.save()"><i class="icon-check"></i> Cập nhật thay đổi</button>
+                            <div class="heading">{{vm.tabNames[vm.tab - 1]}}</div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.tab == 1}">
+                            <div ng-include="'profile/views/edit/thongtinchung.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.tab == 2}">
+                            <div ng-include="'profile/views/edit/nhansu.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.tab == 3}">
+                            <div ng-include="'profile/views/edit/cosohatang.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.tab == 4}">
+                            <div ng-include="'profile/views/edit/dichvuxetnghiem.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.tab == 5}">
+                            <div ng-include="'profile/views/edit/phuongcachxetnghiem.html'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script>
+    // call any jquery or angularjs code ehre
+</script>
+<!-- BEGIN MAIN JS -->

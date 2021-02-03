@@ -1,0 +1,18 @@
+<div class="form-group row">
+    <div class="col-md-12">
+        <label class="bold">23a. Bạn có áp dụng phương cách xét nghiệm nào để chuẩn đoán một trường hợp HIV dương tính? Nêu tên phương cách:</label>
+    </div>
+    <div class="col-md-12">
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="col-md-12">
+        <label class="bold">23b. Bạn hãy vẽ sơ đồ chuẩn đoán HIV trong phòng xét nghiệm của bạn (Testing Algorthm) ở trang này (chỉ vẽ nếu bạn có sơ đồ)</label>
+    </div>
+</div>

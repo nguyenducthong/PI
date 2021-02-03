@@ -1,0 +1,54 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-head">
+    <h3 class="page-title"><i class="icon-grid margin-right-10"></i> Các thông báo chung </h3>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="btn-group pull-left margin-top-10 margin-bottom-10">
+                    <button class="btn btn-default" data-ng-click="vm.newAnnouncement()"><i class="fa fa-plus-circle"></i> Thêm mới</button>
+                    <button class="btn btn-danger margin-left-10" data-ng-click="vm.deleteAnnouncements()" data-ng-disabled="vm.selectedAnnouncements.length <= 0"><i class="fa fa-trash"></i> Xóa bản ghi đã chọn</button>
+                </div>
+                <table id="bsTableControl" bs-table-control="vm.bsTableControl"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="add_edit_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="fa fa-plus-circle"></i> Thêm thông báo mới</h4>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label class="bold">Tiêu đề thông báo</label>
+                    <input class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label class="bold">Mô tả tóm tắt</label>
+                    <input class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 margin-top-20">
+                    <label class="bold">Nội dung</label>
+                    <textarea required="required" ui-tinymce="vm.tinymceOptions" ng-model="vm.announcement.content"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Hủy lưu</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Lưu</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->

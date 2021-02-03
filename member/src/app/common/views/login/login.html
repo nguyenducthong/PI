@@ -1,0 +1,125 @@
+<!-- BEGIN LOGO -->
+<div login-screen>
+    <div class="user-login-5">
+        <div class="row bs-reset">
+            <div class="col-md-6 bs-reset mt-login-5-bsfix">
+                <div class="login-bg" style="background-image:url(assets/images/bg3.jpg)">
+                    <img class="login-logo" src="assets/images/logo-light.png" />
+                </div>
+            </div>
+            <div class="col-md-6 login-container bs-reset mt-login-5-bsfix">
+                <div class="login-content">
+                    <h1>Đăng nhập hệ thống</h1>
+                    <p> Hệ thống thông tin điện tử chương trình ngoại kiểm dành cho các phòng xét nghiệm HIV bằng huyết thanh. Xin mời đăng nhập trước khi sử dụng.</p>
+                    <form action="javascript:;" class="login-form" method="post">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <label class="bold">Tên đăng nhập</label>
+                                <input class="form-control form-control-solid username placeholder-no-fix form-group" type="text"  autocomplete="off" placeholder="Nhập tên đăng nhập..." id="username" data-ng-model="vm.user.username" /> </div>
+                            <div class="col-xs-6">
+                                <label class="bold">Mật khẩu</label>
+                                <input class="form-control form-control-solid password placeholder-no-fix form-group" type="password" autocomplete="off" placeholder="Nhập mật khẩu..." id="password" data-ng-model="vm.user.password" /> </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="rem-password">
+                                    <label class="rememberme mt-checkbox mt-checkbox-outline">
+                                        <input type="checkbox" name="remember" value="1" /> Ghi nhớ tên đăng nhập.
+                                        <span></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-8 text-right">
+                                <div class="forgot-password">
+                                    <a href="javascript:;" id="forget-password" class="forget-password">Bạn đã quên mật khẩu?</a>
+                                </div>
+                                <button class="btn green" data-ng-click="vm.login()" class="btn green uppercase">Đăng nhập</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="login-footer">
+                    <div class="row bs-reset">
+                        <div class="col-xs-5 bs-reset">
+                            <ul class="login-social">
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="icon-social-facebook"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="icon-social-twitter"></i>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="icon-social-dribbble"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-xs-7 bs-reset">
+                            <div class="login-copyright text-right">
+                                <p>Bản quyền &copy; 2018 Pasteur Institute. Bảo lưu mọi quyền.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="logo">-->
+        <!--<a href="index.html">-->
+            <!--<img src="assets/images/logo-light.png" alt="" width="150" class="margin-bottom-20 margin-top-20" /> </a>-->
+    <!--</div>-->
+    <!--&lt;!&ndash; END LOGO &ndash;&gt;-->
+    <!--&lt;!&ndash; BEGIN LOGIN &ndash;&gt;-->
+    <!--<div class="content">-->
+        <!--&lt;!&ndash; BEGIN LOGIN FORM &ndash;&gt;-->
+        <!--<form class="login-form" novalidate>-->
+            <!--<h3 class="form-title font-green">Đăng nhập</h3>-->
+            <!--<div class="form-group">-->
+                <!--&lt;!&ndash;ie8, ie9 does not support html5 placeholder, so we just show field title for that&ndash;&gt;-->
+                <!--<label class="control-label visible-ie8 visible-ie9">Tên đăng nhập</label>-->
+                <!--<input on-key-press="vm.login()" when-key-code="13" class="form-control form-control-solid placeholder-no-fix" type="text" autocomplete="off" placeholder="Nhập tên đăng nhập..." id="username" data-ng-model="vm.user.username" /> </div>-->
+            <!--<div class="form-group margin-top-20">-->
+                <!--<label class="control-label visible-ie8 visible-ie9">Mật khẩu</label>-->
+                <!--<input on-key-press="vm.login()" when-key-code="13" class="form-control form-control-solid placeholder-no-fix" type="password" autocomplete="off" placeholder="Nhập mật khẩu..." id="password" data-ng-model="vm.user.password" /> </div>-->
+            <!--<div class="form-actions">-->
+                <!--<button type="button" data-ng-click="vm.login()" class="btn green uppercase">Đăng nhập</button>-->
+            <!--</div>-->
+            <!--<div class="login-options">-->
+                <!--<p class="margin-top-0">-->
+                    <!--Chưa có tài khoản? <a href="javascript:;" class="">Gửi yêu cầu</a> tạo tài khoản.-->
+                <!--</p>-->
+                <!--&lt;!&ndash;<label class="rememberme check mt-checkbox mt-checkbox-outline">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<input type="checkbox" data-ng-model="vm.user.remember" value="1" />Tự động đăng nhập lần tới&ndash;&gt;-->
+                    <!--&lt;!&ndash;<span></span>&ndash;&gt;-->
+                <!--&lt;!&ndash;</label>&ndash;&gt;-->
+            <!--</div>-->
+            <!--<div class="create-account">-->
+                <!--<p>-->
+                    <!--<a href="javascript:;" class="">Bạn quên mật khẩu?</a>-->
+                <!--</p>-->
+            <!--</div>-->
+        <!--</form>-->
+        <!--&lt;!&ndash; END LOGIN FORM &ndash;&gt;-->
+        <!--&lt;!&ndash; BEGIN FORGOT PASSWORD FORM &ndash;&gt;-->
+        <!--<form class="forget-form" novalidate>-->
+            <!--<h3 class="font-green">Forgot your password?</h3>-->
+            <!--<p>Enter your email address and we will send a new password.</p>-->
+            <!--<div class="form-group">-->
+                <!--<input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Email" id="email" data-ng-model="vm.user.email" /> </div>-->
+            <!--<div class="form-actions">-->
+                <!--<button type="button" data-ng-click="vm.backToLogin()" class="btn green btn-outline">Cancel</button>-->
+                <!--<button type="button" data-ng-click="vm.getPassword()" class="btn btn-success uppercase pull-right">Get new password</button>-->
+            <!--</div>-->
+        <!--</form>-->
+        <!--&lt;!&ndash; END FORGOT PASSWORD FORM &ndash;&gt;-->
+        <!--</form>-->
+        <!--&lt;!&ndash; END REGISTRATION FORM &ndash;&gt;-->
+    <!--</div>-->
+    <!--<div class="copyright"> 2018 © HCMC Pasteur Institute. Bảo lưu mọi quyền. </div>-->
+</div>

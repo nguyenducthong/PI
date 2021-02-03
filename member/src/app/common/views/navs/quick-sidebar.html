@@ -1,0 +1,22 @@
+<div class="page-quick-sidebar">
+    <div class="quick-sidebar-header">
+        <i class="icon-bell margin-right-5"></i>THÔNG BÁO
+    </div>
+    <div class="tab-content">
+        <div class="tab-pane active page-quick-sidebar-chat" id="quick_sidebar_tab_1">
+            <div class="page-quick-sidebar-chat-users" data-rail-color="#9dbdd9" data-wrapper-class="page-quick-sidebar-list">
+                <div class="ann_item" ng-repeat="ann in announcements">
+                    <span class="title">
+                        <i class="fa fa-bullhorn" style="color: #cccccc; margin-right: 10px;"></i>
+                        <span ng-if="isCalendarAdmin(currentUser) || isMyCalendarEvent(currentUser, ann)">
+                            <a uib-tooltip="Sửa thông báo" tooltip-trigger="mouseenter" class="blue-oleo btn-sm" href="#/calendar/edit/event/2/{{ann.id}}"><i class="icon-pencil"></i></a>
+                        </span>
+                        {{ann.title}} &mdash;
+                        <span style="font-weight: 400 !important;" ng-if="(ann.room && ann.room.id) || ann.location" class="location"><i class="icon-location-pin"></i> <span ng-if="ann.room && ann.room.id">{{ann.room.name}}</span><span ng-if="ann.otherLocation && ann.location">{{ann.location}}</span></span>
+                    </span>
+                    <span class="description" ng-bind-html="ann.description"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

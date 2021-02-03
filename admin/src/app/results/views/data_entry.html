@@ -1,0 +1,79 @@
+<!-- BEGIN PAGE HEADER-->
+<div class="page-head">
+    <h3 class="page-title"><i class="icon-pie-chart margin-right-10"></i>Nhập kết quả <small>&mdash; Vòng ngoại kiểm <a href="#">số 12 <i class="fa fa-caret-down"></i></a></small></h3>
+</div>
+<!-- END PAGE HEADER-->
+<!-- BEGIN MAIN CONTENT -->
+<div class="row margin-top-10">
+    <div class="col-md-12">
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div class="tabbable-line">
+                    <ul class="nav nav-tabs ">
+                        <li ng-class="{'active' : vm.testMethod == 1}">
+                            <a href="#" ng-click="vm.changeTestMethod(1)" data-toggle="tab"> Xét nghiệm nhanh </a>
+                        </li>
+                        <li ng-class="{'active' : vm.testMethod == 2}">
+                            <a href="#" ng-click="vm.changeTestMethod(2)" data-toggle="tab"> Ngưng kết hạt </a>
+                        </li>
+                        <li ng-class="{'active' : vm.testMethod == 3}">
+                            <a href="#" ng-click="vm.changeTestMethod(3)" data-toggle="tab"> ELISA </a>
+                        </li>
+                        <!--<li ng-class="{'active' : vm.testMethod == 4}">-->
+                            <!--<a href="#" ng-click="vm.changeTestMethod(4)" data-toggle="tab"> Western Blot </a>-->
+                        <!--</li>-->
+                        <li ng-class="{'active' : vm.testMethod == 5}">
+                            <a href="#" ng-click="vm.changeTestMethod(5)" data-toggle="tab"> Western Blot </a>
+                        </li>
+                        <li ng-class="{'active' : vm.testMethod == 6}">
+                            <a href="#" ng-click="vm.changeTestMethod(6)" data-toggle="tab"> Tổng hợp kết quả </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content entry-screen" id="sticky-header-container">
+                        <div class="buttons margin-bottom-10" hl-sticky="" sticky-class="is-sticky custom" container="sticky-header-container">
+                            <button class="btn btn-default margin-right-10" data-ng-click="vm.validateResults()"><i class="icon-check"></i> Kiểm tra</button>
+                            <button class="btn btn-primary" data-ng-click="vm.saveResults()"><i class="fa fa-floppy-o"></i> Lưu kết quả</button>
+                            <div class="heading">{{vm.testMethodNames[vm.testMethod - 1]}}</div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 1}">
+                            <div ng-include="'results/views/entry/rapid_test.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 2}">
+                            <div ng-include="'results/views/entry/ngungkethat.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 3}">
+                            <div ng-include="'results/views/entry/elisa.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 4}">
+                            <div ng-include="'results/views/entry/western_blot.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 5}">
+                            <div ng-include="'results/views/entry/hoadienphatquang.html'"></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'active' : vm.testMethod == 6}">
+                            <div ng-include="'results/views/entry/tonghop.html'"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+<!-- BEGIN MAIN JS-->
+<script type="text/ng-template" id="confirm_send_result_modal.html">
+    <div modal-movable>
+        <div class="modal-header">
+            <button type="button" class="close" ng-click="$dismiss()" aria-hidden="true"></button>
+            <h4 class="modal-title"><i class="icon-question"></i> Gửi kết quả?</h4>
+        </div>
+        <div class="modal-body">
+            <p>Bạn có thực sự muốn gửi kết quả của <b>vòng ngoại kiểm số 12</b> không?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="$dismiss()" class="btn btn-default" data-dismiss="modal">Không</button>
+            <button type="button" ng-click="$close('yes')" class="btn btn-primary" data-dismiss="modal">Có</button>
+        </div>
+    </div>
+</script>
+<!-- BEGIN MAIN JS -->
