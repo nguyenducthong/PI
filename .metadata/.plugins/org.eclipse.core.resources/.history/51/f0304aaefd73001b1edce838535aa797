@@ -1,0 +1,5 @@
+package com.globits.PI.service.impl;
+
+public class PublicServiceImpl {
+
+}

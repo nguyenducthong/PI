@@ -1,0 +1,147 @@
+<div class="row">
+    <div class="col-md-12 margin-top-20">
+        <h4 class="section-header"><i class="icon-equalizer"></i> Nhập thông tin chung của kĩ thuật được sử dụng</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Mã phòng xét nghiệm</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Số lô sinh phẩm</label>
+        <input class="form-control" />
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Thứ tự của xét nghiệm</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Tên sinh phẩm</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Hạn sử dụng</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Nguồn cung cấp</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Người mua sinh phẩm</label>
+        <input class="form-control" />
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Người xét nghiệm</label>
+        <input class="form-control" />
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Ngày xét nghiệm</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Có chạy chứng kiểm tra trong bộ SP không?</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Tổng số giếng chứng</label>
+        <input type="text" class="form-control" />
+    </div>
+    <div class="col-md-4 margin-top-20">
+        <label class="bold">Có sử dụng mẫu nội kiểm (IQC) không?</label>
+        <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+            <ui-select-match allow-clear="true" placeholder="Xin mời chọn...">{{$select.selected.name}}</ui-select-match>
+            <ui-select-choices repeat="lab in vm.labs | propsFilter: {name: $select.search}">
+                <div class="bold" ng-bind-html="lab.name | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 margin-top-20">
+        <h4 class="section-header"><i class="icon-equalizer"></i> Nhập kết quả cho các mẫu xét nghiệm</h4>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 result-row row-header">
+        <div>
+            <div class="row">
+                <div class="col-xs-3" style="padding-left: 30px;">SỐ HIỆU MẪU</div>
+                <div class="col-xs-3">TỶ LỆ</div>
+                <div class="col-xs-3">KẾT QUẢ</div>
+                <div class="col-xs-3">GHI CHÚ</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 result-row" ng-repeat="sample in vm.samples">
+        <div>
+            <div class="row">
+                <div class="col-xs-3">{{sample}}</div>
+                <div class="col-xs-3">
+                    <input class="form-control" />
+                </div>
+                <div class="col-xs-3">
+                    <ui-select ng-model="vm.lab.code" sortable="true" close-on-select="true" style="width: 100% !important;">
+                        <ui-select-match allow-clear="true" placeholder="Chọn kết quả...">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="result in vm.rapidResults | propsFilter: {name: $select.search}">
+                            <div class="bold" ng-bind-html="result.name | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="col-xs-3">
+                    <input class="form-control" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 margin-top-20">
+        <h4 class="section-header"><i class="fa fa-comments-o"></i> Nhận xét của bạn</h4>
+    </div>
+    <div class="col-md-12">
+        <textarea required="required" ui-tinymce="vm.tinymceOptions" ng-model="vm.comments"></textarea>
+    </div>
+</div>

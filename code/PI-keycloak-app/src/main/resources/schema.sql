@@ -1,0 +1,49 @@
+--CREATE TABLE [dbo].[oauth_access_token](
+--	[token_id] [varchar](255) NULL,
+--	[token] [varbinary](max) NULL,
+--	[authentication_id] [varchar](255) NULL,
+--	[user_name] [varchar](255) NULL,
+--	[client_id] [varchar](255) NULL,
+--	[authentication] [varbinary](max) NULL,
+--	[refresh_token] [varchar](255) NULL,
+--	[defaultOAuth2AccessToken] [varbinary](1) NULL
+--) ON [PRIMARY]
+--
+--CREATE TABLE [dbo].[oauth_approvals](
+--	[userId] [varchar](256) NULL,
+--	[clientId] [varchar](256) NULL,
+--	[scope] [varchar](256) NULL,
+--	[status] [varchar](10) NULL,
+--	[expiresAt] [datetime] NULL,
+--	[lastModifiedAt] [datetime] NULL
+--) ON [PRIMARY];
+--CREATE TABLE [dbo].[oauth_client_details](
+--	[client_id] [varchar](256) NOT NULL,
+--	[resource_ids] [varchar](256) NULL,
+--	[client_secret] [varchar](256) NULL,
+--	[scope] [varchar](256) NULL,
+--	[authorized_grant_types] [varchar](256) NULL,
+--	[web_server_redirect_uri] [varchar](256) NULL,
+--	[authorities] [varchar](256) NULL,
+--	[access_token_validity] [int] NULL,
+--	[refresh_token_validity] [int] NULL,
+--	[additional_information] [varchar](4096) NULL,
+--	[autoapprove] [varchar](255) NULL,
+--PRIMARY KEY CLUSTERED 
+--(
+--	[client_id] ASC
+--)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+--) ON [PRIMARY];
+--ALTER TABLE [dbo].[oauth_client_details] ADD  DEFAULT (NULL) FOR [additional_information]
+--ALTER TABLE [dbo].[oauth_client_details] ADD  DEFAULT (NULL) FOR [autoapprove];
+--
+--CREATE TABLE [dbo].[oauth_code](
+--	[code] [varchar](255) NULL,
+--	[authentication] [varbinary](max) NULL
+--) ON [PRIMARY];
+--
+--CREATE TABLE [dbo].[oauth_refresh_token](
+--	[token_id] [varchar](256) NULL,
+--	[token] [varbinary](max) NULL,
+--	[authentication] [varbinary](max) NULL
+--) ON [PRIMARY];

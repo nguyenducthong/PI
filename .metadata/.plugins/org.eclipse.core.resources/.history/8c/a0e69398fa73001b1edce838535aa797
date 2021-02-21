@@ -1,0 +1,2212 @@
+package com.globits.PI.service.impl;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.globits.PI.PIConst;
+import com.globits.PI.domain.EQAResultReport;
+import com.globits.PI.domain.EQAResultReportDetail;
+import com.globits.PI.domain.EQARound;
+import com.globits.PI.domain.EQASample;
+import com.globits.PI.domain.EQASampleTube;
+import com.globits.PI.domain.HealthOrgEQARound;
+import com.globits.PI.domain.Reagent;
+import com.globits.PI.domain.UserInHealthOrg;
+
+import com.globits.PI.dto.EQAResultReportDetailDto;
+import com.globits.PI.dto.EQAResultReportDto;
+
+import com.globits.PI.dto.EQASampleTubeDto;
+import com.globits.PI.dto.HealthOrgEQARoundDto;
+import com.globits.PI.functiondto.EQAResultReportSearchDto;
+import com.globits.PI.functiondto.EQASampleTubeResultConclusionDto;
+import com.globits.PI.functiondto.TestResultDto;
+import com.globits.PI.functiondto.UserInfoDto;
+import com.globits.PI.repository.EQAResultReportDetailRepository;
+import com.globits.PI.repository.EQAResultReportRepository;
+import com.globits.PI.repository.EQARoundRepository;
+import com.globits.PI.repository.EQASampleRepository;
+import com.globits.PI.repository.EQASampleSetRepository;
+import com.globits.PI.repository.EQASampleTubeRepository;
+import com.globits.PI.repository.HealthOrgEQARoundRepository;
+import com.globits.PI.repository.ReagentRepository;
+import com.globits.PI.service.EQAResultReportService;
+import com.globits.PI.service.UserInHealthOrgService;
+import com.globits.core.domain.FileDescription;
+import com.globits.core.dto.ActivityLogDto;
+import com.globits.core.repository.FileDescriptionRepository;
+import com.globits.core.service.impl.GenericServiceImpl;
+import com.globits.PI.utils.PIDateTimeUtil;
+
+@Transactional
+@Service
+public class EQAResultReportServiceImpl extends GenericServiceImpl<EQAResultReport, UUID> implements EQAResultReportService {
+	
+	@Autowired
+	private EntityManager manager;
+
+	@Autowired
+	private EQAResultReportRepository eQAResultReportRepository;
+	
+	@Autowired
+	private ReagentRepository reagentRepository;
+
+	@Autowired
+	private HealthOrgEQARoundRepository healthOrgEQARoundRepository;
+
+	@Autowired
+	private EQAResultReportDetailRepository eQAResultReportDetailRepository;
+
+	@Autowired
+	private EQASampleTubeRepository eQASampleTubeRepository;
+	
+	@Autowired
+	private EQASampleSetRepository eQASampleSetRepository;
+	
+	@Autowired
+	private UserInHealthOrgService userInHealthOrgService;
+	
+	@Autowired
+	EQARoundRepository eQARoundRepository;
+	
+	@Autowired
+	EQASampleRepository eQASampleRepository;
+	
+	@Autowired
+	FileDescriptionRepository fileDescriptionRepository;
+	
+	public static Date getEndOfDay(Date date) {
+		if(date!=null) {
+			Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(date);
+		    calendar.set(Calendar.HOUR_OF_DAY, 23);
+		    calendar.set(Calendar.MINUTE, 59);
+		    calendar.set(Calendar.SECOND, 59);
+		    calendar.set(Calendar.MILLISECOND, 999);
+		    return calendar.getTime();
+		}
+	    return null;
+	}
+	
+	public static Date getStartOfDay(Date date) {
+		if(date!=null) {
+			Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(date);
+		    calendar.set(Calendar.HOUR_OF_DAY, 00);
+		    calendar.set(Calendar.MINUTE, 00);
+		    calendar.set(Calendar.SECOND, 00);
+		    calendar.set(Calendar.MILLISECOND, 000);
+		    return calendar.getTime();
+		}
+	    return null;
+	}
+	
+	@Override
+	public Page<EQAResultReportDto> searchByDto(EQAResultReportSearchDto dto) {
+		if (dto == null) {
+			return null;
+		}
+		
+		int pageIndex = dto.getPageIndex();
+		int pageSize = dto.getPageSize();
+		
+		if (pageIndex > 0) {
+			pageIndex--;
+		} else {
+			pageIndex = 0;
+		}
+		UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+
+		String whereClause = "";
+		String orderBy = " ORDER BY  eqap.createDate DESC, eqap.orderTest DESC, eqap.healthOrgRound.round.createDate DESC ";
+		
+		String sqlCount = "select count(eqap.id) from EQAResultReport as eqap where (1=1) ";
+		String sql = "select new com.globits.PI.dto.EQAResultReportDto(eqap,true) from EQAResultReport as eqap where (1=1) ";
+
+		if (dto.getTypeMethod() != null && dto.getTypeMethod() > 0) {
+			whereClause += " AND ( eqap.typeMethod = :typeMethod ) ";
+		}
+		if (dto.getText() != null && StringUtils.hasText(dto.getText())) {
+			whereClause += " AND ( eqap.healthOrgRound.healthOrg.code LIKE :text "
+					+ "OR eqap.healthOrgRound.healthOrg.name LIKE :text "
+					+ "OR eqap.reagent.name LIKE :text "
+					+ "OR eqap.dateSubmitResults LIKE :text) ";
+		}
+		if(dto.getRound() != null && dto.getRound().getId() != null) {
+			whereClause += " AND ( eqap.healthOrgRound.round.id =: roundId ) " ;
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() != null) {
+			whereClause += " AND ( eqap.testDate >=: startDate ) AND ( eqap.testDate <=: endDate ) " ;
+		}
+		if(dto.getStartDate() != null && dto.getEndDate() == null) {
+			whereClause += " AND ( eqap.testDate >=: startDate ) " ;
+		}
+		if(dto.getEndDate() != null && dto.getStartDate() == null) {
+			whereClause += " AND ( eqap.testDate <=: endDate ) " ;
+		}
+		
+		List<UUID> listHealthOrgId = null;
+		if(!userInfo.getIsRoleAdmin() && !userInfo.getIsRoleAdiministrativeStaff() && !userInfo.getIsRoleStaff()) {
+			listHealthOrgId = userInHealthOrgService.getListHealthOrgIdByUser(null);
+			if (listHealthOrgId != null && listHealthOrgId.size() > 0) {
+				whereClause += " AND ( eqap.healthOrgRound.healthOrg.id in (:healthOrgIds) ) ";
+			}
+		}
+		if(dto.getIsManagementUnit() != null) {
+			whereClause += " AND ( eqap.healthOrgRound.healthOrg.isManagementUnit =: isManagementUnit ) " ;
+		}
+				
+		sql+=whereClause + orderBy;
+		sqlCount+=whereClause;
+
+		Query q = manager.createQuery(sql, EQAResultReportDto.class);
+		Query qCount = manager.createQuery(sqlCount);
+	
+
+		if (dto.getTypeMethod() != null && dto.getTypeMethod() > 0) {
+			q.setParameter("typeMethod", dto.getTypeMethod());
+			qCount.setParameter("typeMethod", dto.getTypeMethod());
+		}
+		if (dto.getText() != null && StringUtils.hasText(dto.getText())) {
+			q.setParameter("text", "%" + dto.getText() + "%");
+			qCount.setParameter("text", "%" + dto.getText() + "%");
+		}
+		if (dto.getRound() != null && dto.getRound().getId() != null) {
+			q.setParameter("roundId", dto.getRound().getId() );
+			qCount.setParameter("roundId", dto.getRound().getId() );
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() == null) {
+			q.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			qCount.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+		}
+		if (dto.getEndDate() != null && dto.getStartDate() == null) {
+			q.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+			qCount.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() != null) {
+			q.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			qCount.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			
+			q.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+			qCount.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+		}
+		if(!userInfo.getIsRoleAdmin() && !userInfo.getIsRoleAdiministrativeStaff() && !userInfo.getIsRoleStaff()) {
+			q.setParameter("healthOrgIds", listHealthOrgId);
+			qCount.setParameter("healthOrgIds", listHealthOrgId);
+		}
+		if(dto.getIsManagementUnit() != null) {
+			q.setParameter("isManagementUnit", dto.getIsManagementUnit());
+			qCount.setParameter("isManagementUnit", dto.getIsManagementUnit());
+		}
+		int startPosition = pageIndex * pageSize;
+		q.setFirstResult(startPosition);
+		q.setMaxResults(pageSize);
+		List<EQAResultReportDto> dtos = q.getResultList();
+		long count = (long) qCount.getSingleResult();
+		if(userInfo!=null && userInfo.getListHealthOrgId()!=null && userInfo.getListHealthOrgId().size()>0 && dtos!=null && dtos.size()>0) {
+			Boolean isCheck = false;
+			for (EQAResultReportDto eqaResultReportDto : dtos) {
+//				for (UUID id : userInfo.getListHealthOrgId()) {
+//					if(id.equals(eqaResultReportDto.getHealthOrgId())) {
+//						isCheck = true;
+//					}
+//				}
+				eqaResultReportDto.setIsEditAble(userInfo.getListHealthOrgId().contains(eqaResultReportDto.getHealthOrgRound().getHealthOrg().getId()));
+			}
+		}
+		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+		Page<EQAResultReportDto> result = new PageImpl<EQAResultReportDto>(dtos, pageable, count);
+		return result;
+	}
+
+	@Override
+	public EQAResultReportDto saveOrUpdate(EQAResultReportDto dto, UUID id) throws ParseException {
+		if (dto != null && dto.getTypeMethod() != null && dto.getHealthOrgRound() != null && dto.getHealthOrgRound().getId() != null) {
+			EQAResultReport entity = null;
+			////Check User
+			UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+			boolean isCheckUser = false;
+			// admin thì luôn đc thêm sửa
+			if(userInfo.getIsRoleAdmin()) {
+				isCheckUser = true;
+			}
+			
+			//Sinh pham chọn là Other thì sẽ không check 
+			if(dto.getOtherReagent() != null && dto.getOtherReagent() == false) {
+				Boolean checkReagent = this.checkReagent(id, dto.getHealthOrgRound().getId(), dto.getReagent().getId(), dto.getTypeMethod());
+				if (checkReagent) {
+					return null;
+				}
+				List<EQAResultReport> entities = eQAResultReportRepository.countReagentByHealthOrgRound(dto.getHealthOrgRound().getId(), dto.getReagent().getId(), dto.getTypeMethod());
+				if(entities != null && entities.size() > 0) {
+					entity = entities.get(0);
+				}
+			}
+
+			
+//			List<UUID> listHealthOrgId = null;
+//			Boolean isCheck = false;
+//			if(!userInfo.getIsRoleAdmin() && !userInfo.getIsRoleAdiministrativeStaff() && !userInfo.getIsRoleStaff()) {
+//				listHealthOrgId = userInHealthOrgService.getListHealthOrgIdByUser(null);
+//				if (listHealthOrgId != null && listHealthOrgId.size() > 0) {
+//					if(dto.getHealthOrgRound().getHealthOrg() != null && dto.getHealthOrgRound().getHealthOrg().getId() != null) {
+//						for(int i = 0 ; i < listHealthOrgId.size(); i++) {
+//							
+//							if(listHealthOrgId.get(i).equals(dto.getHealthOrgRound().getHealthOrg().getId())) {
+//								isCheck = true;
+//							}
+//						}
+//						if(isCheck == false) {
+//							return null;
+//						}
+//					}
+//				}
+//			}
+			/////log
+			ActivityLogDto activityLogDto = new ActivityLogDto();
+			if(userInfo!= null && userInfo.getUser()!= null && userInfo.getUser().getUsername() != null) {
+				activityLogDto.setUserName(userInfo.getUser().getUsername());	
+			}
+			String moduleLog = "EQA";
+			Date nowDate = new Date();
+			LocalDateTime logDate = LocalDateTime.now();
+			activityLogDto.setModuleLog(moduleLog);
+			activityLogDto.setLogDate(logDate);
+			activityLogDto.setLogType(PIConst.LogType.log_ResultReport.getValue());
+			String contentLog ="";
+			if(dto.getHealthOrgRound() != null && dto.getHealthOrgRound().getRound() != null) {
+				contentLog += dto.getHealthOrgRound().getRound().getName() + " - ";
+			}
+			if(dto.getHealthOrgRound() != null && dto.getHealthOrgRound().getHealthOrg() != null) {
+				contentLog += dto.getHealthOrgRound().getHealthOrg().getName() + " - ";
+			}
+			if(dto.getTestMethod() != null) {
+				contentLog +=dto.getTestMethod().getName() + " - ";
+			}
+			if(dto.getReagent() != null) {
+				contentLog +=dto.getReagent().getName() + " - ";
+			}
+			SimpleDateFormat ft = 
+				      new SimpleDateFormat ("dd.MM.yyy hh:mm:ss");
+			if(dto.getIsFinalResult() != null && dto.getIsFinalResult()) {
+				contentLog += " Ngày nhập kết quả cuối cùng " + ft.format(nowDate) +" - ";
+			}
+//			if(dto.getDateSubmitResults() != null) {
+//				contentLog += dto.getDateSubmitResults() + " - ";
+//			}
+//			contentLog = dto.getHealthOrgRound().getRound().getName() + " - "  +dto.getHealthOrgRound().getHealthOrg().getName()
+//			+ " - " + dto.getTestMethod().getName() + " - " + dto.getReagent().getName() + " - ";
+			
+			
+			
+			if (id != null) {
+				entity = eQAResultReportRepository.getOne(id);
+			}
+			if(entity != null ) {
+				contentLog += "Sửa";
+				
+			}
+			
+			if(entity == null) {
+				entity = new EQAResultReport();
+				contentLog += "Thêm";
+			}
+			activityLogDto.setEntityObjectType(entity.getClass().getName());
+			activityLogDto.setContentLog(contentLog);
+			entity.setReagentLot(dto.getReagentLot());
+//			entity.setReagentExpiryDate(dto.getReagentExpiryDate());
+			if(dto.getDayReagentExpiryDate() != null && dto.getMonthReagentExpiryDate() != null && dto.getYeahReagentExpiryDate() != null) {
+				Date date = PIDateTimeUtil.numberToDate( dto.getDayReagentExpiryDate(),dto.getMonthReagentExpiryDate(),dto.getYeahReagentExpiryDate());
+				entity.setReagentExpiryDate(date);			
+			}else if(dto.getMonthReagentExpiryDate() != null && dto.getYeahReagentExpiryDate() != null) {
+				int day =  PIDateTimeUtil.getDatesByYearMonth(dto.getYeahReagentExpiryDate(), dto.getMonthReagentExpiryDate()).size();
+				Date date = PIDateTimeUtil.numberToDate( day ,dto.getMonthReagentExpiryDate(),dto.getYeahReagentExpiryDate());
+				entity.setReagentExpiryDate(date);
+			}else {
+				Date date = PIDateTimeUtil.numberToDate(31, 12 ,dto.getYeahReagentExpiryDate());
+				entity.setReagentExpiryDate(date);				
+			}
+			entity.setReagentUnBoxDate(dto.getReagentUnBoxDate());
+			entity.setNote(dto.getNote());
+			entity.setNoteOtherReagent(dto.getNoteOtherReagent());
+			entity.setIsFinalResult(dto.getIsFinalResult());
+			TestMethod testMethod = null;
+			if (dto.getTestMethod() != null && dto.getTestMethod().getId() != null) {
+				testMethod = testMethodRepository.getOne(dto.getTestMethod().getId());
+			}
+			entity.setTestMethod(testMethod);
+			entity.setTypeMethod(dto.getTypeMethod());
+			TestPurpose testPurpose = null;
+			if (dto.getTestPurpose() != null && dto.getTestPurpose().getId() != null) {
+				testPurpose = testPurposeRepository.getOne(dto.getTestPurpose().getId());
+			}
+			entity.setTestPurpose(testPurpose);
+			
+			Technician technician = null;
+			if (dto.getTechnician() != null && dto.getTechnician().getId() != null) {
+				technician = technicianRepository.getOne(dto.getTechnician().getId());
+			}
+			entity.setTechnician(technician);
+			
+			Reagent reagent = null;
+			if (dto.getReagent() != null && dto.getReagent().getId() != null) {
+				reagent = reagentRepository.getOne(dto.getReagent().getId());
+			}
+			entity.setReagent(reagent);
+			
+			HealthOrgEQARound healthOrgRound = null;
+			if (dto.getHealthOrgRound() != null && dto.getHealthOrgRound().getId() != null) {
+				healthOrgRound = healthOrgEQARoundRepository.getOne(dto.getHealthOrgRound().getId());
+				//check user
+				if(healthOrgRound.getHealthOrg() != null) {
+					if(healthOrgRound.getHealthOrg().getListUser() != null && healthOrgRound.getHealthOrg().getListUser().size() >0) {
+						for (UserInHealthOrg user : healthOrgRound.getHealthOrg().getListUser()) {
+							
+							if(userInfo != null && userInfo.getUser() != null && user.getUser() != null && !userInfo.getIsRoleAdmin()) {
+								if(userInfo.getUser().getId().equals(user.getUser().getId())) {
+									isCheckUser = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (healthOrgRound == null) {
+				return null;
+			}
+			//Nếu user đang đang nhập khác user trong đơn vị được sửa thì return null
+			if(!isCheckUser) {
+				return null;
+			}
+			entity.setHealthOrgRound(healthOrgRound);
+			entity.setSupplyOfReagent(dto.getSupplyOfReagent());// Nguồn cung cấp sinh phẩm
+			entity.setPersonBuyReagent(dto.getPersonBuyReagent());// Người mua sinh phẩm
+			entity.setOrderTest(dto.getOrderTest());// Thứ tự xét nghiệm
+			entity.setTestDate(dto.getTestDate());// Ngày xét nghiệm
+			entity.setDateSubmitResults(dto.getDateSubmitResults());//thời gian thực hiện kết quả cuối cùng
+			// Xet nghiem nhanh
+			entity.setTimeToResult(dto.getTimeToResult());// thời gian trả kết quả (Phút)
+			entity.setIsUsingIQC(dto.getIsUsingIQC());// Có sử dụng mẫu nội kiểm hay không (IQC Internal Quality Control)
+			entity.setIsUsingControlLine(dto.getIsUsingControlLine());// Có sử dụng vạch kiểm chứng hay không
+
+			// Ngưng kết hạt
+			entity.setShakingMethod(dto.getShakingMethod());// Phương pháp lắc
+			entity.setShakingNumber(dto.getShakingNumber());// Số lần lắc
+			entity.setShakingTimes(dto.getShakingTimes());// Thời gian lắc (Giây)
+
+			// ELISA
+			entity.setIncubationPeriod(dto.getIncubationPeriod());// Thời gian ủ (Phút)
+			entity.setIncubationTemp(dto.getIncubationTemp());// nhiệt độ ủ (°C)
+			entity.setIncubationPeriodWithPlus(dto.getIncubationPeriodWithPlus());// Thời gian ủ với cộng hợp(Phút)
+			entity.setIncubationTempWithPlus(dto.getIncubationTempWithPlus());// nhiệt độ ủ với cộng hợp (°C)
+			entity.setIncubationPeriodWithSubstrate(dto.getIncubationPeriodWithSubstrate());// Thời gian ủ với cơ chất(Phút)
+			entity.setIncubationTempWithSubstrate(dto.getIncubationTempWithSubstrate());// nhiệt độ ủ với cơ chất (°C)
+			entity.setIsUsingCTest(entity.getIsUsingCTest());// có chạy chứng kiểm tra hay không
+			entity.setTotalCheckValue( entity.getTotalCheckValue());// ELISA - tổng số giếng trứng	
+			//Cập nhập kết quả null.
+			List<EQAResultReportDetail> list = eQAResultReportDetailRepository.listResultReportDetail();
+			if(list != null && list.size() > 0) {
+				for(EQAResultReportDetail item : list ) {
+					item.setResult(PIConst.EQAResultReportDetail_TestValue.none.getValue());
+					eQAResultReportDetailRepository.save(item);
+				}
+			}
+			if (dto.getDetails() != null && dto.getDetails().size() > 0) {
+				Set<EQAResultReportDetail> listEQAResultReportDetail = new HashSet<EQAResultReportDetail>();
+				for (EQAResultReportDetailDto eQAResultReportDetailDto : dto.getDetails()) {
+					EQAResultReportDetail eQAResultReportDetail = null;
+					if (eQAResultReportDetailDto.getId() != null) {
+						eQAResultReportDetail = eQAResultReportDetailRepository.getOne(eQAResultReportDetailDto.getId());
+					}
+					
+					if (eQAResultReportDetail == null) {
+						eQAResultReportDetail = new EQAResultReportDetail();
+					}
+					
+					eQAResultReportDetail.setResultReport(entity);
+					eQAResultReportDetail.setResult(eQAResultReportDetailDto.getResult());
+					eQAResultReportDetail.setOrderNumber(eQAResultReportDetailDto.getOrderNumber());
+					eQAResultReportDetail.setNote(eQAResultReportDetailDto.getNote());
+					
+					//serodia 
+					eQAResultReportDetail.setAgglomeration(eQAResultReportDetailDto.getAgglomeration());
+					eQAResultReportDetail.setCheckValue(eQAResultReportDetailDto.getCheckValue());
+					eQAResultReportDetail.setTestValue(eQAResultReportDetailDto.getTestValue());
+					//ELISA
+					eQAResultReportDetail.setCutOff(eQAResultReportDetailDto.getCutOff());
+					eQAResultReportDetail.setoDvalue(eQAResultReportDetailDto.getoDvalue());
+					eQAResultReportDetail.setRatioOdAndCutOff(eQAResultReportDetailDto.getRatioOdAndCutOff());
+					//ECLIA
+					eQAResultReportDetail.setsCOvalue(eQAResultReportDetailDto.getsCOvalue());
+					//Test nhanh
+					eQAResultReportDetail.settLine(eQAResultReportDetailDto.gettLine());
+					eQAResultReportDetail.setcLine(eQAResultReportDetailDto.getcLine());
+					
+					EQASampleTube sampleTube = null;
+					if (eQAResultReportDetailDto.getSampleTube() != null && eQAResultReportDetailDto.getSampleTube().getId() != null) {
+						sampleTube = eQASampleTubeRepository.getOne(eQAResultReportDetailDto.getSampleTube().getId());
+					}
+					eQAResultReportDetail.setSampleTube(sampleTube);
+					
+					listEQAResultReportDetail.add(eQAResultReportDetail);
+				}
+
+				if (entity.getDetails() == null) {
+					entity.setDetails(listEQAResultReportDetail);
+				} else {
+					entity.getDetails().clear();
+					entity.getDetails().addAll(listEQAResultReportDetail);
+				}
+			}
+			
+			//
+			Set<EQAResultReportFileAttachment> documentAttachments = new HashSet<EQAResultReportFileAttachment>();
+			if (dto.getDocuments() != null && dto.getDocuments().size() > 0) {
+				for (EQAResultReportFileAttachmentDto documentAttachmentDto : dto.getDocuments()) {
+					if (documentAttachmentDto != null && documentAttachmentDto.getFile() != null) {
+						EQAResultReportFileAttachment documentAttachment = null;
+						if (documentAttachmentDto.getId() != null) {
+							documentAttachment = eQAResultReportFileAttachmentRepository.getOne(documentAttachmentDto.getId());
+						}
+						if (documentAttachment == null) {
+							documentAttachment = new EQAResultReportFileAttachment();
+						}
+						FileDescription file = null;
+						if (documentAttachmentDto.getFile() != null && documentAttachmentDto.getFile().getId() != null) {
+							file = fileDescriptionRepository.getOne(documentAttachmentDto.getFile().getId());
+						}
+						if(documentAttachmentDto.getName() != null) {
+							documentAttachment.setName(documentAttachmentDto.getName());
+						}
+						documentAttachment.setFile(file);
+						documentAttachment.setResultReport(entity);
+						documentAttachments.add(documentAttachment);
+					}
+				}
+			}
+			if (documentAttachments != null && documentAttachments.size() >0 ) {
+				if(entity.getDocuments() == null) {
+					entity.setDocuments(documentAttachments);
+				}else {
+					entity.getDocuments().clear();
+					entity.getDocuments().addAll(documentAttachments);
+				}
+			}
+			
+			entity = eQAResultReportRepository.save(entity);
+			eQAActivityLogService.save(activityLogDto);
+			HealthOrgEQARound healthOrgEQARound = healthOrgEQARoundRepository.getOne(entity.getHealthOrgRound().getId());
+			healthOrgEQARound.setHasResult(true);
+			if (entity != null ) {
+				return new EQAResultReportDto(entity);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public EQAResultReportDto getById(UUID id) {
+		if (id != null) {
+			EQAResultReport entity = eQAResultReportRepository.getOne(id);
+			if (entity != null) {
+				EQAResultReportDto eqaResultReportDto = new EQAResultReportDto(entity);
+				return eqaResultReportDto;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean deleteById(UUID id) {
+		if (id != null) {
+			EQAResultReport entity = eQAResultReportRepository.getOne(id);
+			UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+			
+			if (entity != null) {
+				//Check user
+				boolean isCheckUser = false;
+				if(entity.getHealthOrgRound() != null &&  entity.getHealthOrgRound().getHealthOrg() != null) {
+					if(entity.getHealthOrgRound().getHealthOrg().getListUser() != null && entity.getHealthOrgRound().getHealthOrg().getListUser().size() >0) {
+						for (UserInHealthOrg user : entity.getHealthOrgRound().getHealthOrg().getListUser()) {
+							if(userInfo != null && userInfo.getUser() != null && user.getUser() != null && userInfo.getIsRoleAdmin()) {
+								
+									isCheckUser = true;
+								
+							}
+						}
+					}
+				}
+				//Nếu user đang đang nhập khác user trong đơn vị được xóa thì return null
+				if(!isCheckUser) {
+					return false;
+				}
+				
+				ActivityLogDto activityLogDto = new ActivityLogDto();
+				if(userInfo!= null && userInfo.getUser()!= null && userInfo.getUser().getUsername() != null) {
+					activityLogDto.setUserName(userInfo.getUser().getUsername());	
+				}
+				String moduleLog = "EQA";
+				LocalDateTime logDate = LocalDateTime.now();
+				activityLogDto.setModuleLog(moduleLog);
+				activityLogDto.setLogDate(logDate);
+				activityLogDto.setLogType(PIConst.LogType.log_ResultReport.getValue());
+				String contentLog ="";
+				if(entity.getHealthOrgRound() != null && entity.getHealthOrgRound().getRound() != null) {
+					contentLog += entity.getHealthOrgRound().getRound().getName() + " - ";
+				}
+				if(entity.getHealthOrgRound() != null && entity.getHealthOrgRound().getHealthOrg() != null) {
+					contentLog += entity.getHealthOrgRound().getHealthOrg().getName() + " - ";
+				}
+				if(entity.getTestMethod() != null) {
+					contentLog +=entity.getTestMethod().getName() + " - ";
+				}
+				if(entity.getReagent() != null) {
+					contentLog +=entity.getReagent().getName() + " - ";
+				}
+
+				contentLog += "Xóa";
+				
+				activityLogDto.setEntityObjectType(entity.getClass().getName());
+				activityLogDto.setContentLog(contentLog);
+				eQAResultReportRepository.deleteById(id);
+				eQAActivityLogService.save(activityLogDto);
+				return true;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public List<EQAResultReportDto> getAllResultByHealthOrgEQARoundId(UUID id) {
+		UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+		
+		List<EQAResultReportDto> result = eQAResultReportRepository.getAllResultByHealthOrgEQARoundId(id);
+		for (EQAResultReportDto eqaResultReportDto : result) {
+			eqaResultReportDto.setIsEditAble(userInfo.getListHealthOrgId().contains(eqaResultReportDto.getHealthOrgId()));
+		}
+		return result;
+	}
+
+	@Override
+	/**
+	 * Create a new EQAResultReport for the conclusion based on the DTO passed through from the client
+	 * 
+	 * @param	dtoList	list of DTOs that will be used to create a list of EQAResultReportDetail
+	 * @param	orgID	The ID of the HealthOrgEQARound that the EQAResultReport belongs to
+	 * @return			true if the creating process is successful, false if errors happen
+	 */
+	public Boolean updateResultReportConclusionBySampleTube(List<EQASampleTubeResultConclusionDto> dtoList, UUID orgID,Boolean isFinalResult) {
+		if (dtoList != null && !dtoList.isEmpty()) {
+			UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+			EQAResultReport conclusion = null;
+			EQAResultReportDto eqaResultReportDto = eQAResultReportRepository.getConclusionByHealthOrgEQARoundId(orgID);
+			if (eqaResultReportDto != null) {			
+				conclusion = eQAResultReportRepository.getOne(eqaResultReportDto.getId());
+				///log
+				ActivityLogDto activityLogDto = new ActivityLogDto();
+				if(userInfo!= null && userInfo.getUser()!= null && userInfo.getUser().getUsername() != null) {
+					activityLogDto.setUserName(userInfo.getUser().getUsername());	
+				}
+				String moduleLog = "EQA";
+				LocalDateTime logDate = LocalDateTime.now();
+				activityLogDto.setModuleLog(moduleLog);
+				activityLogDto.setLogDate(logDate);
+				activityLogDto.setLogType(PIConst.LogType.log_ResultReport.getValue());
+				String contentLog ="";
+				if(conclusion.getHealthOrgRound() != null && conclusion.getHealthOrgRound().getRound() != null) {
+					contentLog += conclusion.getHealthOrgRound().getRound().getName() + " - ";
+				}
+				if(conclusion.getHealthOrgRound() != null && conclusion.getHealthOrgRound().getHealthOrg() != null) {
+					contentLog += conclusion.getHealthOrgRound().getHealthOrg().getName() + " - ";
+				}
+				if(conclusion.getTestMethod() != null) {
+					contentLog +=conclusion.getTestMethod().getName() + " - ";
+				}
+				if(conclusion.getReagent() != null) {
+					contentLog +=conclusion.getReagent().getName() + " - ";
+				}
+
+				contentLog += "Sửa";
+				
+				activityLogDto.setEntityObjectType(conclusion.getClass().getName());
+				activityLogDto.setContentLog(contentLog);
+				eQAActivityLogService.save(activityLogDto);
+			} else {
+				conclusion = new EQAResultReport();
+			}
+			conclusion.setIsFinalResult(isFinalResult);
+			Set<EQAResultReportDetail> resultReportDetailList = new HashSet<>();
+			EQASampleTube tube;
+			conclusion.setTypeMethod(PIConst.EQAResultReportTypeMethod.Conclusion.getValue());
+			HealthOrgEQARound healthOrgEQARound = healthOrgEQARoundRepository.getOne(orgID);
+			if(isFinalResult) {
+			healthOrgEQARound.setHasResult(true);
+			}else {
+				healthOrgEQARound.setHasResult(false);	
+			}
+			conclusion.setHealthOrgRound(healthOrgEQARound);
+			for (EQASampleTubeResultConclusionDto dto : dtoList) {
+				tube = eQASampleTubeRepository.getOne(dto.getTubeID());
+				EQAResultReportDetail resultReportDetail = new EQAResultReportDetail();
+				resultReportDetail.setResult(dto.getResult());
+				resultReportDetail.setSampleTube(tube);
+				resultReportDetail.setNote(dto.getNote());
+				resultReportDetail.setResultReport(conclusion);
+				resultReportDetailList.add(resultReportDetail);
+				tube.setLastResultFromLab(dto.getResult());
+				tube.setStatus(3);
+			}
+			
+			if(conclusion.getDetails() == null) {
+				conclusion.setDetails(resultReportDetailList);
+			}
+			else {
+				conclusion.getDetails().clear();
+				conclusion.getDetails().addAll(resultReportDetailList);
+			}
+			eQAResultReportRepository.save(conclusion);
+			return true;
+		}
+		return false;
+	}
+	@Override
+	public EQAResultReportDto updateFinalResultStatus(UUID id,boolean isFinalResult) {
+		UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+		if(userInfo.getIsRoleAdmin()) {
+			EQAResultReport re = eQAResultReportRepository.getOne(id);
+			if(re!=null) {
+				re.setIsFinalResult(isFinalResult);
+				re = eQAResultReportRepository.save(re);
+				return new EQAResultReportDto(re);
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	/**
+	 * Get a list of DTOs from the ID of the HealthOrgEQARound. This list of DTOs will be displayed on the client.
+	 * 
+	 * @param	orgID	The ID of the HealthOrgEQARound
+	 * @return			a list of the DTOs to be displayed on the client. Return a new DTO list 
+	 * 					if there is no conclusion for this particular HealthOrgEQARound yet.
+	 */
+	public List<EQASampleTubeResultConclusionDto> getEQASampleTubeResultConclusionDtoByHealthOrgEQARoundId(UUID orgID) {
+		EQAResultReportDto eqaResultReportDto = eQAResultReportRepository.getConclusionByHealthOrgEQARoundId(orgID);
+		if (eqaResultReportDto != null) {
+			
+			Set<EQAResultReportDetailDto> resultReportDetailList = eqaResultReportDto.getDetails();
+			List<EQASampleTubeResultConclusionDto> returnList = new ArrayList<>();
+			for (EQAResultReportDetailDto detailDto : resultReportDetailList) {
+				EQASampleTubeResultConclusionDto returnDto = new EQASampleTubeResultConclusionDto();
+				returnDto.setTubeCode(detailDto.getSampleTube().getCode());
+				returnDto.setNote(detailDto.getNote());
+				returnDto.setResult(detailDto.getResult());
+				returnDto.setTubeID(detailDto.getSampleTube().getId());
+				returnList.add(returnDto);
+			}
+			Collections.sort(returnList);
+			return returnList;
+		} else {
+			List<EQASampleTubeResultConclusionDto> returnList = new ArrayList<>();
+			List<EQASampleTubeDto> tubeList = eQASampleTubeRepository.getByHealthOrgEQARoundId(orgID);
+			for(EQASampleTubeDto tube : tubeList) {
+				EQASampleTubeResultConclusionDto conclusionDto = new EQASampleTubeResultConclusionDto();
+				conclusionDto.setTubeCode(tube.getCode());
+				conclusionDto.setTubeID(tube.getId());
+				conclusionDto.setNote(null);
+				conclusionDto.setResult(null);
+				returnList.add(conclusionDto);
+			}
+			Collections.sort(returnList);
+			return returnList;
+		}
+	}
+
+	@Override
+	public List<PivotTableResultConclusionDataDto> getAllResultConclusionByRoundId(UUID roundID) {
+		List<EQAResultReportDto> conclusionList = eQAResultReportRepository.getConclusionByEQARoundId(roundID);
+		if (conclusionList != null && !conclusionList.isEmpty()) {
+			List<PivotTableResultConclusionDataDto> returnList = new ArrayList<>();
+			for(EQAResultReportDto conclusionDto : conclusionList) {
+				Set<EQAResultReportDetailDto> reportDetailDtoList = conclusionDto.getDetails();
+				for (EQAResultReportDetailDto reportDetailDto : reportDetailDtoList) {
+					PivotTableResultConclusionDataDto returnDto = new PivotTableResultConclusionDataDto();
+					returnDto.setTubeCode(reportDetailDto.getSampleTube().getCode());
+					returnDto.setResult(reportDetailDto.getResult());
+					returnDto.setHealthOrgCode(conclusionDto.getHealthOrgRound().getHealthOrg().getCode());
+//					if(conclusionDto.getHealthOrgRound().getHealthOrg().getPositiveAffirmativeRight()!=null 
+//							&& conclusionDto.getHealthOrgRound().getHealthOrg().getPositiveAffirmativeRight()) {
+//						returnDto.setPositiveAffirmativeRight("Yes");	
+//					}
+//					else {
+//						returnDto.setPositiveAffirmativeRight("No");
+//					}
+					if (reportDetailDto.getSampleTube().getEqaSample() != null) {
+						returnDto.setSampleCode(reportDetailDto.getSampleTube().getEqaSample().getCode());						
+					}
+					
+					returnList.add(returnDto);
+				}
+			}
+			return returnList;
+		}
+		return null;
+	}
+	@Override
+	public List<PivotTableResultConclusionDataDto> getListResultByRoundId(UUID roundID) {
+		String SQL = "SELECT new com.globits.PI.functiondto.PivotTableResultConclusionDataDto( "
+				+ "			re.resultReport.healthOrgRound.healthOrg.code, re.resultReport.healthOrgRound.healthOrg.name, re.resultReport.healthOrgRound.healthOrg.id, " + 
+				"			re.sampleTube.code, re.sampleTube.id, re.sampleTube.eqaSample.code , re.sampleTube.eqaSample.id, re.result, " + 
+				"			re.resultReport.healthOrgRound.healthOrg.positiveAffirmativeRight, re.resultReport.typeMethod, re.resultReport.reagent.name, " + 
+				"			re.resultReport.reagent.id ,re.resultReport.healthOrgRound.round.id,re.resultReport.healthOrgRound.round.code) "
+				+ " FROM EQAResultReportDetail re WHERE re.resultReport.healthOrgRound.round.id = :roundID AND re.resultReport.typeMethod <> 5 AND  re.resultReport.healthOrgRound.healthOrg.isManagementUnit is false "
+				+ "or re.resultReport.healthOrgRound.healthOrg.isManagementUnit is null "
+				+ "OR NOT re.resultReport.reagent.name = 'Sinh phẩm khác' ";
+		Query q = manager.createQuery(SQL,PivotTableResultConclusionDataDto.class);
+		q.setParameter("roundID", roundID);
+		return q.getResultList();
+	}
+
+	@Override
+	public List<EQAResultReport> getAllResultByHealthOrg(UUID id) {
+		List<EQAResultReport> result = eQAResultReportRepository.getAllResultByHealthOrg(id);
+		return result;
+	}
+
+	@Override
+	public List<EQAResultReportDto> getAllResultByHealthOrgManagementEQARoundId(UUID id) {
+		UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+		
+		List<EQAResultReportDto> result = eQAResultReportRepository.getAllResultByHealthOrgManagementEQARoundId(id);
+		for (EQAResultReportDto eqaResultReportDto : result) {
+			eqaResultReportDto.setIsEditAble(userInfo.getListHealthOrgId().contains(eqaResultReportDto.getHealthOrgId()));
+		}
+		return result;
+	}
+	@Override
+	public Boolean checkReagent(UUID id, UUID idHealthOrgRound, UUID idReagent, Integer typeMethod) {
+//		if(PIConst.CHECK_ERROR_RESULT) {
+			List<EQAResultReport> entities = eQAResultReportRepository.countReagentByHealthOrgRound(idHealthOrgRound, idReagent, typeMethod);
+			if(entities == null) {
+				return false;
+			}
+			if(entities != null && entities.size()>0) {
+				for (EQAResultReport eqaResultReport : entities) {
+					if(id != null && eqaResultReport.getId().equals(id)) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
+//		}
+//		return false;
+	}
+
+
+	@Override
+	public List<PivotTableResultConclusionDataDto> getListResultByHealthOrgEQARound(
+			UUID RoundId) {
+		String SQL = "SELECT new com.globits.PI.functiondto.PivotTableResultConclusionDataDto( "
+				+ "			re.resultReport.healthOrgRound.healthOrg.code, re.resultReport.healthOrgRound.healthOrg.name, re.resultReport.healthOrgRound.healthOrg.id, " + 
+				"			re.sampleTube.code, re.sampleTube.id, re.sampleTube.eqaSample.code , re.sampleTube.eqaSample.id, re.result, " + 
+				"			re.resultReport.healthOrgRound.healthOrg.positiveAffirmativeRight, re.resultReport.typeMethod, re.resultReport.reagent.name, " + 
+				"			re.resultReport.reagent.id ,re.resultReport.healthOrgRound.round.id,re.resultReport.healthOrgRound.round.code, "
+				+ "         re.resultReport.reagent.healthDepartmentDirectory, re.resultReport.dateSubmitResults) "
+				+ " FROM EQAResultReportDetail re WHERE re.resultReport.healthOrgRound.round.id = :RoundId AND  re.resultReport.healthOrgRound.healthOrg.isManagementUnit is false or re.resultReport.healthOrgRound.healthOrg.isManagementUnit is null ";
+		Query q = manager.createQuery(SQL,PivotTableResultConclusionDataDto.class);
+		q.setParameter("RoundId", RoundId);
+		return q.getResultList();
+	}
+
+	@Override
+	public List<PivotTableResultConclusionDataDto> getListResultByHealthOrgManagementUnitEQARound(UUID roundId) {
+		
+		List<HealthOrgEQARoundDto> listhealthOrgManagementUnitEQARound = healthOrgEQARoundRepository.getListHealthOrgManagementUnitEQARoundByEQARoundId(roundId);
+		String whereClause = "";
+		if(listhealthOrgManagementUnitEQARound != null && listhealthOrgManagementUnitEQARound.size() > 0) {
+		String SQL = "SELECT new com.globits.PI.functiondto.PivotTableResultConclusionDataDto( "
+				+ "			re.resultReport.healthOrgRound.healthOrg.code, re.resultReport.healthOrgRound.healthOrg.name, re.resultReport.healthOrgRound.healthOrg.id, " + 
+				"			re.sampleTube.code, re.sampleTube.id, re.sampleTube.eqaSample.code , re.sampleTube.eqaSample.id, re.result, " + 
+				"			re.resultReport.healthOrgRound.healthOrg.positiveAffirmativeRight, re.resultReport.typeMethod, re.resultReport.reagent.name, " + 
+				"			re.resultReport.reagent.id ,re.resultReport.healthOrgRound.round.id,re.resultReport.healthOrgRound.round.code, "
+				+ "         re.resultReport.reagent.healthDepartmentDirectory, re.resultReport.dateSubmitResults) "
+				+ " FROM EQAResultReportDetail re WHERE  re.resultReport.typeMethod = 5";
+		
+			whereClause += " AND ( re.resultReport.healthOrgRound.id = :healthOrgEQARoundId ) ";
+		SQL += whereClause;
+		Query q = manager.createQuery(SQL,PivotTableResultConclusionDataDto.class);
+		q.setParameter("healthOrgEQARoundId", listhealthOrgManagementUnitEQARound.get(0).getId());
+		return q.getResultList();
+		}
+		return null;
+	}
+
+	@Override
+	public List<HealthOrgEQARoundDto> checkPoint(UUID roundId) {
+//		EQARound round = eQARoundRepository.getOne(roundId);
+		List<HealthOrgEQARoundDto> listResult = new ArrayList<HealthOrgEQARoundDto>();
+		List<PivotTableResultConclusionDataDto> listhealthOrgManagementUnitEQARound = this.getListResultByHealthOrgManagementUnitEQARound(roundId);
+		List<PivotTableResultConclusionDataDto> listResultByHealthOrgEQARound = this.getListResultByHealthOrgEQARound(roundId);
+		List<HealthOrgEQARound> listHealthOrgEQARound = healthOrgEQARoundRepository.getHealthOrgEQARoundByEQARoundId(roundId);
+		if(listHealthOrgEQARound != null && listHealthOrgEQARound.size()>0) {
+		for (HealthOrgEQARound healthOrgEQARound : listHealthOrgEQARound) {
+			//l1 Lỗi 1: Sai kết quả (-60 điểm)
+			//l2 Lỗi 2: Trả kết quả trễ hạn (-10 điểm)
+			//l3 Lỗi 3: Sinh phẩm sử dụng ngoài danh mục (-10 điểm)
+			//l5, l6 5-6: PXN không có quyền khẳng định, mà ko báo chuyển XN khẳng định
+			//l7 Lỗi 7: Không kết luận âm tính (-5 điểm)
+			//l8 Lỗi 8: Làm xét nghiệm bổ sung với mẫu âm tính hoặc không theo quy trình thường
+			//			qui (-5 điểm)
+			//			8: 1 mẫu xét nghiệm mà có hơn 1 kết quả âm tính --> trừ điểm.
+			//			--1 mẫu mà có kết quả 1 âm 1 dương --< thì lọc ra --> trường hợp này có trừ điểm hay ko do người dùng quyết định
+			CheckScores l1 = null;
+			CheckScores l2 = null;
+			CheckScores l3 = null;
+			CheckScores l5 = null;
+			CheckScores l6 = null;
+			CheckScores l7 = null;
+			CheckScores l8 = null;
+			Integer countErrorL1 = 0;
+			Integer countErrorL2 = 0;
+			Integer countErrorL3 = 0;
+			Integer countErrorL5 = 0;
+			Integer countErrorL6 = 0;
+			Integer countErrorL7 = 0;
+			Integer countErrorL8 = 0;
+			String noteL1 ="";
+			String noteL2 ="";
+			String noteL3 ="";
+			String noteL5 ="";
+			String noteL6 ="";
+			String noteL7 ="";
+			String noteL8 ="";
+			UUID healthOrgEQARoundId = healthOrgEQARound.getId();
+			List<CheckScores> listL1 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L1");
+			if(listL1 != null && listL1.size() >0) {
+				l1 = listL1.get(0);
+			}
+			if(l1 == null) {
+				l1 = new CheckScores();
+			}
+			l1.setErrorName("L1");
+			l1.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL2 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L2");
+			if(listL2 != null && listL2.size() >0) {
+				l2 = listL2.get(0);
+			}
+			if(l2 == null) {
+				l2 = new CheckScores();
+			}
+			l2.setErrorName("L2");
+			l2.setHealthOrgRound(healthOrgEQARound);
+			//
+			//
+			List<CheckScores> listL3 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L3");
+			if(listL3 != null && listL3.size() >0) {
+				l3 = listL3.get(0);
+			}
+			if(l3 == null) {
+				l3 = new CheckScores();
+			}
+			l3.setErrorName("L3");
+			l3.setHealthOrgRound(healthOrgEQARound);
+			//
+			//
+			List<CheckScores> listL5 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L5");
+			if(listL5 != null && listL5.size() >0) {
+				l5 = listL5.get(0);
+			}
+			if(l5 == null) {
+				l5 = new CheckScores();
+			}
+			l5.setErrorName("L5");
+			l5.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL6 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L6");
+			if(listL6 != null && listL6.size() >0) {
+				l6 = listL6.get(0);
+			}
+			if(l6 == null) {
+				l6 = new CheckScores();
+			}
+			l6.setErrorName("L6");
+			l6.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL7 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L7");
+			if(listL7 != null && listL7.size() >0) {
+				l7 = listL7.get(0);
+			}
+			if(l7 == null) {
+				l7 = new CheckScores();
+			}
+			l7.setErrorName("L7");
+			l7.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL8 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L8");
+			if(listL8 != null && listL8.size() >0) {
+				l8 = listL8.get(0);
+			}
+			if(l8 == null) {
+				l8 = new CheckScores();
+			}
+			l8.setErrorName("L8");
+			l8.setHealthOrgRound(healthOrgEQARound);
+			
+			Integer point = 100;
+			// PXN chưa có kết quả thì điểm  = 0
+			if(healthOrgEQARound.getHasResult() == null || !healthOrgEQARound.getHasResult()) {
+				point = 0;
+			}
+			
+			if(healthOrgEQARound.getHasResult()) {
+			Boolean isCheckResult = false;
+			Boolean isCheckDateSubmitResults = false;
+			Boolean isCheckHealthDepartmentDirectory = false;
+			Boolean isCheckPositiveAffirmativeRight = false;
+			Boolean isCheckResultFinal = false;
+			Integer count = 0;
+			for (PivotTableResultConclusionDataDto resultByHealthOrgEQARound : listResultByHealthOrgEQARound) {
+				if(healthOrgEQARound.getHealthOrg().getId().equals(resultByHealthOrgEQARound.getHealthOrgId())) {
+					
+					if(listhealthOrgManagementUnitEQARound != null ) {
+						for (PivotTableResultConclusionDataDto result : listhealthOrgManagementUnitEQARound) {
+							if(resultByHealthOrgEQARound.getSampleId().equals(result.getSampleId())) {
+								if(!resultByHealthOrgEQARound.getResult().equals(result.getResult())) {
+									isCheckResult = true;
+									countErrorL1 ++;
+									noteL1 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+								}
+							}
+						}
+					}
+					//Kiểm tra ngày nộp kết quả
+					if(resultByHealthOrgEQARound.getDateSubmitResults() != null && healthOrgEQARound.getRound().getEndDate()!= null) {
+//						SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd");
+//						Date dateSubmitResults = 
+						if(resultByHealthOrgEQARound.getDateSubmitResults().compareTo(healthOrgEQARound.getRound().getEndDate()) > 0 ) {
+							isCheckDateSubmitResults = true;
+							countErrorL2 ++;
+							noteL2 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+						}
+					}
+					
+					//Kiểm tra xem sinh phẩm sử dụng có trong danh mục BYT
+					if(resultByHealthOrgEQARound.getHealthDepartmentDirectory() == null || !resultByHealthOrgEQARound.getHealthDepartmentDirectory()) {
+						 isCheckHealthDepartmentDirectory = true;
+						 countErrorL3 ++;
+						 noteL3 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+					}
+					
+					//Kiểm tra kết quả của PXN chưa đc khẳng định
+					if((resultByHealthOrgEQARound.getPositiveAffirmativeRight() == null || !resultByHealthOrgEQARound.getPositiveAffirmativeRight())
+							&& healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight() == null || !healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight()) {
+						if(resultByHealthOrgEQARound.getTypeMethod().equals(PIConst.EQAResultReportTypeMethod.Conclusion.getValue()) 
+								&& resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.confirmation_form.getValue())) {
+							
+							isCheckPositiveAffirmativeRight = true;
+							 countErrorL5 ++;
+							 countErrorL6 ++;
+							 noteL5 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							 noteL6 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							
+						}
+					}
+										
+					//Kiểm tra xem có nhập kết luận chung cuối cùng.
+					if(resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.none.getValue())) {
+						isCheckResultFinal = true;
+						 countErrorL7 ++;
+						 noteL7 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+					}
+					
+					//Kiểm tra 1 mẫu xét nghiệm mà có hơn 1 kết quả âm tính
+					for (PivotTableResultConclusionDataDto resulHealthOrgEQARound : listResultByHealthOrgEQARound) {
+						if(resulHealthOrgEQARound.getTypeMethod().equals(resultByHealthOrgEQARound.getTypeMethod()) && resulHealthOrgEQARound.getSampleId().equals(resultByHealthOrgEQARound.getSampleId())
+								&& resulHealthOrgEQARound.getHealthOrgId().equals(resultByHealthOrgEQARound.getHealthOrgId()) && !resultByHealthOrgEQARound.getReagentId().equals(resulHealthOrgEQARound.getReagentId()) ) {
+							if(resulHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue()) && resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())) {
+							count ++;
+							 countErrorL8 ++;
+							 noteL8 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							}
+						}
+					}
+					
+				}
+				
+			}
+			
+				if(isCheckResult) {
+					point -= 60;
+					l1.setMinusPoint(60);
+				}else {
+					l1.setMinusPoint(0);
+				}
+				
+				if(isCheckDateSubmitResults) {
+					point-= 10;
+					l2.setMinusPoint(10);
+				}else {
+					l2.setMinusPoint(0);
+				}
+				
+				if(isCheckHealthDepartmentDirectory) {
+					point-= 10;
+					l3.setMinusPoint(10);
+				}else {
+					l3.setMinusPoint(0);
+				}
+				
+				if(isCheckPositiveAffirmativeRight) {
+					point-= 10;
+					l5.setMinusPoint(5);
+					l6.setMinusPoint(5);
+				}else {
+					l5.setMinusPoint(0);
+					l6.setMinusPoint(0);
+				}
+				
+				if(isCheckResultFinal) {
+					point-= 5;
+					l7.setMinusPoint(5);
+				}else {
+					l7.setMinusPoint(0);
+				}
+				
+				if(count >1) {
+					point-= 5;
+					l8.setMinusPoint(5);
+				}else {
+					l8.setMinusPoint(0);
+				}
+				if(point < 0) {
+					point = 0;
+				}
+				l1.setErrorNumber(countErrorL1);
+				l1.setNote(noteL1);
+				l2.setErrorNumber(countErrorL2);
+				l2.setNote(noteL2);
+				l3.setErrorNumber(countErrorL3);
+				l3.setNote(noteL3);
+				l5.setErrorNumber(countErrorL5);
+				l5.setNote(noteL5);
+				l6.setErrorNumber(countErrorL6);
+				l6.setNote(noteL6);
+				l7.setErrorNumber(countErrorL7);
+				l7.setNote(noteL7);
+				l8.setErrorNumber(countErrorL8);
+				l8.setNote(noteL8);
+			}
+//			HealthOrgEQARound healthOrgEQARound = healthOrgEQARoundRepository.getOne(healthOrgEQARoundDto.getId());
+			l1 = checkScoresRepository.save(l1);
+			l2 = checkScoresRepository.save(l2);
+			l3 = checkScoresRepository.save(l3);
+			l5 = checkScoresRepository.save(l5);
+			l6 = checkScoresRepository.save(l6);
+			l7 = checkScoresRepository.save(l7);
+			l8 = checkScoresRepository.save(l8);
+			healthOrgEQARound.setPoint(point);
+			healthOrgEQARound= healthOrgEQARoundRepository.save(healthOrgEQARound);
+			HealthOrgEQARoundDto dto = new HealthOrgEQARoundDto(healthOrgEQARound);
+			listResult.add(dto);
+			
+		}
+		}
+		return listResult;
+	}
+	@Override
+	public Integer countResultReport(UUID id) {
+		Integer count = 0;
+		if(id != null) {
+			count = eQAResultReportRepository.countResultReport(id);
+		}
+		return count;
+	}
+//	@Override
+//	public List<AnalysisRecommendationsDto> analyzeTheResults(UUID roundId) {
+//		List<EQASampleSetDto> listEQASampleSetDto = eQASampleSetRepository.getSampleSetByRoundID(roundId);
+//		List<PivotTableResultConclusionDataDto> listhealthOrgManagementUnitEQARound = this.getListResultByHealthOrgManagementUnitEQARound(roundId);// Mau don vi quan li (Pi)
+//		List<PivotTableResultConclusionDataDto> listResultByHealthOrgEQARound = this.getListResultByHealthOrgEQARound(roundId);// lấy danh sách tất cả các kết quả của các phương pháp xét nghiệm.
+//		AnalysisRecommendationsDto analysisRecommendationsDto = new AnalysisRecommendationsDto();
+//		List<AnalysisRecommendationsDto> listAnalysisRecommendations = new ArrayList<AnalysisRecommendationsDto>();
+//		
+//		
+//		if(listEQASampleSetDto != null) {
+//			Set<EQASampleSetDetailDto> listSample = listEQASampleSetDto.get(0).getDetails();
+//			Integer count = 0;
+//			for (EQASampleSetDetailDto sample : listSample) {
+//				 count++;
+//				for (PivotTableResultConclusionDataDto resultByHealthOrgEQARound : listResultByHealthOrgEQARound) {
+//					if(listhealthOrgManagementUnitEQARound != null) {
+//						for (PivotTableResultConclusionDataDto result : listhealthOrgManagementUnitEQARound) {
+//							if(sample.getSample().getId().equals(result.getSampleId()) && resultByHealthOrgEQARound.getSampleId().equals(result.getSampleId())) {
+//								if(!resultByHealthOrgEQARound.getResult().equals(result.getResult())) {
+//									count ++;
+//								}
+//								
+//							}			
+//						}
+//			
+//					}
+//					if(sample.getId().equals(resultByHealthOrgEQARound.getTubeId())) {
+//						count++;
+//					};
+				//}
+//				analysisRecommendationsDto.setSampleId(sample.getSample().getId());
+//				analysisRecommendationsDto.setSampleCode(sample.getSampleCode());
+//				analysisRecommendationsDto.setTubeId(sample.getId());
+//				analysisRecommendationsDto.setTubeCode(sample.getCode());
+//				analysisRecommendationsDto.setCount(count);
+//				listAnalysisRecommendations.add(analysisRecommendationsDto);
+//			}
+//		}
+//		
+		
+		// SS kq vs kp tham chiếu
+		
+//	
+//		return listAnalysisRecommendations;
+//		
+//	}
+
+	@Override
+	public HealthOrgEQARoundDto checkPointByHealthOrgEQARound(UUID roundId, UUID id) {
+		List<PivotTableResultConclusionDataDto> listhealthOrgManagementUnitEQARound = this.getListResultByHealthOrgManagementUnitEQARound(roundId);
+		List<PivotTableResultConclusionDataDto> listResultByHealthOrgEQARound = this.getListResultByHealthOrgEQARound(roundId);
+		HealthOrgEQARound healthOrgEQARound = healthOrgEQARoundRepository.getOne(id);
+		if(healthOrgEQARound != null) {
+			//l1 Lỗi 1: Sai kết quả (-60 điểm)
+			//l2 Lỗi 2: Trả kết quả trễ hạn (-10 điểm)
+			//l3 Lỗi 3: Sinh phẩm sử dụng ngoài danh mục (-10 điểm)
+			//l5, l6 5-6: PXN không có quyền khẳng định, mà ko báo chuyển XN khẳng định
+			//l7 Lỗi 7: Không kết luận âm tính (-5 điểm)
+			//l8 Lỗi 8: Làm xét nghiệm bổ sung với mẫu âm tính hoặc không theo quy trình thường
+			//			qui (-5 điểm)
+			//			8: 1 mẫu xét nghiệm mà có hơn 1 kết quả âm tính --> trừ điểm.
+			//			--1 mẫu mà có kết quả 1 âm 1 dương --< thì lọc ra --> trường hợp này có trừ điểm hay ko do người dùng quyết định
+			CheckScores l1 = null;
+			CheckScores l2 = null;
+			CheckScores l3 = null;
+			CheckScores l5 = null;
+			CheckScores l6 = null;
+			CheckScores l7 = null;
+			CheckScores l8 = null;
+			Integer countErrorL1 = 0;
+			Integer countErrorL2 = 0;
+			Integer countErrorL3 = 0;
+			Integer countErrorL5 = 0;
+			Integer countErrorL6 = 0;
+			Integer countErrorL7 = 0;
+			Integer countErrorL8 = 0;
+			String noteL1 ="";
+			String noteL2 ="";
+			String noteL3 ="";
+			String noteL5 ="";
+			String noteL6 ="";
+			String noteL7 ="";
+			String noteL8 ="";
+			UUID healthOrgEQARoundId = healthOrgEQARound.getId();
+			List<CheckScores> listL1 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L1");
+			if(listL1 != null && listL1.size() >0) {
+				l1 = listL1.get(0);
+			}
+			if(l1 == null) {
+				l1 = new CheckScores();
+			}
+			l1.setErrorName("L1");
+			l1.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL2 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L2");
+			if(listL2 != null && listL2.size() >0) {
+				l2 = listL2.get(0);
+			}
+			if(l2 == null) {
+				l2 = new CheckScores();
+			}
+			l2.setErrorName("L2");
+			l2.setHealthOrgRound(healthOrgEQARound);
+			//
+			//
+			List<CheckScores> listL3 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L3");
+			if(listL3 != null && listL3.size() >0) {
+				l3 = listL3.get(0);
+			}
+			if(l3 == null) {
+				l3 = new CheckScores();
+			}
+			l3.setErrorName("L3");
+			l3.setHealthOrgRound(healthOrgEQARound);
+			//
+			//
+			List<CheckScores> listL5 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L5");
+			if(listL5 != null && listL5.size() >0) {
+				l5 = listL5.get(0);
+			}
+			if(l5 == null) {
+				l5 = new CheckScores();
+			}
+			l5.setErrorName("L5");
+			l5.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL6 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L6");
+			if(listL6 != null && listL6.size() >0) {
+				l6 = listL6.get(0);
+			}
+			if(l6 == null) {
+				l6 = new CheckScores();
+			}
+			l6.setErrorName("L6");
+			l6.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL7 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L7");
+			if(listL7 != null && listL7.size() >0) {
+				l7 = listL7.get(0);
+			}
+			if(l7 == null) {
+				l7 = new CheckScores();
+			}
+			l7.setErrorName("L7");
+			l7.setHealthOrgRound(healthOrgEQARound);
+			//
+			List<CheckScores> listL8 = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARoundId, "L8");
+			if(listL8 != null && listL8.size() >0) {
+				l8 = listL8.get(0);
+			}
+			if(l8 == null) {
+				l8 = new CheckScores();
+			}
+			l8.setErrorName("L8");
+			l8.setHealthOrgRound(healthOrgEQARound);
+			
+			Integer point = 100;
+			// PXN chưa có kết quả thì điểm  = 0
+			if(healthOrgEQARound.getHasResult() == null || !healthOrgEQARound.getHasResult()) {
+				point = 0;
+			}
+			
+			if(healthOrgEQARound.getHasResult()) {
+			Boolean isCheckResult = false;
+			Boolean isCheckDateSubmitResults = false;
+			Boolean isCheckHealthDepartmentDirectory = false;
+			Boolean isCheckPositiveAffirmativeRight = false;
+			Boolean isCheckResultFinal = false;
+			Integer count = 0;
+			for (PivotTableResultConclusionDataDto resultByHealthOrgEQARound : listResultByHealthOrgEQARound) {
+				if(healthOrgEQARound.getHealthOrg().getId().equals(resultByHealthOrgEQARound.getHealthOrgId())) {
+					
+					if(listhealthOrgManagementUnitEQARound != null ) {
+						for (PivotTableResultConclusionDataDto result : listhealthOrgManagementUnitEQARound) {
+							if(resultByHealthOrgEQARound.getSampleId().equals(result.getSampleId())) {
+								if(!resultByHealthOrgEQARound.getResult().equals(result.getResult())) {
+									isCheckResult = true;
+									countErrorL1 ++;
+									noteL1 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+								}
+							}
+						}
+					}
+					//Kiểm tra ngày nộp kết quả
+					if(resultByHealthOrgEQARound.getDateSubmitResults() != null && healthOrgEQARound.getRound().getEndDate()!= null) {
+//						SimpleDateFormat fd = new SimpleDateFormat("yyyy-MM-dd");
+//						Date dateSubmitResults = 
+						if(resultByHealthOrgEQARound.getDateSubmitResults().compareTo(healthOrgEQARound.getRound().getEndDate()) > 0 ) {
+							isCheckDateSubmitResults = true;
+							countErrorL2 ++;
+							noteL2 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+						}
+					}
+					
+					//Kiểm tra xem sinh phẩm sử dụng có trong danh mục BYT
+					if(resultByHealthOrgEQARound.getHealthDepartmentDirectory() == null || !resultByHealthOrgEQARound.getHealthDepartmentDirectory()) {
+						 isCheckHealthDepartmentDirectory = true;
+						 countErrorL3 ++;
+						 noteL3 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+					}
+					
+					//Kiểm tra kết quả của PXN chưa đc khẳng định
+					if((resultByHealthOrgEQARound.getPositiveAffirmativeRight() == null || !resultByHealthOrgEQARound.getPositiveAffirmativeRight())
+							&& healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight() == null || !healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight()) {
+						if(resultByHealthOrgEQARound.getTypeMethod().equals(PIConst.EQAResultReportTypeMethod.Conclusion.getValue()) 
+								&& resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.confirmation_form.getValue())) {
+							
+							isCheckPositiveAffirmativeRight = true;
+							 countErrorL5 ++;
+							 countErrorL6 ++;
+							 noteL5 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							 noteL6 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							
+						}
+					}
+										
+					//Kiểm tra xem có nhập kết luận chung cuối cùng.
+					if(resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.none.getValue())) {
+						isCheckResultFinal = true;
+						 countErrorL7 ++;
+						 noteL7 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+					}
+					
+					//Kiểm tra 1 mẫu xét nghiệm mà có hơn 1 kết quả âm tính
+					for (PivotTableResultConclusionDataDto resulHealthOrgEQARound : listResultByHealthOrgEQARound) {
+						if(resulHealthOrgEQARound.getTypeMethod().equals(resultByHealthOrgEQARound.getTypeMethod()) && resulHealthOrgEQARound.getSampleId().equals(resultByHealthOrgEQARound.getSampleId())
+								&& resulHealthOrgEQARound.getHealthOrgId().equals(resultByHealthOrgEQARound.getHealthOrgId()) && !resultByHealthOrgEQARound.getReagentId().equals(resulHealthOrgEQARound.getReagentId()) ) {
+							if(resulHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue()) && resultByHealthOrgEQARound.getResult().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())) {
+							count ++;
+							 countErrorL8 ++;
+							 noteL8 += " (" + resultByHealthOrgEQARound.getReagent() + "/"+ resultByHealthOrgEQARound.getSampleCode() +") -";
+							}
+						}
+					}
+					
+				}
+				
+			}
+			
+			if(isCheckResult) {
+				point -= 60;
+				l1.setMinusPoint(60);
+			}else {
+				l1.setMinusPoint(0);
+			}
+			
+			if(isCheckDateSubmitResults) {
+				point-= 10;
+				l2.setMinusPoint(10);
+			}else {
+				l2.setMinusPoint(0);
+			}
+			
+			if(isCheckHealthDepartmentDirectory) {
+				point-= 10;
+				l3.setMinusPoint(10);
+			}else {
+				l3.setMinusPoint(0);
+			}
+			
+			if(isCheckPositiveAffirmativeRight) {
+				point-= 10;
+				l5.setMinusPoint(5);
+				l6.setMinusPoint(5);
+			}else {
+				l5.setMinusPoint(0);
+				l6.setMinusPoint(0);
+			}
+			
+			if(isCheckResultFinal) {
+				point-= 5;
+				l7.setMinusPoint(5);
+			}else {
+				l7.setMinusPoint(0);
+			}
+			
+			if(count >1) {
+				point-= 5;
+				l8.setMinusPoint(5);
+			}else {
+				l8.setMinusPoint(0);
+			}
+				if(point < 0) {
+					point = 0;
+				}
+				l1.setErrorNumber(countErrorL1);
+				l1.setNote(noteL1);
+				l2.setErrorNumber(countErrorL2);
+				l2.setNote(noteL2);
+				l3.setErrorNumber(countErrorL3);
+				l3.setNote(noteL3);
+				l5.setErrorNumber(countErrorL5);
+				l5.setNote(noteL5);
+				l6.setErrorNumber(countErrorL6);
+				l6.setNote(noteL6);
+				l7.setErrorNumber(countErrorL7);
+				l7.setNote(noteL7);
+				l8.setErrorNumber(countErrorL8);
+				l8.setNote(noteL8);
+			}
+//			HealthOrgEQARound healthOrgEQARound = healthOrgEQARoundRepository.getOne(healthOrgEQARoundDto.getId());
+			l1 = checkScoresRepository.save(l1);
+			l2 = checkScoresRepository.save(l2);
+			l3 = checkScoresRepository.save(l3);
+			l5 = checkScoresRepository.save(l5);
+			l6 = checkScoresRepository.save(l6);
+			l7 = checkScoresRepository.save(l7);
+			l8 = checkScoresRepository.save(l8);
+			healthOrgEQARound.setPoint(point);
+			healthOrgEQARound= healthOrgEQARoundRepository.save(healthOrgEQARound);
+			HealthOrgEQARoundDto dto = new HealthOrgEQARoundDto(healthOrgEQARound);
+			
+			return dto;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<TestResultDto> getListTestResultByRound(UUID RoundId,UUID reagentId,Integer testMethod,UUID sampleId) {
+		if(RoundId!=null) {
+			String SQL = "SELECT new com.globits.PI.functiondto.TestResultDto(re.sampleTube.eqaSample.id, "
+					+ " re.resultReport.reagent.name,"
+					+ " re.resultReport.reagent.id , "
+					+ " COUNT(re.id),"
+					+ " re.sampleTube.eqaSample.code,"
+					+ " re.result,"
+					+ " re.resultReport.typeMethod ) "
+					+ " FROM EQAResultReportDetail re ";
+			String whereClause= " WHERE re.resultReport.healthOrgRound.round.id = :RoundId "
+					+ "	AND (re.resultReport.healthOrgRound.healthOrg.isManagementUnit is false or re.resultReport.healthOrgRound.healthOrg.isManagementUnit is null)"
+					+ " AND re.resultReport.reagent.healthDepartmentDirectory is true "
+					+ " AND re.result !=: result "
+					+ " AND re.resultReport.isFinalResult is true ";
+			if(reagentId!=null && !reagentId.equals(new UUID(0L, 0L))) {
+				whereClause+= " AND re.resultReport.reagent.id=:reagentId ";
+			}
+			if(testMethod!=null && testMethod>0 && testMethod<6) {
+				whereClause+= " AND re.resultReport.typeMethod=:testMethod ";
+			}
+			if(sampleId!=null && !sampleId.equals(new UUID(0L, 0L))) {
+				whereClause+= " AND re.sampleTube.eqaSample.id=:sampleId ";
+			}
+			
+			String groupByClause=" GROUP BY re.sampleTube.eqaSample.id, "
+					+ " re.resultReport.reagent.name "
+					+ ", re.resultReport.reagent.id "
+					+ ", re.sampleTube.eqaSample.code"
+					+ ", re.result"
+					+ ", re.resultReport.typeMethod  ";
+			String OrderByClauer = " ORDER BY re.sampleTube.eqaSample.code, re.resultReport.reagent.name ";
+			SQL+=whereClause+groupByClause + OrderByClauer;			
+			Query q = manager.createQuery(SQL,TestResultDto.class);
+			q.setParameter("RoundId", RoundId);
+			q.setParameter("result", PIConst.EQAResultReportDetail_TestValue.none.getValue());
+			if(reagentId!=null && !reagentId.equals(new UUID(0L, 0L))) {
+				q.setParameter("reagentId", reagentId);
+			}
+			if(testMethod!=null && testMethod>0 && testMethod<6) {
+				q.setParameter("testMethod", testMethod);
+			}
+			if(sampleId!=null && !sampleId.equals(new UUID(0L, 0L))) {
+				q.setParameter("sampleId", sampleId);
+			}
+			return q.getResultList();
+		}
+		return null;
+	}
+		
+	@Override
+	public List<ReferenceResultCalculateDto> getListTestResult(UUID roundId,UUID reagentId,Integer testMethod,UUID sampleId) {
+		List<TestResultDto> listTestResultByRound = this.getListTestResultByRound(roundId,reagentId,testMethod,sampleId);
+		Hashtable<String,ReferenceResultCalculateDto> hash = new Hashtable<String,ReferenceResultCalculateDto>();
+		List<ReferenceResultCalculateDto> ret = new ArrayList<ReferenceResultCalculateDto>();
+		if(listTestResultByRound!=null && listTestResultByRound.size()>0) {
+			for (TestResultDto item : listTestResultByRound) {
+				String key=item.getSampleId().toString()+item.getReagentId().toString();
+				ReferenceResultCalculateDto refDto = null;
+				if(hash.get(key)==null) {
+					refDto = new ReferenceResultCalculateDto();
+					refDto.setReagentId(item.getReagentId());
+					refDto.setReagentName(item.getReagent());
+					refDto.setSampleCode(item.getSampleCode());
+					refDto.setSampleId(item.getSampleId());
+					refDto.setRoundId(roundId);
+					refDto.setTypeMethod(item.getTypeMethod());
+					hash.put(key, refDto);
+				}
+				else {
+					refDto=hash.get(key);
+				}
+				refDto.setTotalNumberOfTest(refDto.getTotalNumberOfTest()+item.getTotalHealthOrg());
+				if(item.getResultSample().equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue())
+						|| item.getResultSample().equals(PIConst.EQAResultReportDetail_TestValue.confirmation_form.getValue())) {
+					refDto.setPositive(refDto.getPositive() + item.getTotalHealthOrg());
+				}
+				if(item.getResultSample().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())) {
+					refDto.setNegative(refDto.getNegative() + item.getTotalHealthOrg());
+				}
+				if(item.getResultSample().equals(PIConst.EQAResultReportDetail_TestValue.indertermine.getValue())
+						) {
+					refDto.setIndertermine(refDto.getIndertermine() + item.getTotalHealthOrg());
+				}			
+			}
+			if(hash.size()>0) {
+				for (String key : hash.keySet()) {
+					ret.add(hash.get(key));
+				}
+			}
+			Comparator<ReferenceResultCalculateDto> compare = Comparator
+	                .comparing(ReferenceResultCalculateDto::getReagentId)
+	                .thenComparing(ReferenceResultCalculateDto::getSampleCode);
+
+			ret = ret.stream()
+	        .sorted(compare)
+	        .collect(Collectors.toList());
+			return ret;
+		}
+		return null;
+	}
+	@Override
+	public List<CheckScoresDto> calculateScoresInRound(UUID roundId, UUID healthOrg){
+		List<CheckScores> ret = new ArrayList<CheckScores>();
+		EQARound round = eQARoundRepository.getOne(roundId);
+		//Đợi hàm check kết quả tham chiếu
+		List<ReferenceResult> listReferenceResult = referenceResultRepository.getListReferenceResult(roundId);
+		if(round!=null && listReferenceResult!=null && listReferenceResult.size()>0) {
+			List<HealthOrgEQARound> listHealthOrgEQARound = null;
+			if(healthOrg != null && !healthOrg.equals(new UUID(0L, 0L))) {
+				listHealthOrgEQARound = healthOrgEQARoundRepository.getListByEQARoundAndHealthOrg(roundId, healthOrg);
+			}else {
+				listHealthOrgEQARound = healthOrgEQARoundRepository.getHealthOrgEQARoundByEQARoundId(roundId);
+			}
+			
+			if(listHealthOrgEQARound!=null && listHealthOrgEQARound.size()>0) {
+				List<EQAResultReportDetail> listDetail = null;
+				if(healthOrg != null && !healthOrg.equals(new UUID(0L, 0L))) {
+					listDetail = eQAResultReportDetailRepository.getListFinalResultByRoundId(roundId,healthOrg);
+				}else {
+					listDetail = eQAResultReportDetailRepository.getListFinalResultByRoundId(roundId);
+				}
+				if(listDetail!=null && listDetail.size()>0) {
+					/**
+					 * Vòng lặp các đơn vị tham gia vòng ngoại kiểm
+					 */
+					for (HealthOrgEQARound healthOrgEQARound : listHealthOrgEQARound) {
+						if(healthOrgEQARound.getHasResult()) {							
+							CheckScores l1 = null;
+							CheckScores l2 = null;
+							CheckScores l3 = null;
+							CheckScores l5 = null;
+							CheckScores l6 = null;
+							CheckScores l7 = null;
+							CheckScores l8 = null;
+							CheckScores l9 = null;
+							
+							List<CheckScores> lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L1");
+							if(lstFind!=null && lstFind.size()>0) {
+								l1 = lstFind.get(0);
+								l1.setErrorNumber(0);
+								l1.setNote("");
+								l1.setMinusPoint(0);								
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L2");
+							if(lstFind!=null && lstFind.size()>0) {
+								l2 = lstFind.get(0);
+								l2.setErrorNumber(0);
+								l2.setNote("");
+								l2.setMinusPoint(0);								
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L3");
+							if(lstFind!=null && lstFind.size()>0) {
+								l3 = lstFind.get(0);
+								l3.setErrorNumber(0);
+								l3.setNote("");
+								l3.setMinusPoint(0);								
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L5");
+							if(lstFind!=null && lstFind.size()>0) {
+								l5 = lstFind.get(0);
+								l5.setErrorNumber(0);
+								l5.setNote("");
+								l5.setMinusPoint(0);								
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L6");
+							if(lstFind!=null && lstFind.size()>0) {
+								l6 = lstFind.get(0);
+								l6.setErrorNumber(0);
+								l6.setNote("");
+								l6.setMinusPoint(0);								
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L7");
+							if(lstFind!=null && lstFind.size()>0) {
+								l7 = lstFind.get(0);
+								l7.setErrorNumber(0);
+								l7.setNote("");
+								l7.setMinusPoint(0);
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L8");
+							if(lstFind!=null && lstFind.size()>0) {
+								l8 = lstFind.get(0);
+								l8.setErrorNumber(0);
+								l8.setNote("");
+								l8.setMinusPoint(0);
+							}
+							lstFind=null;
+							lstFind = checkScoresRepository.checkScoresHealthOrgRound(healthOrgEQARound.getId(),"L9");
+							if(lstFind!=null && lstFind.size()>0) {
+								l9 = lstFind.get(0);
+								l9.setErrorNumber(0);
+								l9.setNote("");
+								l9.setMinusPoint(0);
+							}
+							lstFind=null;
+							
+							boolean hasConclusion = false;
+							Hashtable<String, Integer> hashPositive = new Hashtable<String, Integer>();
+							/**
+							 * Vòng lặp các kết quả
+							 */
+							for (EQAResultReportDetail eqaResultReportDetail : listDetail) {
+								if(eqaResultReportDetail.getResultReport().getHealthOrgRound().getId().equals(healthOrgEQARound.getId())) {
+									
+									UUID healthOrgEQARoundId = eqaResultReportDetail.getResultReport().getHealthOrgRound().getId();
+									HealthOrgEQARound healthOrgRound = eqaResultReportDetail.getResultReport().getHealthOrgRound();
+									
+									Reagent reagent = null;
+									UUID reagentId = null;
+									String reagentName="";
+									if(eqaResultReportDetail.getResultReport().getReagent()!=null) {
+										reagent = eqaResultReportDetail.getResultReport().getReagent();
+										reagentId = reagent.getId();
+										reagentName = reagent.getName();
+									}										
+									
+//									EQASample sample = eqaResultReportDetail.getSampleTube().getEqaSample();
+									UUID sampleId = eqaResultReportDetail.getSampleTube().getEqaSample().getId();
+									String sampleCode = eqaResultReportDetail.getSampleTube().getEqaSample().getCode();
+									
+									//Kỹ thuật xét nghiệm - kết luậ xét nghiệm
+									Integer methodType=eqaResultReportDetail.getResultReport().getTypeMethod();
+									Integer resultDetail = eqaResultReportDetail.getResult();
+									
+									EQAResultReport resultReport = eqaResultReportDetail.getResultReport();
+									
+									/**
+									 * Lỗi 1: Sai kết quả (-60 điểm)
+									 */
+									//Trường hợp PXN có kết quả là không thực hiện với mẫu này và sinh phẩm này thì không tính lỗi 1
+									//Trường hợp phòng xét nghiệm không thực hiện toàn bộ các mẫu chưa xử lý
+									//resultDetail = null coi như chưa thực hiện
+									if(resultDetail!=null && !resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.none.getValue())) {
+										for (ReferenceResult refRe : listReferenceResult) {
+											//kết quả tham chiếu với mẫu và sinh phẩm trùng với eqaResultReportDetail
+											if(reagentId!=null && refRe.getReagent() != null && refRe.getReagent().getId().equals(reagentId) 
+													&& refRe.getSample().getId().equals(sampleId)) {
+												
+												Integer refResult=null;//Kết quả nào được dùng làm đối chứng: kết quả tương đồng hay kết quả PI
+												//Lấy kết quả PI
+												if(refRe.getPriority().equals(PIConst.ReferenceResultPriority.officialResult.getValue())) {
+													refResult = refRe.getOfficialResult();
+												}
+												//Lấy kết quả tương đồng
+												else if(refRe.getPriority().equals(PIConst.ReferenceResultPriority.referenceResult.getValue())) {
+													refResult = refRe.getReferenceResult();
+												}
+												//Nếu có kết quả và không phải trường hợp không đánh giá
+												if(refResult!=null && !refResult.equals(PIConst.EQAResultReportDetail_TestValue.noEvaluate.getValue())) {
+													//Nếu dương tính hoặc gửi mẫu khẳng định
+													if((resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue())
+															|| resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.confirmation_form.getValue()))
+															&& !refResult.equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue())) {														
+														
+															if(l1==null) {
+																l1 = new CheckScores(healthOrgRound, "L1","Sai kết quả" , 1,sampleCode+"(SP: "+reagentName+")", 60);
+															}
+															else {
+																l1.setErrorNumber(l1.getErrorNumber()+1);
+																l1.setDescription("Sai kết quả");
+																if(l1.getNote() == null || l1.getNote() == "") {
+																	l1.setNote(sampleCode+"(SP: "+reagentName+")");
+																}else {
+																	l1.setNote(l1.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+																}
+															}
+													}
+													//Nếu không xác định
+													else if(resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.indertermine.getValue())
+															&& !refResult.equals(PIConst.EQAResultReportDetail_TestValue.indertermine.getValue())) {
+														if(l1==null) {
+															l1 = new CheckScores(healthOrgRound, "L1","Sai kết quả", 1,sampleCode+"(SP: "+reagentName+")", 60);
+														}
+														else {
+															l1.setErrorNumber(l1.getErrorNumber()+1);
+															l1.setDescription("Sai kết quả");
+															if(l1.getNote() == null || l1.getNote() == "") {
+																l1.setNote(sampleCode+"(SP: "+reagentName+")");
+															}else {
+																l1.setNote(l1.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+															}
+														}
+													}
+													//Nếu âm tính
+													else if(resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())
+															&& !refResult.equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())) {
+														if(l1==null) {
+															l1 = new CheckScores(healthOrgRound, "L1" ,"Sai kết quả", 1,sampleCode+"(SP: "+reagentName+")", 60);
+														}
+														else {
+															l1.setErrorNumber(l1.getErrorNumber()+1);
+															l1.setDescription("Sai kết quả");
+															if(l1.getNote() == null || l1.getNote() == "") {
+																l1.setNote(sampleCode+"(SP: "+reagentName+")");
+															}else {
+																l1.setNote(l1.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+															}
+														}
+													}
+												}
+												break;
+											}
+										}
+									}
+									/**
+									 * Lỗi 2: Trả kết quả trễ hạn (-10 điểm)
+									 */
+									if(resultReport.getDateSubmitResults()!=null 
+											&& resultReport.getDateSubmitResults().after(round.getSampleSubmissionDeadline())) {
+										if(l2==null) {
+											l2 = new CheckScores(healthOrgRound, "L2","Trả kết quả trễ hạn", 1,sampleCode+"(SP: "+reagentName+")", 10);
+										}
+										else {
+											l2.setErrorNumber(l2.getErrorNumber()+1);
+											l2.setDescription("Trả kết quả trễ hạn");
+											l2.setNote("Trả kết quả trễ hạn");
+//											if(l2.getNote() == null || l2.getNote() == "") {
+//												l2.setNote(sampleCode+"(SP: "+reagentName+")");
+//											}else {
+//												l2.setNote(l2.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+//											}
+//											l2.setNote(l2.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+										}
+									}
+									/**
+									 * Lỗi 3: Sinh phẩm sử dụng ngoài danh mục (-10 điểm)
+									 */
+									if(reagent!=null && (reagent.getHealthDepartmentDirectory()==null || reagent.getHealthDepartmentDirectory()==false)) {
+										if(l3==null) {
+											l3 = new CheckScores(healthOrgRound, "L3","Sinh phẩm sử dụng ngoài danh mục", 1,"(SP: "+reagentName+")", 10);
+										}
+										else {
+											if(!l3.getNote().contains(reagentName)) {
+												l3.setErrorNumber(l3.getErrorNumber()+1);
+												l3.setDescription("Sinh phẩm sử dụng ngoài danh mục");
+												if(l3.getNote() == null || l3.getNote() == "") {
+													l3.setNote(sampleCode+"(SP: "+reagentName+")");
+												}else {
+													l3.setNote(l3.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+												}
+//												l3.setNote(l3.getNote()+";"+"(SP: "+reagentName+")");
+											}
+										}
+									}
+									/**
+									 * Lỗi 5: Phòng xét nghiệm sàng lọc kết luận dương tính (-5 điểm)
+									 * Lỗi 6: Phòng sàng lọc không đề nghị gửi khẳng định cho mẫu dương tính và nghi ngờ (-5 điểm)
+									 */
+									//Nếu là bản ghi kết luận
+									if(resultReport.getTypeMethod().equals(PIConst.EQAResultReportTypeMethod.Conclusion.getValue())) {
+										hasConclusion = true;
+										//Nếu đơn vị không có quyền khẳng định
+										if(healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight()==null 
+												|| healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight()==false) {
+											//Nếu nhập kết quả dương tính
+											if(resultDetail!=null && resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue())) {
+												if(l5==null) {
+													l5 = new CheckScores(healthOrgRound, "L5","Phòng xét nghiệm sàng lọc kết luận dương tính", 1,sampleCode+"(SP: "+reagentName+")", 5);
+												}
+												else {
+													l5.setErrorNumber(l5.getErrorNumber()+1);
+													l5.setDescription("Phòng xét nghiệm sàng lọc kết luận dương tính");
+													if(l5.getNote() == null || l5.getNote() == "") {
+														l5.setNote(sampleCode+"(SP: "+reagentName+")");
+													}else {
+														l5.setNote(l5.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+													}
+//													l5.setNote(l5.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+												}
+											}
+										}
+										
+										//Nếu đơn vị có quyền khẳng định
+										if(healthOrgEQARound.getHealthOrg().getPositiveAffirmativeRight()==true ) {
+											//Nếu nhập kết PXN gửi mẫu khẳng định
+											if(resultDetail!=null && resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.confirmation_form.getValue())) {
+												if(l6==null) {
+													l6 = new CheckScores(healthOrgRound, "L6","Phòng sàng lọc không đề nghị gửi khẳng định cho mẫu dương tính và nghi ngờ", 1,sampleCode+"(SP: "+reagentName+")", 5);
+												}
+												else {
+													l6.setErrorNumber(l6.getErrorNumber()+1);
+													l6.setDescription("Phòng sàng lọc không đề nghị gửi khẳng định cho mẫu dương tính và nghi ngờ");
+													if(l6.getNote() == null || l6.getNote() == "") {
+														l6.setNote(sampleCode+"(SP: "+reagentName+")");
+													}else {
+														l6.setNote(l6.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+													}
+//													l6.setNote(l6.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+												}
+											}
+										}
+									}
+									/**
+									 * Lỗi 8: Làm xét nghiệm bổ sung với mẫu âm tính hoặc không theo quy trình thường qui (-5 điểm)
+									 */
+									if(reagentId!=null && eqaResultReportDetail.getResult().equals(PIConst.EQAResultReportDetail_TestValue.negative.getValue())) {
+										if(hashPositive.get(reagentId.toString()+sampleId.toString())==null) {
+											hashPositive.put(reagentId.toString()+sampleId.toString(), 1);
+										}
+										else {
+											hashPositive.put(reagentId.toString()+sampleId.toString(),hashPositive.get(reagentId.toString()+sampleId.toString())+1);
+											if(l8==null) {
+												l8 = new CheckScores(healthOrgRound, "L8","Làm xét nghiệm bổ sung với mẫu âm tính hoặc không theo quy trình thường qui", 1,sampleCode+"(SP: "+reagentName+")", 5);
+											}
+											else {
+												l8.setErrorNumber(hashPositive.get(reagentId.toString()+sampleId.toString()));
+												l8.setDescription("Làm xét nghiệm bổ sung với mẫu âm tính hoặc không theo quy trình thường qui");
+												if(l8.getNote() == null || l8.getNote() == "") {
+													l8.setNote(sampleCode+"(SP: "+reagentName+")");
+												}else {
+													l8.setNote(l8.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+												}
+//												l8.setNote(l8.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+											}
+										}
+									}
+									/**
+									 * Lỗi 9: Sai kết quả vạch chứng hoặc điền sai kết quả (-5 điểm)
+									 */
+									//Nếu xét nghiệm nhanh hoặc SERODIA, và có thực hiện xét nghiệm
+  									if((resultReport.getTypeMethod() == PIConst.EQAResultReportTypeMethod.FastTest.getValue()
+											|| resultReport.getTypeMethod() == PIConst.EQAResultReportTypeMethod.SERODIA.getValue())
+											&& resultDetail!=null && !resultDetail.equals(PIConst.EQAResultReportDetail_TestValue.none.getValue())) {
+										if((resultReport.getTypeMethod() == PIConst.EQAResultReportTypeMethod.FastTest.getValue())
+												&& (eqaResultReportDetail.getcLine()==null || !eqaResultReportDetail.getcLine().equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue()))) {
+											if(l9==null) {
+												l9 = new CheckScores(healthOrgRound, "L9","Sai kết quả vạch chứng hoặc điền sai kết quả", 1,sampleCode+"(SP: "+reagentName+")", 5);
+											}
+											else {
+												l9.setErrorNumber(l9.getErrorNumber()+1);
+												l9.setDescription("Sai kết quả vạch chứng hoặc điền sai kết quả");
+												if(l9.getNote() == null || l9.getNote() == "") {
+													l9.setNote(sampleCode+"(SP: "+reagentName+")");
+												}else {
+													l9.setNote(l9.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+												}
+//												l9.setNote(l9.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+											}
+										}
+										if((resultReport.getTypeMethod() == PIConst.EQAResultReportTypeMethod.SERODIA.getValue())
+												&& (eqaResultReportDetail.getCheckValue()==null || !eqaResultReportDetail.getCheckValue().equals(PIConst.EQAResultReportDetail_TestValue.positive.getValue()))) {
+											if(l9==null) {
+												l9 = new CheckScores(healthOrgRound, "L9","Sai kết quả vạch chứng hoặc điền sai kết quả", 1,sampleCode+"(SP: "+reagentName+")", 5);
+											}
+											else {
+												l9.setErrorNumber(l9.getErrorNumber()+1);
+												l9.setDescription("Sai kết quả vạch chứng hoặc điền sai kết quả");
+												if(l9.getNote() == null || l9.getNote() == "") {
+													l9.setNote(sampleCode+"(SP: "+reagentName+")");
+												}else {
+													l9.setNote(l9.getNote()+";\n"+sampleCode+"(SP: "+reagentName+")");
+												}
+//												l9.setNote(l9.getNote()+";"+sampleCode+"(SP: "+reagentName+")");
+											}
+										}
+									}
+									
+								}
+							}
+							/**
+							 * Lỗi 7: Không kết luận âm tính (-5 điểm)
+							 */
+							if(!hasConclusion) {
+								if(l7==null) {
+									l7 = new CheckScores(healthOrgEQARound, "L7","Không kết luận âm tính", 1,"Không nhập kết luận", 5);
+								}
+								else {
+									l7.setErrorNumber(l7.getErrorNumber()+1);
+									l7.setDescription("Không kết luận âm tính");
+									l7.setNote("Không nhập kết luận");
+								}
+							}
+								Integer point = 100;
+							
+							if(l1 != null  &&l1.getErrorNumber()>=1) {
+								point = point - 60;
+								l1.setMinusPoint(60);
+							}
+							
+							if(l2 != null && l2.getErrorNumber() == 1) {
+								point = point - 10;
+								l2.setMinusPoint(10);
+							}else if(l2 != null && l2.getErrorNumber() > 1) {
+								point = point - 20;
+								l2.setMinusPoint(20);
+							}
+							
+							if(l3 != null && l3.getErrorNumber() == 1) {
+								point = point - 10;
+								l3.setMinusPoint(10);
+							}else if(l3 != null && l3.getErrorNumber() > 1) {
+								point = point - 20;
+								l3.setMinusPoint(20);
+							}
+							
+							if(l5 != null && l5.getErrorNumber() == 1) {
+								point = point - 5;
+								l5.setMinusPoint(5);
+							}else if(l5 != null && l5.getErrorNumber() > 1) {
+								point = point - 10;
+								l5.setMinusPoint(10);
+							}
+							
+							if(l6 != null && l6.getErrorNumber() == 1) {
+								point = point - 5;
+								l6.setMinusPoint(5);
+							}else if(l6 != null && l6.getErrorNumber() > 1) {
+								point = point - 10;
+								l6.setMinusPoint(10);
+							}
+							
+							if(l7 != null && l7.getErrorNumber() == 1) {
+								point = point - 5;
+								l7.setMinusPoint(5);
+							}else if(l7 != null && l7.getErrorNumber() > 1) {
+								point = point - 10;
+								l7.setMinusPoint(10);
+							}
+							
+							if(l8 != null && l8.getErrorNumber() == 1) {
+								point = point - 5;
+								l8.setMinusPoint(5);
+							}else if(l8 != null && l8.getErrorNumber() > 1) {
+								point = point - 10;
+								l8.setMinusPoint(10);
+							}
+							
+							if(l9 != null && l9.getErrorNumber() == 1) {
+								point = point - 5;
+								l9.setMinusPoint(5);
+							}else if(l9 != null && l9.getErrorNumber() > 1) {
+								point = point - 10;
+								l9.setMinusPoint(10);
+							}
+							if(l1!=null) ret.add(l1);
+							if(l2!=null) ret.add(l2);
+							if(l3!=null) ret.add(l3);
+							if(l5!=null) ret.add(l5);
+							if(l6!=null) ret.add(l6);
+							if(l7!=null) ret.add(l7);
+							if(l8!=null) ret.add(l8);
+							if(l9!=null) ret.add(l9);
+							
+							
+							if(point < 0) {
+								point = 0;
+							}
+							
+							healthOrgEQARound.setPoint(point);
+							healthOrgEQARound = healthOrgEQARoundRepository.save(healthOrgEQARound);
+						}
+					}
+				}
+			}
+		}
+  		ret = checkScoresRepository.saveAll(ret);
+		List<CheckScoresDto> retDto = new ArrayList<CheckScoresDto>();
+		if(ret!=null && ret.size()>0) {
+			for (CheckScores checkScores : ret) {
+				retDto.add(new CheckScoresDto(checkScores));
+			}
+		}
+		return retDto;
+	}
+
+	@Override
+	public List<ReferenceResultDto> updateReferenceResult(List<ReferenceResultCalculateDto> listData) {
+		List<ReferenceResultDto> listResult = new ArrayList<ReferenceResultDto>();
+		for (ReferenceResultCalculateDto referenceResultCalculateDto : listData) {
+//			if(referenceResultCalculateDto.getReagentName().equals("Alere HIV Combo")
+//					&& referenceResultCalculateDto.getSampleCode().equals("PI 1.20-3")) {
+//				System.out.println(referenceResultCalculateDto.getReferenceResult());
+//			}
+//			if(referenceResultCalculateDto.getReferenceResult()==null) {
+//				System.out.println(referenceResultCalculateDto.getReferenceResult());
+//			}
+			ReferenceResult item = null;
+			List<ReferenceResult>listReferenceResult =  referenceResultRepository.getListReferenceResult(referenceResultCalculateDto.getRoundId(), referenceResultCalculateDto.getReagentId(), referenceResultCalculateDto.getTypeMethod(), referenceResultCalculateDto.getSampleId());
+			if(listReferenceResult != null && listReferenceResult.size() >0) {
+				item = listReferenceResult.get(0);
+			}
+			if(item == null) {
+				item = new ReferenceResult();
+			}
+			EQARound round = null;
+			EQASample sample = null;
+			Reagent reagent = null;
+			item.setTypeMethod(referenceResultCalculateDto.getTypeMethod());
+			
+//			item.setOfficialResult(referenceResultCalculateDto.get);
+			if(referenceResultCalculateDto.getRoundId() != null && !referenceResultCalculateDto.getRoundId().equals(new UUID(0L, 0L))) {
+				round = eQARoundRepository.getOne(referenceResultCalculateDto.getRoundId());
+			}
+			if(referenceResultCalculateDto.getSampleId() != null && !referenceResultCalculateDto.getSampleId().equals(new UUID(0L, 0L))) {
+				sample = eQASampleRepository.getOne(referenceResultCalculateDto.getSampleId());
+			}
+			if(referenceResultCalculateDto.getReagentId() != null && referenceResultCalculateDto.getReagentId() != null) {
+				reagent = reagentRepository.getOne(referenceResultCalculateDto.getReagentId());
+			}
+			item.setRound(round);
+			item.setSample(sample);
+			item.setReagent(reagent);
+//			item.setOfficialResult(sample.getResult());
+			item.setReferenceResult(referenceResultCalculateDto.getReferenceResult());
+			//Nếu không thì lấy kết quả PI
+			if(referenceResultCalculateDto.getReferenceResult()==null) {
+				item.setPriority(PIConst.ReferenceResultPriority.officialResult.getValue());
+			}
+			//Nếu đủ điều kiện lấy kết quả tương đồng thì lấy kết quả tương đồng			
+			else {
+				item.setPriority(PIConst.ReferenceResultPriority.referenceResult.getValue());
+			}
+			item = referenceResultRepository.save(item);
+			listResult.add(new ReferenceResultDto(item));
+			
+		}
+		return listResult;
+	}
+
+	@Override
+	public Page<EQAResultReportDto> searchByDtoAll(EQAResultReportSearchDto dto) {
+		if (dto == null) {
+			return null;
+		}
+		
+		int pageIndex = dto.getPageIndex();
+		int pageSize = dto.getPageSize();
+		
+		if (pageIndex > 0) {
+			pageIndex--;
+		} else {
+			pageIndex = 0;
+		}
+		UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
+
+		String whereClause = "";
+		String orderBy = " ORDER BY  eqap.createDate DESC, eqap.orderTest DESC, eqap.healthOrgRound.round.createDate DESC ";
+		
+		String sqlCount = "select count(eqap.id) from EQAResultReport as eqap where (1=1) ";
+		String sql = "select new com.globits.PI.dto.EQAResultReportDto(eqap,true) from EQAResultReport as eqap where (1=1) ";
+
+		if (dto.getTypeMethod() != null && dto.getTypeMethod() > 0) {
+			whereClause += " AND ( eqap.typeMethod = :typeMethod ) ";
+		}
+		if (dto.getText() != null && StringUtils.hasText(dto.getText())) {
+			whereClause += " AND ( eqap.healthOrgRound.healthOrg.code LIKE :text "
+					+ "OR eqap.healthOrgRound.healthOrg.name LIKE :text "
+					+ "OR eqap.dateSubmitResults LIKE :text) ";
+		}
+		if(dto.getRound() != null && dto.getRound().getId() != null) {
+			whereClause += " AND ( eqap.healthOrgRound.round.id =: roundId ) " ;
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() != null) {
+			whereClause += " AND ( eqap.testDate >=: startDate ) AND ( eqap.testDate <=: endDate ) " ;
+		}
+		if(dto.getStartDate() != null && dto.getEndDate() == null) {
+			whereClause += " AND ( eqap.testDate >=: startDate ) " ;
+		}
+		if(dto.getEndDate() != null && dto.getStartDate() == null) {
+			whereClause += " AND ( eqap.testDate <=: endDate ) " ;
+		}
+		
+		List<UUID> listHealthOrgId = null;
+		if(!userInfo.getIsRoleAdmin() && !userInfo.getIsRoleAdiministrativeStaff() && !userInfo.getIsRoleStaff()) {
+			listHealthOrgId = userInHealthOrgService.getListHealthOrgIdByUser(null);
+			if (listHealthOrgId != null && listHealthOrgId.size() > 0) {
+				whereClause += " AND ( eqap.healthOrgRound.healthOrg.id in (:healthOrgIds) ) ";
+			}
+		}
+		if(dto.getIsManagementUnit() != null) {
+			whereClause += " AND ( eqap.healthOrgRound.healthOrg.isManagementUnit =: isManagementUnit ) " ;
+		}
+				
+		sql+=whereClause + orderBy;
+		sqlCount+=whereClause;
+
+		Query q = manager.createQuery(sql, EQAResultReportDto.class);
+		Query qCount = manager.createQuery(sqlCount);
+
+		if (dto.getTypeMethod() != null && dto.getTypeMethod() > 0) {
+			q.setParameter("typeMethod", dto.getTypeMethod());
+			qCount.setParameter("typeMethod", dto.getTypeMethod());
+		}
+		if (dto.getText() != null && StringUtils.hasText(dto.getText())) {
+			q.setParameter("text", "%" + dto.getText() + "%");
+			qCount.setParameter("text", "%" + dto.getText() + "%");
+		}
+		if (dto.getRound() != null && dto.getRound().getId() != null) {
+			q.setParameter("roundId", dto.getRound().getId() );
+			qCount.setParameter("roundId", dto.getRound().getId() );
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() == null) {
+			q.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			qCount.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+		}
+		if (dto.getEndDate() != null && dto.getStartDate() == null) {
+			q.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+			qCount.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+		}
+		if (dto.getStartDate() != null && dto.getEndDate() != null) {
+			q.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			qCount.setParameter("startDate", getStartOfDay(dto.getStartDate()) );
+			
+			q.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+			qCount.setParameter("endDate", getEndOfDay(dto.getEndDate()) );
+		}
+		if(!userInfo.getIsRoleAdmin() && !userInfo.getIsRoleAdiministrativeStaff() && !userInfo.getIsRoleStaff()) {
+			q.setParameter("healthOrgIds", listHealthOrgId);
+			qCount.setParameter("healthOrgIds", listHealthOrgId);
+		}
+		if(dto.getIsManagementUnit() != null) {
+			q.setParameter("isManagementUnit", dto.getIsManagementUnit());
+			qCount.setParameter("isManagementUnit", dto.getIsManagementUnit());
+		}
+		int startPosition = pageIndex * pageSize;
+		q.setFirstResult(startPosition);
+		q.setMaxResults(pageSize);
+		List<EQAResultReportDto> dtos = q.getResultList();
+		long count = (long) qCount.getSingleResult();
+		
+		if(userInfo!=null && userInfo.getListHealthOrgId()!=null && userInfo.getListHealthOrgId().size()>0 && dtos!=null && dtos.size()>0) {
+			Boolean isCheck = false;
+			for (EQAResultReportDto eqaResultReportDto : dtos) {
+//				for (UUID id : userInfo.getListHealthOrgId()) {
+//					if(id.equals(eqaResultReportDto.getHealthOrgId())) {
+//						isCheck = true;
+//					}
+//				}
+				eqaResultReportDto.setIsEditAble(userInfo.getListHealthOrgId().contains(eqaResultReportDto.getHealthOrgRound().getHealthOrg().getId()));
+			}
+		}
+		Pageable pageable = PageRequest.of(pageIndex, pageSize);
+		Page<EQAResultReportDto> result = new PageImpl<EQAResultReportDto>(dtos, pageable, count);
+		return result;
+	}
+	
+	
+}

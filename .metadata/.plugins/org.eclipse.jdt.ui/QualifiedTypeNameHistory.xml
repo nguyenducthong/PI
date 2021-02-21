@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASampleSet"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASampleSetDetail"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASample"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASampleBottle"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASerumBank"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASerumBottle"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQAResultReport"/>
+<fullyQualifiedTypeName name="java.util.UUID"/>
+<fullyQualifiedTypeName name="java.util.Calendar"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.Reagent"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.HealthOrgEQARound"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQARound"/>
+<fullyQualifiedTypeName name="com.globits.PI.PIConst"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQAResultReportDetail"/>
+<fullyQualifiedTypeName name="com.globits.core.dto.AdministrativeUnitDto"/>
+<fullyQualifiedTypeName name="java.util.Date"/>
+<fullyQualifiedTypeName name="java.util.Set"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.HealthOrg"/>
+<fullyQualifiedTypeName name="java.util.HashSet"/>
+<fullyQualifiedTypeName name="com.globits.core.dto.BaseObjectDto"/>
+<fullyQualifiedTypeName name="com.globits.security.dto.UserDto"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.UserInHealthOrg"/>
+<fullyQualifiedTypeName name="com.globits.PI.domain.EQASampleTube"/>
+</qualifiedTypeNameHistroy>

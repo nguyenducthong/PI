@@ -1,0 +1,149 @@
+ackage com.globits.PI.functiondto;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import com.globits.PI.PIConst;
+
+public class ReferenceResultCalculateDto {
+	public UUID sampleId;
+	public String sampleCode;
+	public UUID reagentId;
+	public String reagentName;
+	public UUID roundId;
+	public Integer typeMethod;
+	
+	public Long totalNumberOfTest=0L;//Tổng số lần thực hiện
+	
+	public Long negative=0L;//Số lần âm tính
+	public Double negativeRatio=0D;//Tỷ lệ âm tính
+	public Long indertermine=0L;//Số lần ko xác đ
+	public Double indertermineRatio=0D;//Tỷ lệ không xác định
+	public Long positive=0L;//Số lần dương tính
+	public Double positiveRatio=0D;//Tỷ lệ dương tính
+	public Long confirmationForm=0L;//Số lần gửi mẫu khẳng định
+	public Double confirmationFormRatio=0D;//Tỷ lệ gửi mẫu khảng định
+	
+	//Kết luận (âm tính - dương tính - không xác định - Không đánh giá kết quả);
+	
+	//giá trị trong PIConst.EQAResultReportDetail_TestValue
+	public Integer referenceResult;
+	
+	public UUID getSampleId() {
+		return sampleId;
+	}
+	public void setSampleId(UUID sampleId) {
+		this.sampleId = sampleId;
+	}
+	public String getSampleCode() {
+		return sampleCode;
+	}
+	public void setSampleCode(String sampleCode) {
+		this.sampleCode = sampleCode;
+	}
+	public UUID getReagentId() {
+		return reagentId;
+	}
+	public void setReagentId(UUID reagentId) {
+		this.reagentId = reagentId;
+	}
+	public String getReagentName() {
+		return reagentName;
+	}
+	public void setReagentName(String reagentName) {
+		this.reagentName = reagentName;
+	}
+	public Long getTotalNumberOfTest() {
+		return totalNumberOfTest;
+	}
+	public void setTotalNumberOfTest(Long totalNumberOfTest) {
+		this.totalNumberOfTest = totalNumberOfTest;
+	}
+	public Long getNegative() {
+		return negative;
+	}
+	public void setNegative(Long negative) {
+		this.negative = negative;
+	}
+	public Double getNegativeRatio() {
+		if(totalNumberOfTest>0) {
+			negativeRatio = BigDecimal.valueOf(negative).doubleValue()/BigDecimal.valueOf(totalNumberOfTest).doubleValue()*100;
+		}
+		return negativeRatio;
+	}
+	
+	public Long getIndertermine() {
+		return indertermine;
+	}
+	public void setIndertermine(Long indertermine) {
+		this.indertermine = indertermine;
+	}
+	public Double getIndertermineRatio() {
+		if(totalNumberOfTest>0) {
+			indertermineRatio = BigDecimal.valueOf(indertermine).doubleValue()/BigDecimal.valueOf(totalNumberOfTest).doubleValue()*100;
+		}		
+		return indertermineRatio;
+	}
+
+	public Long getPositive() {
+		return positive;
+	}
+	public void setPositive(Long positive) {
+		this.positive = positive;
+	}
+	public Double getPositiveRatio() {
+		if(totalNumberOfTest>0) {
+			positiveRatio = BigDecimal.valueOf(positive).doubleValue()/BigDecimal.valueOf(totalNumberOfTest).doubleValue()*100;
+		}	
+		return positiveRatio;
+	}
+
+	public Long getConfirmationForm() {
+		return confirmationForm;
+	}
+	public void setConfirmationForm(Long confirmationForm) {
+		this.confirmationForm = confirmationForm;
+	}
+	public Double getConfirmationFormRatio() {
+		return confirmationFormRatio;
+	}
+	public void setConfirmationFormRatio(Double confirmationFormRatio) {
+		this.confirmationFormRatio = confirmationFormRatio;
+	}
+	public UUID getRoundId() {
+		return roundId;
+	}
+	public void setRoundId(UUID roundId) {
+		this.roundId = roundId;
+	}
+	public Integer getTypeMethod() {
+		return typeMethod;
+	}
+	public void setTypeMethod(Integer typeMethod) {
+		this.typeMethod = typeMethod;
+	}
+	public Integer getReferenceResult() {
+		boolean hasResult=false;
+		if(totalNumberOfTest>=10) {
+			if(this.getPositiveRatio()>=80) {
+				referenceResult=PIConst.EQAResultReportDetail_TestValue.positive.getValue();
+				hasResult=true;
+			}
+			else if(this.getNegativeRatio()>=80) {
+				referenceResult=PIConst.EQAResultReportDetail_TestValue.negative.getValue();
+				hasResult=true;
+			}
+			else if(this.getIndertermineRatio()>=80) {
+				referenceResult=PIConst.EQAResultReportDetail_TestValue.indertermine.getValue();
+				hasResult=true;
+			}
+			if(!hasResult) {
+				referenceResult = PIConst.EQAResultReportDetail_TestValue.noEvaluate.getValue();
+			}
+		}
+		else {
+			referenceResult=null;
+		}		
+		return referenceResult;
+	}
+}

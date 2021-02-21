@@ -1,0 +1,5 @@
+package com.globits.PI.dto;
+
+public class EQASerumBankDto {
+
+}

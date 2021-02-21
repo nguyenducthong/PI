@@ -1,0 +1,270 @@
+package com.globits.PI.functiondto;
+
+import java.util.Date;
+import java.util.UUID;
+
+import com.globits.PI.PIConst;
+
+public class PivotTableResultConclusionDataDto {
+	
+	private String healthOrgCode;//Mã đơn vị XN
+
+	private String healthOrgName;//Tên đơn vị XN
+	
+	private UUID healthOrgId;//ID đơn vị XN
+	
+	private String tubeCode;//Mã ống
+	
+	private UUID tubeId;//Id ống
+	
+	private String sampleCode;//Mã mẫu
+	
+	private UUID sampleId;//Id mẫu
+	
+	private Integer result;//Kết quả âm tính, dương tính, không xác định, không thực hiện
+
+	private String typeMethodName;//Tên loại xét nghiệm
+	
+	private Integer typeMethod;//Loại xét nghiệm
+	
+	private String reagent;//Sinh phẩm
+	
+	private UUID reagentId;//Id Sinh phẩm
+	
+	private UUID roundId;
+	
+	private String roundCode;
+	
+	private Boolean positiveAffirmativeRight;//Có quyền xét nghiệm khẳng định HIV
+	
+	private Boolean healthDepartmentDirectory;//Thuộc danh mục bộ y tế
+	
+	private Date dateSubmitResults;//Nộp kết quả cuối cùng
+
+	public String getHealthOrgCode() {
+		return healthOrgCode;
+	}
+
+	public void setHealthOrgCode(String healthOrgCode) {
+		this.healthOrgCode = healthOrgCode;
+	}
+
+	public String getHealthOrgName() {
+		return healthOrgName;
+	}
+
+	public void setHealthOrgName(String healthOrgName) {
+		this.healthOrgName = healthOrgName;
+	}
+
+	public UUID getHealthOrgId() {
+		return healthOrgId;
+	}
+
+	public void setHealthOrgId(UUID healthOrgId) {
+		this.healthOrgId = healthOrgId;
+	}
+
+	public String getTubeCode() {
+		return tubeCode;
+	}
+
+	public void setTubeCode(String tubeCode) {
+		this.tubeCode = tubeCode;
+	}
+
+	public UUID getTubeId() {
+		return tubeId;
+	}
+
+	public void setTubeId(UUID tubeId) {
+		this.tubeId = tubeId;
+	}
+
+	public String getSampleCode() {
+		return sampleCode;
+	}
+
+	public void setSampleCode(String sampleCode) {
+		this.sampleCode = sampleCode;
+	}
+
+	public UUID getSampleId() {
+		return sampleId;
+	}
+
+	public void setSampleId(UUID sampleId) {
+		this.sampleId = sampleId;
+	}
+
+	public Integer getResult() {
+		return result;
+	}
+
+	public void setResult(Integer result) {
+		this.result = result;
+	}
+
+	public Boolean getPositiveAffirmativeRight() {
+		return positiveAffirmativeRight;
+	}
+
+	public void setPositiveAffirmativeRight(Boolean positiveAffirmativeRight) {
+		this.positiveAffirmativeRight = positiveAffirmativeRight;
+	}
+
+	public String getTypeMethodName() {
+		return typeMethodName;
+	}
+
+	public void setTypeMethodName(String typeMethodName) {
+		this.typeMethodName = typeMethodName;
+	}
+
+	public Integer getTypeMethod() {
+		return typeMethod;
+	}
+
+	public void setTypeMethod(Integer typeMethod) {
+		this.typeMethod = typeMethod;
+	}
+
+	public String getReagent() {
+		return reagent;
+	}
+
+	public void setReagent(String reagent) {
+		this.reagent = reagent;
+	}
+
+	public UUID getReagentId() {
+		return reagentId;
+	}
+
+	public void setReagentId(UUID reagentId) {
+		this.reagentId = reagentId;
+	}
+
+	public UUID getRoundId() {
+		return roundId;
+	}
+
+	public void setRoundId(UUID roundId) {
+		this.roundId = roundId;
+	}
+
+	public String getRoundCode() {
+		return roundCode;
+	}
+
+	public void setRoundCode(String roundCode) {
+		this.roundCode = roundCode;
+	}
+
+	public Boolean getHealthDepartmentDirectory() {
+		return healthDepartmentDirectory;
+	}
+
+	public void setHealthDepartmentDirectory(Boolean healthDepartmentDirectory) {
+		this.healthDepartmentDirectory = healthDepartmentDirectory;
+	}
+
+	public Date getDateSubmitResults() {
+		return dateSubmitResults;
+	}
+
+	public void setDateSubmitResults(Date dateSubmitResults) {
+		this.dateSubmitResults = dateSubmitResults;
+	}
+
+	public PivotTableResultConclusionDataDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public PivotTableResultConclusionDataDto(String healthOrgCode, String healthOrgName, UUID healthOrgId,
+			String tubeCode, UUID tubeId, String sampleCode, UUID sampleId, Integer result,
+			Boolean positiveAffirmativeRight, Integer typeMethod, String reagent,
+			UUID reagentId,UUID roundId,String roundCode) {
+		super();
+		this.healthOrgCode = healthOrgCode;
+		this.healthOrgName = healthOrgName;
+		this.healthOrgId = healthOrgId;
+		this.tubeCode = tubeCode;
+		this.tubeId = tubeId;
+		this.sampleCode = sampleCode;
+		this.sampleId = sampleId;
+		this.result = result;
+		this.positiveAffirmativeRight = positiveAffirmativeRight;
+		this.typeMethod = typeMethod;
+		
+		if(this.typeMethod !=null) {
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.Elisa.getValue())) {
+				this.typeMethodName="Elisa";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.ECL.getValue())) {
+				this.typeMethodName="Eclia";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.SERODIA.getValue())) {
+				this.typeMethodName="SERODIA";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.FastTest.getValue())) {
+				this.typeMethodName="Quick";
+			}
+		}
+		this.reagent = reagent;
+		this.reagentId = reagentId;
+		this.roundId = roundId;
+		this.roundCode = roundCode;
+	}
+	
+	
+	public PivotTableResultConclusionDataDto(String healthOrgCode, String healthOrgName, UUID healthOrgId,
+			String tubeCode, UUID tubeId, String sampleCode, UUID sampleId, Integer result,
+			Boolean positiveAffirmativeRight, Integer typeMethod, String reagent,
+			UUID reagentId,UUID roundId,String roundCode,Boolean healthDepartmentDirectory,Date dateSubmitResults) {
+		super();
+		this.healthOrgCode = healthOrgCode;
+		this.healthOrgName = healthOrgName;
+		this.healthOrgId = healthOrgId;
+		this.tubeCode = tubeCode;
+		this.tubeId = tubeId;
+		this.sampleCode = sampleCode;
+		this.sampleId = sampleId;
+		this.result = result;
+		this.positiveAffirmativeRight = positiveAffirmativeRight;
+		this.typeMethod = typeMethod;
+		
+		if(this.typeMethod !=null) {
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.Elisa.getValue())) {
+				this.typeMethodName="Elisa";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.ECL.getValue())) {
+				this.typeMethodName="Eclia";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.SERODIA.getValue())) {
+				this.typeMethodName="SERODIA";
+			}
+			if(this.typeMethod.equals(PIConst.EQAResultReportTypeMethod.FastTest.getValue())) {
+				this.typeMethodName="Quick";
+			}
+		}
+		this.reagent = reagent;
+		this.reagentId = reagentId;
+		this.roundId = roundId;
+		this.roundCode = roundCode;
+		this.dateSubmitResults = dateSubmitResults;
+		this.healthDepartmentDirectory = healthDepartmentDirectory;
+	}
+
+	@Override
+	public String toString() {
+		return "PivotTableResultConclusionDataDto [healthOrgCode=" + healthOrgCode + ", healthOrgName=" + healthOrgName
+				+ ", healthOrgId=" + healthOrgId + ", tubeCode=" + tubeCode + ", tubeId=" + tubeId + ", sampleCode="
+				+ sampleCode + ", sampleId=" + sampleId + ", result=" + result + ", positiveAffirmativeRight="
+				+ positiveAffirmativeRight + ", typeMethodName=" + typeMethodName + ", typeMethod=" + typeMethod
+				+ ", reagent=" + reagent + ", reagentId=" + reagentId + ", roundId=" + roundId + ", roundCode="
+				+ roundCode + "]";
+	}
+
+}
