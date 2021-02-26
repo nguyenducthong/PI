@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "500px",
     backgroundColor: theme.palette.background.paper,
   },
-  textHeader: { fontSize: '0.75rem', }
+  // textHeader: { fontSize: '0.75rem', }
 }))
 
 export default function CreateStaff(props) {
@@ -165,7 +165,7 @@ export default function CreateStaff(props) {
 
   return (
     <div className={classes.root} value={value} index={0} >
-      <AppBar position="static" color="#ffffff">
+      {/* <AppBar position="static" color="#ffffff">
         <Tabs orientation="horizontal"
           value={value}
           onChange={handleChangeValue}
@@ -180,15 +180,15 @@ export default function CreateStaff(props) {
           <Tab label={t('EQARound.samplePackageAnDelivery')} />
           <Tab label={t('EQARound.analysisReporting')} />
         </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0} color="#ffffff">
+      </AppBar> */}
+      {/* <TabPanel value={value} index={0} color="#ffffff"> */}
         <EQARoundInformation t={t}
           useStyles={useStyles}
           item={props.item ? props.item : {}}
           listPersonnel = {props.listPersonnel}
         />
-      </TabPanel>
-      <TabPanel value={value} index={1} color="#ffffff">
+      {/* </TabPanel> */}
+      {/* <TabPanel value={value} index={1} color="#ffffff">
         <EQAPreparationThePanel t={t}
           useStyles={useStyles}
           item={props.item ? props.item : {}} 
@@ -206,7 +206,7 @@ export default function CreateStaff(props) {
           useStyles={useStyles}
           item={props.item ? props.item : {}}
           listPersonnel = {props.listPersonnel} />
-      </TabPanel>
+      </TabPanel> */}
       
     </div>
   )

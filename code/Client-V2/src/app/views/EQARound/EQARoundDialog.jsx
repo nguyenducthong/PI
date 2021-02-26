@@ -27,7 +27,6 @@ import EQARoundDialog from "./EQARoundDialog";
 import { generateRandomId } from "utils";
 import { useTranslation, withTranslation, Trans } from "react-i18next";
 import { Breadcrumb, ConfirmationDialog } from "egret";
-import { getAll } from "../Personnel/PresonnelService";
 import { search as searchByPage } from "../EQAPlanning/EQAPlanningService";
 import AsynchronousAutocomplete from "../utilities/AsynchronousAutocomplete";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -62,10 +61,7 @@ function PaperComponent(props) {
 class OrganizationEditorDialog extends Component {
   constructor(props) {
     super(props);
-    getAll().then(result => {
-      let listPersonnel = result.data;
-      this.setState({ listPersonnel: listPersonnel });
-    })
+
   }
   state = {
     name: "",
@@ -113,18 +109,6 @@ class OrganizationEditorDialog extends Component {
     let { t } = this.props;
     
     this.setState({isView:true});
-    if (detailRound != null && detailRound.length > 0 && detailRound.length == 21) {
-      detailRound.forEach(res =>{
-        if(res.startDate == null){
-          checkStartDate = true
-        }
-        if(res.endDate == null){
-          checkEndDate = true
-        }
-        if(res.personnel == null){
-          checkPersonnel = true
-        }
-      })
       if(checkStartDate == true){
         toast.warning(t("EQARound.emptyStartTime"));
         this.setState({isView:false});
@@ -138,11 +122,6 @@ class OrganizationEditorDialog extends Component {
         this.setState({isView:false});
         return
       }else{
-        detailRound.forEach(res => {
-          let objDetailRound = listPersonnel.find(item => item.id == res.personnel);
-          res.personnel = objDetailRound;
-        })
-        this.setState({detailRound: detailRound}, function(){
           if(isManualSetCode){
             checkCode(id, code).then(res =>{
               if(res.data){
@@ -263,37 +242,14 @@ class OrganizationEditorDialog extends Component {
               });
             }
           }
-        })
       } 
-    } else {
-      this.setState({ hasErrorPerson: true, isView:false });
-      toast.warning("Vui lòng điền đầy dủ thông tin chi tiết kế hoạch chi tiết");
-    }
   };
 
   componentWillMount() {
     let { open, handleClose, item } = this.props;
-    let { detailRound } = item;
-
-    if (typeof detailRound === "undefined"){
-      let detailRound = [];
-      for(var i= 0 ; i < 21 ; i++){
-        detailRound.push({
-          type: i
-        });
-      }
-    item.detailRound = detailRound;
-    }
+  
     this.setState({ item: item }, function () {
-      let { detailRound } = this.state.item;
-      if (detailRound != null && detailRound.length > 0) {
-        detailRound.forEach(res => {
-          if (res != null && res.personnel != null && res.personnel.id) {
-            res.personnel = res.personnel.id;
-          }
-        });
-        this.setState({ detailRound: detailRound });
-      }
+    
     });
   }
   handleSelectPlaning = results => {

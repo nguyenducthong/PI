@@ -74,11 +74,11 @@ public class RestEQAPlanningController {
 		return new ResponseEntity<Boolean>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
 	}
 	
-	@Secured({Constants.ROLE_ADMIN,"ROLE_STUDENT_MANAGERMENT", PIConst.ROLE_COORDINATOR, PIConst.ROLE_HEALTH_ORG})
-	@RequestMapping(value = "/checkNotBeingUsed/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Boolean> checkNotBeingUsed(@PathVariable("id") String id) {
-		Boolean result = service.checkNotBeingUsed(UUID.fromString(id));
-		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
-	}
+//	@Secured({Constants.ROLE_ADMIN,"ROLE_STUDENT_MANAGERMENT", PIConst.ROLE_COORDINATOR, PIConst.ROLE_HEALTH_ORG})
+//	@RequestMapping(value = "/checkNotBeingUsed/{id}", method = RequestMethod.GET)
+//	public ResponseEntity<Boolean> checkNotBeingUsed(@PathVariable("id") String id) {
+//		Boolean result = service.checkNotBeingUsed(UUID.fromString(id));
+//		return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+//	}
 
 }

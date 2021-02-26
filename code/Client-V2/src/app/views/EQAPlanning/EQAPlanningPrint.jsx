@@ -141,9 +141,9 @@ function PaperComponent(props) {
                             <td ><p style={{ fontWeight: "bold" }}>{t("EndDate")} :</p></td>
                             <td> {this.state.endDate ? moment(this.state.endDate).format('DD/MM/YYYY') : ""}</td>
                         </tr>
-                        <tr>
+                        {/* <tr>
                             <td><p style={{ fontWeight: "bold"}}>{t("EQAPlanning.time")}</p></td>
-                        </tr>
+                        </tr> */}
 
                   </table>
                 
