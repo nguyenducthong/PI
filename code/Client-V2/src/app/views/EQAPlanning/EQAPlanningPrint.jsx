@@ -144,86 +144,9 @@ function PaperComponent(props) {
                         <tr>
                             <td><p style={{ fontWeight: "bold"}}>{t("EQAPlanning.time")}</p></td>
                         </tr>
-                        <tr style={{ border: "1px solid black !important" }}>
-                            <div>
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[0] ? this.state?.detailPlanning[0].data ?  this.state?.detailPlanning[0].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[1] ? this.state?.detailPlanning[1].data ?  this.state?.detailPlanning[1].data : "" : ""}</td>
-                            </div>
-                        </tr>
-                        <tr >
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.modelNumber")}</p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[2] ? this.state?.detailPlanning[2].data ?  this.state?.detailPlanning[2].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[3] ? this.state?.detailPlanning[3].data ?  this.state?.detailPlanning[3].data : "" : ""}</td>
-                        </tr>
-                        <tr>
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.volumeOfOneSample")} </p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[4] ? this.state?.detailPlanning[4].data ?  this.state?.detailPlanning[4].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[5] ? this.state?.detailPlanning[5].data ?  this.state?.detailPlanning[5].data : "" : ""}</td>
-                        </tr>
-                        <tr>
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.designTemplateSet")} </p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[6] ? this.state?.detailPlanning[6].data ?  this.state?.detailPlanning[6].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[7] ? this.state?.detailPlanning[7].data ?  this.state?.detailPlanning[7].data : "" : ""}</td>
-                        </tr>
-                        <tr>
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.numberOfReagentsTestedAtPI(type)")} </p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid #black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[8] ? this.state?.detailPlanning[8].data ?  this.state?.detailPlanning[8].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[9] ? this.state?.detailPlanning[9].data ?  this.state?.detailPlanning[9].data : "" : ""}</td>
-                        </tr>
-                        <tr>
-                            <td><p style={{ fontWeight: "bold"}}>{t("EQAPlanning.numberOfRefundedSamples")} </p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[10] ? this.state?.detailPlanning[10].data ?  this.state?.detailPlanning[10].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[11] ? this.state?.detailPlanning[11].data ?  this.state?.detailPlanning[11].data : "" : ""}</td>
-                        </tr>
-                        <tr>
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.numberOfGroupsOfUnits(set)TheLawOfDivision")} </p></td>
-                        </tr>
-                        <tr style={{ border: "1px solid black"  }}>
-                            
-                            <td><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundOne")} :</p></td>
-                            <td> {this.state?.detailPlanning[12] ? this.state?.detailPlanning[12].data ?  this.state?.detailPlanning[12].data : "" : ""}</td>
-                            <td ><p style={{ fontWeight: "bold" }}>{t("EQAPlanning.roundTwo")} :</p></td>
-                            <td> {this.state?.detailPlanning[13] ? this.state?.detailPlanning[13].data ?  this.state?.detailPlanning[13].data : "" : ""}</td>
-                        </tr>
-                        
+
                   </table>
-                      {/* <ol style={{listStyle: "none"}}>
-                          <li><p>{t("EQAPlanning.name")} : {this.state.name ? this.state.name:""} </p></li>
-                          <li><p>{t("EQAPlanning.code")} : {this.state.code ? this.state.code :""}</p></li>
-                          <li><p>{t("Year")} : {this.state.year ? this.state.year :""}</p></li>
-                          <li><p>{t("EQAPlanning.numberOfRound")} :   {this.state.numberOfRound ? this.state.numberOfRound:""}</p></li>
-                          <li><p>{t("EQAPlanning.fee")} : {this.state.fee ? this.state.fee:""}</p></li>
-                          <li><p>{t("StartDate")} :  {this.state.startDate ? moment(this.state.startDate).format('DD/MM/YYYY'):""}</p></li>
-                          <li><p>{t("EndDate")} :  {this.state.endDate ? moment(this.state.endDate).format('DD/MM/YYYY'):""}</p></li>
-                          <li><p>{t('EQAPlanning.detail.responsible_by')} : {this.state.personnel ? this.state.personnel.displayName:""}</p></li>
-                      </ol> */}
+                
                   </div>
                 </div>
               </DialogContent>

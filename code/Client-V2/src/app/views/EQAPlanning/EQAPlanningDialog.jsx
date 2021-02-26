@@ -412,7 +412,7 @@ class EQAPlanningDialog extends Component {
                   label={
                     <span className="font">
                       <span style={{ color: "red" }}> * </span>
-                      {t("EQAPlanning.personnel")}
+                      {t("EQAPlanning.detail.responsible_by")}
                     </span>
                   }
                   onChange={this.handleChange}
@@ -420,11 +420,9 @@ class EQAPlanningDialog extends Component {
                   value={personnel}
                   variant="outlined"
                   size="small"
-                  validators={["required"]}
-                  errorMessages={[t("general.errorMessages_required")]}
-                  InputProps={{
-                    inputComponent: NumberFormatCustom,
-                  }}
+                  // validators={["required"]}
+                  // errorMessages={[t("general.errorMessages_required")]}
+                  
                 />
               </Grid>
             </Grid>
