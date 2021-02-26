@@ -14,7 +14,6 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { getUserById, updateUser, addNewEQAPlanning, updateEQAPlanning, checkCode } from "./EQAPlanningService";
 import { MuiPickersUtilsProvider, DatePicker, KeyboardDatePicker } from "@material-ui/pickers";
 import "date-fns";
-import { getAll } from "../Personnel/PresonnelService";
 import DateFnsUtils from "@date-io/date-fns";
 import { generateRandomId } from "utils";
 import Draggable from 'react-draggable';
@@ -71,10 +70,7 @@ NumberFormatCustom.propTypes = {
 class EQAPlanningDialog extends Component {
   constructor(props) {
     super(props);
-    getAll().then(result => {
-      let listPersonnel = result.data;
-      this.setState({ listPersonnel: listPersonnel });
-    })
+ 
   }
   state = {
     name: "",
@@ -89,7 +85,6 @@ class EQAPlanningDialog extends Component {
     isView: false,
     personnel: "",
     isManualSetCode: false,
-    listPersonnel: []
   };
 
   handleChange = (event, source) => {
@@ -126,13 +121,10 @@ class EQAPlanningDialog extends Component {
     });
   };
   handleFormSubmit = () => {
-    let { id, code, personnel, listPersonnel, isManualSetCode } = this.state;
+    let { id, code, personnel, isManualSetCode } = this.state;
 
     let { t } = this.props;
     if (personnel != "") {
-      let objPersonnel = listPersonnel.find(item => item.id == personnel);
-      personnel = objPersonnel;
-      this.setState({ personnel: personnel }, function () {
         if (isManualSetCode) {
           checkCode(id, code).then(res => {
             if (res.data) {
@@ -144,7 +136,6 @@ class EQAPlanningDialog extends Component {
                   ...this.state
                 }).then((response) => {
                   this.state.id = response?.data?.id;
-                  this.state.personnel = response?.data?.personnel?.id
                   this.setState({ ...this.state, isView: false })
                   // this.props.handleClose();
                   toast.success(t('mess_edit'));
@@ -158,7 +149,6 @@ class EQAPlanningDialog extends Component {
                 }).then((response) => {
                   // this.props.handleClose();
                   this.state.id = response?.data?.id;
-                  this.state.personnel = response?.data?.personnel?.id
                   this.setState({ ...this.state, isView: false })
                   toast.success(t('mess_add'));
                 }).catch(() => {
@@ -175,7 +165,6 @@ class EQAPlanningDialog extends Component {
             }).then((response) => {
               // this.props.handleClose();
               this.state.id = response?.data?.id;
-              this.state.personnel = response?.data?.personnel?.id
               this.setState({ ...this.state, isView: false })
               toast.success(t('mess_edit'));
             }).catch(() => {
@@ -188,7 +177,6 @@ class EQAPlanningDialog extends Component {
             }).then((response) => {
               // this.props.handleClose();
               this.state.id = response?.data?.id;
-              this.state.personnel = response?.data?.personnel?.id
               this.setState({ ...this.state, isView: false })
               toast.success(t('mess_add'));
             }).catch(() => {
@@ -196,40 +184,11 @@ class EQAPlanningDialog extends Component {
             });
           }
         }
-      })
     } else {
-      this.setState({ hasErrorPerson: true, isView: false })
+      this.setState({  isView: false })
     }
   };
-  handleChangeDetailPlanning = (number, event, name) => {
-    let { detailPlanning } = this.state;
-    let p = {}
-    if (name === "startDate" || name === "endDate") {
-        if (name === "startDate" && event != null) {
-            event.setHours("00");
-            event.setMinutes("00");
-            event.setSeconds("00");
-        }
-        if (name === "endDate" && event != null) {
-            event.setHours("23");
-            event.setMinutes("59");
-            event.setSeconds("00");
-        }
-        p = {
-            ...detailPlanning[number],
-            [name]: event,
-        };
-        p.type = number
-    } else {
-        p = {
-            ...detailPlanning[number],
-            [event.target.name]: event.target.value,
-        };
-        p.type = number
-    }
-    detailPlanning.splice(number, 1, p)
-    this.setState({ detailPlanning })
-}
+ 
 
   handleStartDateChange = (event) => {
     if (event != null) {
@@ -237,8 +196,6 @@ class EQAPlanningDialog extends Component {
       event.setMinutes("00");
       event.setSeconds("00");
     }
-
-    // Date.prototype.setTimezoneOffset = function () {return -0;};
     this.setState({ startDate: event });
     ;
   };
@@ -249,34 +206,14 @@ class EQAPlanningDialog extends Component {
       event.setMinutes("59");
       event.setSeconds("00");
     }
-
-    // Date.prototype.getTimezoneOffset = function () {return -0;};
     this.setState({ endDate: event });
   };
 
   componentWillMount() {
     let { open, handleClose, item } = this.props;
-    let { detailPlanning } = item;
-
-    if (typeof detailPlanning === "undefined"){
-      let detailPlanning = [];
-      for(var i= 0 ; i < 13 ; i++){
-        detailPlanning.push({
-          type: i
-        });
-      }
-      this.setState({detailPlanning: detailPlanning})
-    }
     
     this.setState({...this.props.item}, function () {
-      let { personnel } = this.state;
-      if (personnel != null && personnel.id != null) {
-        personnel = personnel.id;
-      }
-      // console.log(detailPlanning);
-
-      
-      this.setState({ personnel: personnel });
+   
     });
   }
 

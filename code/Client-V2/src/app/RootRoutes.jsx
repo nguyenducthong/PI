@@ -21,7 +21,6 @@ import qualificationRoutes from "./views/Qualification/QualificationRoutes";
 import reagentRoutes from "./views/Reagent/ReagentRoutes";
 import personnelRoutes from "./views/Personnel/PersonnelRoutes";
 import healthOrgLevelRoutes from "./views/HealthOrgLevel/HealthOrgLevelRoutes";
-import testPurposeRoutes from "./views/TestPurpose/TestPurposeRoutes";
 import eQASerumBankRoutes from "./views/EQASerumBank/EQASerumBankRoutes";
 import conceptClassRoutes from "./views/ConceptClass/ConceptClassRoutes";
 import eQASampleRoutes from "./views/EQASamplesList/EQASampleRoutes";
@@ -43,13 +42,10 @@ import roundConclusionsRoutes from "./views/EQARoundConclusions/EQARoundConclusi
 import EQAActivityLogRoutes from "./views/EQAActivityLog/EQAActivityLogRoutes";
 import ReferenceResultsRoutes from "./views/ReferenceResults/ReferenceResultsRoutes";
 import ReportSimilarityReagentRoutes from "./views/ReportSimilarityReagent/ReportSimilarityReagentRoutes";
-import CheckPointRoutes from "./views/CheckPoint/CheckPointRoutes";
 import ResultsOfUnitsByReagentGroupRoutes from "./views/ResultsOfUnitsByReagentGroup/ResultsOfUnitsByReagentGroupRoutes";
 import ReferenceResultRoutes from "./views/ReferenceResult/ReferenceResultRoutes";
 import Contact from "./views/Contact/ContactRoutes";
 import EQAReferenceDocument from "./views/EQAReferenceDocument/EQAReferenceDocumentRoutes";
-// import EQASubscribeToThePlanRouters from "./views/EQASubscribeToThePlan/EQASubscribeToThePlanRouters";
-// import IntroduceTheProgramRoutes from "./views/IntroduceTheProgram/IntroduceTheProgramRouter";
 
 const redirectRoute = [
   {
@@ -75,7 +71,6 @@ const routes = [
   ...eQASampleSetRoutes,
   ...reagentRoutes,
   ...eQASerumBankRoutes,
-  ...testPurposeRoutes,
   ...conceptClassRoutes,
   ...ResultsOfUnitsByReagentGroupRoutes,
   ...qualificationRoutes,
@@ -102,7 +97,6 @@ const routes = [
   ...technicianRoutes,
   ...allocationSampleSet,
   ...UserRoutes,
-  ...CheckPointRoutes,
   ...roleRoutes,
   ...MenuRoutes,
   ...resultsOfTheUnitsRoutes,
@@ -113,7 +107,6 @@ const routes = [
   ...ReferenceResultRoutes,
   ...Contact,
   ...EQAReferenceDocument,
-  // ...EQASubscribeToThePlanRouters,
   ...errorRoute
 
 ];

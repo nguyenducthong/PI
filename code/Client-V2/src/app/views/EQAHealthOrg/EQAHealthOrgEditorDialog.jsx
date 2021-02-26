@@ -5,14 +5,13 @@ import {
   Grid,
   DialogActions,
   FormControlLabel,
-  InputAdornment, Checkbox,FormHelperText, Icon, IconButton
+  InputAdornment, Checkbox, FormHelperText, Icon, IconButton
 } from "@material-ui/core";
 import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import { ValidatorForm, TextValidator, TextField, SelectValidator } from "react-material-ui-form-validator";
 import { getByPage, deleteItem, saveItem, getItemById, checkCode, checkEmail } from "./EQAHealthOrgService";
-import { getAllTestPurposes } from "../TestPurpose/TestPurposeService";
 import { getAllEQAhealthOrgLevels } from "../HealthOrgLevel/HealthOrgLevelService"
 import { searchByPage } from "../EQAHealthOrgType/EQAHealthOrgTypeService";
 import { getAllQualifications, getQualificationById } from '../Qualification/QualificationService';
@@ -57,18 +56,13 @@ class EQAHealthOrgEditorDialog extends Component {
   state = {
     name: "",
     taxCodeOfTheUnit: "",
-    code: "", specifyTestPurpose: "",
+    code: "",
     specifyLevel: "",
     positiveAffirmativeRight: true,
     shouldOpenSearchDialog: false,
     shouldOpenConfirmationDialog: false,
     qualificationSelect: [],
     qualification: {}, officerPosion: "", unitCodeOfProgramPEQAS: "",
-    testpurposeSelect: [],
-    testPurpose1: {},
-    testPurpose2: {},
-    testPurpose3: {},
-    testPurpose4: {},
     levelHealOrg: [],
     healthOrgTypeSelect: [],
     healthOrgType: [],
@@ -79,7 +73,7 @@ class EQAHealthOrgEditorDialog extends Component {
     level: {}, sampleReceiptDate: new Date(),
     sampleRecipient: "", specifySampleStatus: "", specifyQualification: "",
     isManualSetCode: false,
-    hasErrorLever:false,
+    hasErrorLever: false,
     levelId: "",
     loading: false
   };
@@ -129,40 +123,13 @@ class EQAHealthOrgEditorDialog extends Component {
       qualificationId: event.target.value
     })
   }
-  handleChangetestpurpose1 = (event, source) => {
-    let { testpurposeSelect } = this.state;
-    this.setState({
-      testPurpose1: testpurposeSelect.find(item => item.id == event.target.value),
-      testPurpose1Id: event.target.value
-    })
-  }
-  handleChangetestpurpose2 = (event, source) => {
-    let { testpurposeSelect } = this.state;
-    this.setState({
-      testPurpose2: testpurposeSelect.find(item => item.id == event.target.value),
-      testPurpose2Id: event.target.value
-    })
-  }
-  handleChangetestpurpose3 = (event, source) => {
-    let { testpurposeSelect } = this.state;
-    this.setState({
-      testPurpose3: testpurposeSelect.find(item => item.id == event.target.value),
-      testPurpose3Id: event.target.value
-    })
-  }
-  handleChangetestpurpose4 = (event, source) => {
-    let { testpurposeSelect } = this.state;
-    this.setState({
-      testPurpose4: testpurposeSelect.find(item => item.id == event.target.value),
-      testPurpose4Id: event.target.value
-    })
-  }
+
   handleChangelevel = (event, source) => {
     let { levelHealOrg } = this.state;
     this.setState({
       level: levelHealOrg.find(item => item.id == event.target.value),
       levelId: event.target.value,
-      hasErrorLever : false
+      hasErrorLever: false
     })
   }
 
@@ -179,8 +146,8 @@ class EQAHealthOrgEditorDialog extends Component {
     let { t } = this.props;
     this.setState({ loading: true });
 
-    if(levelId == "" ){
-      this.setState({hasErrorLever: true, loading:false});
+    if (levelId == "") {
+      this.setState({ hasErrorLever: true, loading: false });
       return
     }
     if (email != null) {
@@ -207,7 +174,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   saveItem({
                     ...this.state
                   }).then((response) => {
-                    if(response.data != null && response.status == 200){
+                    if (response.data != null && response.status == 200) {
                       this.state.id = response.data.id;
                       toast.success(t('mess_add'));
                       this.setState({ ...this.state, loading: false });
@@ -230,7 +197,7 @@ class EQAHealthOrgEditorDialog extends Component {
               saveItem({
                 ...this.state
               }).then((response) => {
-                if(response.data != null && response.status == 200){
+                if (response.data != null && response.status == 200) {
                   this.state.id = response.data.id;
                   toast.success(t('mess_add'));
                   this.setState({ ...this.state, loading: false });
@@ -259,7 +226,7 @@ class EQAHealthOrgEditorDialog extends Component {
               saveItem({
                 ...this.state
               }).then((response) => {
-                if(response.data != null && response.status == 200){
+                if (response.data != null && response.status == 200) {
                   this.state.id = response.data.id;
                   toast.success(t('mess_add'));
                   this.setState({ ...this.state, loading: false });
@@ -282,7 +249,7 @@ class EQAHealthOrgEditorDialog extends Component {
           saveItem({
             ...this.state
           }).then((response) => {
-            if(response.data != null && response.status == 200){
+            if (response.data != null && response.status == 200) {
               this.state.id = response.data.id;
               toast.success(t('mess_add'));
               this.setState({ ...this.state, loading: false });
@@ -298,25 +265,14 @@ class EQAHealthOrgEditorDialog extends Component {
     this.setState({
       ...this.props.item, isHealthOrg: isHealthOrg
     }, function () {
-      let { qualification, testPurpose1, testPurpose2, testPurpose3, testPurpose4, level, healthOrgType } = this.state;
+      let { qualification, level, healthOrgType } = this.state;
       if (healthOrgType != null && healthOrgType.id != null) {
         this.setState({ healthOrgTypeId: healthOrgType.id })
       }
       if (qualification != null && qualification.id != null) {
         this.setState({ qualificationId: qualification.id })
       }
-      if (testPurpose1 != null && testPurpose1.id != null) {
-        this.setState({ testPurpose1Id: testPurpose1.id })
-      }
-      if (testPurpose2 != null && testPurpose2.id != null) {
-        this.setState({ testPurpose2Id: testPurpose2.id })
-      }
-      if (testPurpose3 != null && testPurpose3.id != null) {
-        this.setState({ testPurpose3Id: testPurpose3.id })
-      }
-      if (testPurpose4 != null && testPurpose4.id != null) {
-        this.setState({ testPurpose4Id: testPurpose4.id })
-      }
+
       if (level != null && level.id != null) {
         this.setState({ levelId: level.id })
       }
@@ -329,10 +285,7 @@ class EQAHealthOrgEditorDialog extends Component {
       let qualificationSelect = data.data;
       this.setState({ qualificationSelect: qualificationSelect });
     });
-    getAllTestPurposes().then((data) => {
-      let testpurposeSelect = data.data;
-      this.setState({ testpurposeSelect: testpurposeSelect })
-    });
+
 
     getAllEQAhealthOrgLevels().then((data) => {
       let levelHealOrg = data.data;
@@ -380,10 +333,10 @@ class EQAHealthOrgEditorDialog extends Component {
       shouldOpenSearchOrgTypeDialog,
       shouldOpenConfirmationDialog, isManagementUnit,
       shouldOpenSearchDialog, sampleReceiptDate,
-      administrativeUnit, testPurpose1Id, testPurpose2Id, testPurpose3Id, testPurpose4Id,
-      email, qualificationId, qualificationSelect, testpurposeSelect, specifyQualification, officerPosion, unitCodeOfProgramPEQAS, fax,
+      administrativeUnit,
+      email, qualificationId, qualificationSelect, specifyQualification, officerPosion, unitCodeOfProgramPEQAS, fax,
       sampleStatus, healthOrgTypeSelect, healthOrgType, healthOrgTypeId,
-      technician, specifyTechnician, positiveAffirmativeRight, sampleRecipient, specifySampleStatus, specifyTestPurpose, specifyLevel, taxCodeOfTheUnit,
+      technician, specifyTechnician, positiveAffirmativeRight, sampleRecipient, specifySampleStatus, specifyLevel, taxCodeOfTheUnit,
       hasErrorLever, loading
     } = this.state;
     let searchObject = { pageIndex: 0, pageSize: 1000000 };
@@ -391,16 +344,16 @@ class EQAHealthOrgEditorDialog extends Component {
 
     return (
       <Dialog open={open} PaperComponent={PaperComponent} maxWidth="lg" fullWidth={true}>
-       <div className={clsx("wrapperButton", !loading && 'hidden')} >
+        <div className={clsx("wrapperButton", !loading && 'hidden')} >
           <CircularProgress className="buttonProgress" size={24} />
         </div>
         <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-        <span className="mb-20 styleColor"> {(id ? t("update") : t("Add")) + " " + t("EQAHealthOrg.title")} </span>
-        <IconButton style={{ position: "absolute", right: "10px", top: "10px" }} onClick={() => handleClose()}><Icon color="error"
-              title={t("close")}>
-              close
+          <span className="mb-20 styleColor"> {(id ? t("update") : t("Add")) + " " + t("EQAHealthOrg.title")} </span>
+          <IconButton style={{ position: "absolute", right: "10px", top: "10px" }} onClick={() => handleClose()}><Icon color="error"
+            title={t("close")}>
+            close
             </Icon>
-            </IconButton>
+          </IconButton>
         </DialogTitle>
         <ValidatorForm ref="form" onSubmit={this.handleFormSubmit} style={{
           overflowY: "auto",
@@ -500,39 +453,19 @@ class EQAHealthOrgEditorDialog extends Component {
                 />
               </Grid>
 
-              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControlLabel
-                  label={t('EQAHealthOrg.isManagementUnit')}
-                  control={<Checkbox checked={isManagementUnit}
-                    onChange={(isManagementUnit) =>
-                      this.handleChange(isManagementUnit, "isManagementUnit")
-                      // this.handleChange(isFinalResult, 'isFinalResult')
-                    }
-                  />}
-                />
-              </Grid> */}
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <FormControlLabel
                   variant="outlined"
                   size="small"
                   disabled={isHealthOrg}
-                  label={<span style={{fontSize: "115%"}} className="font">{t('EQAHealthOrg.positiveAffirmativeRight')}</span>}
+                  label={<span style={{ fontSize: "115%" }} className="font">{t('EQAHealthOrg.positiveAffirmativeRight')}</span>}
                   control={<Checkbox checked={positiveAffirmativeRight}
                     onChange={(positiveAffirmativeRight) =>
                       this.handleChange(positiveAffirmativeRight, "positiveAffirmativeRight")
-                      // this.handleChange(isFinalResult, 'isFinalResult')
                     }
                   />}
                 />
-                {/* <TextValidator
-                  className="w-100 "
-                  label={t("EQAHealthOrg.isManagementUnit")}
-                  onChange={this.handleChange}
-                  disabled = {true}
-                  type="text"
-                  name="code"
-                  value={code}
-                /> */}
+       
               </Grid>
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator
@@ -644,9 +577,6 @@ class EQAHealthOrgEditorDialog extends Component {
                   value={contactPhone}
                   variant="outlined"
                   size="small"
-                // validators={[ "matchRegexp:^[0-9]*$", "isLengthNumber"]}
-                // errorMessages={[ t("general.errorMessages_phone_number_invalid"),
-                // t("general.errorMessages_phone_number_invalid")]}
                 />
               </Grid>
               <Grid item lg={4} md={4} sm={12} xs={12}>
@@ -704,21 +634,6 @@ class EQAHealthOrgEditorDialog extends Component {
                   size="small"
                 />
               </Grid>
-
-              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControl className="w-100">
-                  <InputLabel htmlFor="positiveAffirmativeRight">{t("EQAHealthOrg.positiveAffirmativeRight")}</InputLabel>
-                  <Select
-                    name="positiveAffirmativeRight"
-                    value={positiveAffirmativeRight}
-                    onChange={event => this.handleChange(event)}
-                    input={<Input id="positiveAffirmativeRight" />}
-                  >
-                    <MenuItem value={true}>{t("Yes")}</MenuItem>
-                    <MenuItem value={false}>{t("No")}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid> */}
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <FormControl className="w-100" error={hasErrorLever} variant="outlined" size="small">
                   <InputLabel htmlFor="levelHealOrg"><span className="font">
@@ -754,101 +669,6 @@ class EQAHealthOrgEditorDialog extends Component {
                   size="small"
                 />
               </Grid>
-
-              <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined"
-                  size="small">
-                  <InputLabel htmlFor="testurpose">{<span className="font">{t("EQAHealthOrg.testurpose1")}</span>}</InputLabel>
-                  <Select
-                    value={testPurpose1Id}
-                    onChange={event => this.handleChangetestpurpose1(event)}
-                    inputProps={{
-                      name: "testPurpose1",
-                      id: "testPurpose1"
-                    }}                   >
-                    {testpurposeSelect.map(type => (
-                      <MenuItem key={type.id} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined"
-                  size="small">
-                  <InputLabel htmlFor="testurpose">{<span className="font">{t("EQAHealthOrg.testurpose2")}</span>}</InputLabel>
-                  <Select
-                    value={testPurpose2Id}
-                    onChange={event => this.handleChangetestpurpose2(event)}
-                    inputProps={{
-                      name: "testPurpose2",
-                      id: "testPurpose2"
-                    }}
-                  >
-                    {testpurposeSelect.map(type => (
-                      <MenuItem key={type.id} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined"
-                  size="small">
-                  <InputLabel htmlFor="testurpose">{<span className="font">{t("EQAHealthOrg.testurpose3")}</span>}</InputLabel>
-                  <Select
-                    value={testPurpose3Id}
-                    onChange={event => this.handleChangetestpurpose3(event)}
-                    inputProps={{
-                      name: "testPurpose3",
-                      id: "testPurpose3"
-                    }}
-                  >
-                    {testpurposeSelect.map(type => (
-                      <MenuItem key={type.id} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item lg={4} md={4} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined"
-                  size="small">
-                  <InputLabel htmlFor="testurpose">{<span className="font">{t("EQAHealthOrg.testurpose4")}</span>}</InputLabel>
-                  <Select
-                    value={testPurpose4Id}
-                    onChange={event => this.handleChangetestpurpose4(event)}
-                    inputProps={{
-                      name: "testPurpose4",
-                      id: "testPurpose4"
-                    }}
-                  >
-                    {testpurposeSelect.map(type => (
-                      <MenuItem key={type.id} value={type.id}>
-                        {type.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item lg={4} md={4} sm={12} xs={12}>
-                <TextValidator
-                  className="w-100 "
-                  label={<span className="font">{t("EQAHealthOrg.specifyTestPurpose")}</span>}
-                  name="specifyTestPurpose"
-                  onChange={this.handleChange}
-                  value={specifyTestPurpose}
-                  variant="outlined"
-                  size="small"
-                />
-              </Grid>
             </Grid>
 
           </DialogContent>
@@ -867,7 +687,7 @@ class EQAHealthOrgEditorDialog extends Component {
             </Button>)}
           </DialogActions>
         </ValidatorForm>
-      </Dialog >
+      </Dialog>
     );
   }
 }
