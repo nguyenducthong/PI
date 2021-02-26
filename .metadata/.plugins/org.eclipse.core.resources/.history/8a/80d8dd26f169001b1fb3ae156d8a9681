@@ -1,7 +1,0 @@
-package com.globits.PI.dto;
-
-import com.globits.core.dto.BaseObjectDto;
-
-public class EQASampleBottleDto extends BaseObjectDto{
-
-}
