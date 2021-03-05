@@ -43,6 +43,12 @@ public class EQASerumBankServiceImpl extends GenericServiceImpl<EQASerumBank, UU
 	private EQASerumBankRepository eqaSerumBankRepository;
 	
 	@Autowired
+	private EQASerumBottleRepository eqaSerumBottleRepository;
+	
+	@Autowired
+	private EQASerumBottleService eqaSerumBottleService;
+	
+	@Autowired
 	private UserInHealthOrgService userInHealthOrgService;
 	
 
@@ -165,6 +171,24 @@ public class EQASerumBankServiceImpl extends GenericServiceImpl<EQASerumBank, UU
 				int i=0;
 				for (EQASerumBottleDto srbDto : dto.getSerumBottles()) {					
 					EQASerumBottle bottle = null;
+					if(srbDto.getId()!=null) {
+						bottle = eqaSerumBottleRepository.getOne(srbDto.getId());
+						if(bottle!=null) {
+							if (isChangeSerumCode) {
+								bottle.setCode(eqaSerumBottleService.createCode(entity,i));
+							
+								i++;
+							}else {
+								bottle.setCode(srbDto.getCode());
+								
+							}
+						}
+					}
+					if(bottle==null) {
+						bottle = new EQASerumBottle();
+						bottle.setCode(eqaSerumBottleService.createCode(entity,i));
+						i++;
+					}
 					bottle.setHivStatus(srbDto.getHivStatus());
 					bottle.setNote(srbDto.getNote());
 					bottle.setBottleQuality(srbDto.getBottleQuality());

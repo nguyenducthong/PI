@@ -50,10 +50,9 @@ public class EQASerumBottle extends BaseObject {
 	//1 bottle có thể dùng trong nhiều sample
 //	@OneToMany(fetch = FetchType.EAGER)
 //	@JoinColumn(name = "eqa_sample_bottle_id")
-//	private Set<EQASampleBottle> eqaSampleBottle;	
+//	private Set<EQASampleBottle> eqaSampleBottle;
 	
-	@OneToMany(mappedBy = "eQASerumBottle", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("code ASC")
+	@OneToMany(mappedBy = "eQASerumBottle", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<EQASampleBottle> eqaSampleBottle;
 
 	public String getCode() {
