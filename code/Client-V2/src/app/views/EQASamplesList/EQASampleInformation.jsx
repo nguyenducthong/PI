@@ -19,7 +19,6 @@ import {
 } from "@material-ui/pickers";
 import MaterialTable, { MTableToolbar, Chip, MTableBody, MTableHeader } from 'material-table';
 import DateFnsUtils from "@date-io/date-fns";
-import { getAll } from "../Personnel/PresonnelService";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { checkCode, deleteItem, saveItem, getItemById, updateEQASampleList, addNewEQASampleList } from "./EQASampleListService";
@@ -76,15 +75,10 @@ function OriginnalResult(props) {
 class EQASampleInformation extends Component {
     constructor(props) {
         super(props);
-        getAll().then(result => {
-            let listPersonnel = result.data;
-            this.setState({ listPersonnel: listPersonnel });
-        })
     }
     state = {
         name: "",
         code: "",
-        personnel: "",
         eqaSampleBottles: [],
         thrombinAddedDate: new Date(),
         removeFibrinDate: new Date(),
@@ -96,7 +90,6 @@ class EQASampleInformation extends Component {
         round: [],
         result: null,
         isView: false,
-        listPersonnel: []
     };
 
     handleChange = (event, source) => {
@@ -110,10 +103,7 @@ class EQASampleInformation extends Component {
             item["hasErrorSample"] = false
             this.setState({ item: item });
         }
-        if (source === "personnel") {
-            item["hasErrorPerson"] = false
-            this.setState({ item: item });
-        }
+
         if (source === "inactiveVirus") {
             item["hasErrorVirus"] = false;
             this.setState({ item: item });
@@ -177,23 +167,7 @@ class EQASampleInformation extends Component {
             item.eqaSampleBottles.sort((a, b) => (a.eQASerumBottle.code > b.eQASerumBottle.code) ? 1 : -1);
         }
 
-        if (item != null && item.personnel != null && item.personnel.id != null) {
-            item.personnel = item.personnel.id;
-        }
-        // if(item.round != null && item.round.numberSampleList != null){
-        //     for(let i = 0 ; i < item.round.numberSampleList; i++){
-        //         numberSampleList.push({id: i+1,
-        //         name: i+1});
-        //     }
-        //     item["numberSampleList"] = numberSampleList
-        //     this.setState({item:item});
-        // }else{
-        //     item["numberSampleList"] = null
-        //     this.setState({item: item});
-        // }
-
         this.setState({ item: item });
-
     }
 
     handleThrombinAddedDateChange = (date) => {
@@ -255,7 +229,6 @@ class EQASampleInformation extends Component {
             name,
             code,
             result,
-            listPersonnel,
             round,
             eqaSampleBottles,
             additiveThrombin,
@@ -618,24 +591,7 @@ class EQASampleInformation extends Component {
                                     value={item.performer}
                                 />
                             </Grid> */}
-                    <Grid item lg={3} md={3} sm={12} xs={12}>
-                        <FormControl fullWidth={true} error={item.hasErrorPerson} variant="outlined" size="small">
-                            <InputLabel htmlFor="personnel-simple">{<span className="font"><span style={{ color: "red" }}> *</span> {t('SampleManagement.sample-list.performer')} </span>}</InputLabel>
-                            <Select
-                                value={item.personnel}
-                                onChange={event => this.handleChange(event, "personnel")}
-                                inputProps={{
-                                    name: "personnel",
-                                    id: "personnel-simple"
-                                }}
-                            >
-                                {listPersonnel.map(item => {
-                                    return <MenuItem key={item.id} value={item.id}>{item.displayName}</MenuItem>;
-                                })}
-                            </Select>
-                            {item.hasErrorPerson && <FormHelperText>{t("general.errorMessages_required")}</FormHelperText>}
-                        </FormControl>
-                    </Grid>
+                   
                     <Grid item md = {12} sm={12} xs={12}>
                         <TextValidator
                             size="small"

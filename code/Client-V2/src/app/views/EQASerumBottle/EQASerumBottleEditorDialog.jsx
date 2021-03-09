@@ -56,8 +56,6 @@ class EQASerumBottleEditorDialog extends Component {
     shouldOpenConfirmationDialog: false,
     eqaSerumBank: [],
     hivStatus: '',
-    hcvStatus: "",
-    hbvStatus: "",
     isView: false,
     bottleQuality: "",
     isManualSetCode: false,
@@ -174,8 +172,7 @@ class EQASerumBottleEditorDialog extends Component {
     this.setState({ eqaSerumBank: item });
     if (source === "active" && item != null) {
       this.setState({
-        hivStatus: item.hivStatus,
-        hcvStatus: item.hcvStatus, hbvStatus: item.hbvStatus
+        hivStatus: item.hivStatus
       });
     }
   };
@@ -206,8 +203,6 @@ class EQASerumBottleEditorDialog extends Component {
       id,
       code,
       hivStatus,
-      hcvStatus,
-      hbvStatus,
       isManualSetCode,
       bottleQuality,
       bottleVolume,
@@ -296,10 +291,8 @@ class EQASerumBottleEditorDialog extends Component {
                   </InputLabel>
                   <Select
                     label={<span className="font">{t("SampleManagement.serum-bottle.OriginnalResult.hivStatus")}</span>}
-                    // name="hivStatus"
                     value={typeof hivStatus == "undefined" ? '' : hivStatus}
                     onChange={(event) => this.handleChange(event)}
-                    // input={<Input id="hivStatus" />}
                     inputProps={{
                       id: "hivStatus",
                       name: "hivStatus"
@@ -326,78 +319,7 @@ class EQASerumBottleEditorDialog extends Component {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item  lg={6} md={6} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined" size = "small">
-                  <InputLabel htmlFor="hcvStatus">
-                  {<span className="font">{t("SampleManagement.serum-bottle.OriginnalResult.hcvStatus")}</span>}
-                  </InputLabel>
-                  <Select
-                    // name="hcvStatus"
-                    value={typeof hcvStatus == "undefined" ? '' : hcvStatus}
-                    onChange={(event) => this.handleChange(event)}
-                    // input={<Input id="hcvStatus" />}
-                    inputProps={{
-                      id: "hcvStatus",
-                      name: "hcvStatus"
-                    }}
-                  >
-                    <MenuItem value={LocalValue.EQAResult_Value.positive}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.positive"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.indertermine"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.negative}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.negative"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
-                      {t("SampleManagement.serum-bottle.OriginnalResult.none")}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item  lg={6} md={6} sm={12} xs={12}>
-                <FormControl className="w-100" variant="outlined" size = "small">
-                  <InputLabel htmlFor="hbvStatus" >
-                  {<span className="font">{t("SampleManagement.serum-bottle.OriginnalResult.hbvStatus")}</span>}
-                  </InputLabel>
-                  <Select
-                    // name="hbvStatus"
-                    value={typeof hbvStatus == "undefined" ? '' : hbvStatus}
-                    onChange={(event) => this.handleChange(event)}
-                    // input={<Input id="hbvStatus" />}
-                    inputProps ={{
-                      id: "hbvStatus",
-                      name: "hbvStatus"
-                    }}
-                  >
-                    <MenuItem value={LocalValue.EQAResult_Value.positive}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.positive"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.indertermine"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.negative}>
-                      {t(
-                        "SampleManagement.serum-bottle.OriginnalResult.negative"
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
-                      {t("SampleManagement.serum-bottle.OriginnalResult.none")}
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
+           
               <Grid item  lg={6} md={6} sm={12} xs={12}>
                 <FormControl className="w-100" variant = "outlined" size = "small">
                   <InputLabel htmlFor="bottleQuality">

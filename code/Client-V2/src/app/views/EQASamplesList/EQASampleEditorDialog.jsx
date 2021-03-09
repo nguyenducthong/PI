@@ -18,7 +18,6 @@ import {
     KeyboardDatePicker,
     DateTimePicker
 } from "@material-ui/pickers";
-import { getAll } from "../Personnel/PresonnelService";
 import MaterialTable, { MTableToolbar, Chip, MTableBody, MTableHeader } from 'material-table';
 import DateFnsUtils from "@date-io/date-fns";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -77,10 +76,6 @@ function OriginnalResult(props) {
 class EQASampleEditorDialog extends Component {
     constructor(props){
         super(props);
-        getAll().then(result =>{
-          let listPersonnel = result.data;
-          this.setState({listPersonnel: listPersonnel});
-        })
       }
     state = {
         name: "",
@@ -143,9 +138,8 @@ class EQASampleEditorDialog extends Component {
       }
     handleFormSubmit = () => {
         const { t, i18n } = this.props;
-        let { id,item,  listPersonnel} = this.state;
+        let { id, item} = this.state;
         this.setState({hasErrorResult: false,hasErrorSample: false, hasErrorPerson: false});
-        // console.log(this.state.item.result);
         if( (typeof this.state.item.result == "undefined") || this.state.item.result === null){
             item["hasErrorResult"] = true;
             this.setState({item: item});
@@ -155,14 +149,8 @@ class EQASampleEditorDialog extends Component {
             item["hasErrorVirus"] = true;
             this.setState({item: item});
             return;
-        }else if (typeof this.state.item.personnel == "undefined" || this.state.item.personnel === null){
-            item["hasErrorPerson"] = true;
-            this.setState({item: item});
-            return;
         }else {
             if(item != null && item.eqaSampleBottles != null && item.eqaSampleBottles.length >0) {
-                let objPerson = listPersonnel.find(element => element.id == item.personnel);
-                item.personnel = objPerson;
                 if(typeof item.isManualSetCode != "undefined" && item.isManualSetCode){
                     checkCode(id, item.code).then(res =>{
                         if (res.data) {

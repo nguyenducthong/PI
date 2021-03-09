@@ -88,12 +88,6 @@ class EQASerumBankEditorDialog extends Component {
     if (source === "hivStatus") {
       this.setState({ hivStatus: event.target.value });
     }
-    if (source === "hbvStatus") {
-      this.setState({ hbvStatus: event.target.value });
-    }
-    if (source === "hcvStatus") {
-      this.setState({ hcvStatus: event.target.value });
-    }
     if (source === "originalVolume") {
       this.setState({ presentVolume: event.target.value });
     }
@@ -124,8 +118,6 @@ class EQASerumBankEditorDialog extends Component {
             ? this.state.serumCode + "-" + i + 1
             : i + 1,
         hivStatus: this.state.hivStatus,
-        hbvStatus: this.state.hbvStatus,
-        hcvStatus: this.state.hcvStatus,
         bottleQuality: this.state.bottleQuality,
         bottleVolume: this.state.bottleVolume,
         localSaveBottle: this.state.localSaveBottle,
@@ -143,8 +135,6 @@ class EQASerumBankEditorDialog extends Component {
     let serumBottle = {};
     serumBottle.code = this.state.serumCode + "-" + (serumBottles.length + 1);
     serumBottle.hivStatus = this.state.hivStatus;
-    serumBottle.hbvStatus = this.state.hbvStatus;
-    serumBottle.hcvStatus = this.state.hcvStatus;
     serumBottle.bottleQuality = this.state.bottleQuality;
     serumBottle.bottleVolume = this.state.bottleVolume;
     serumBottle.localSaveBottle = this.state.localSaveBottle;
@@ -192,10 +182,10 @@ class EQASerumBankEditorDialog extends Component {
                   updateEQASerumBank({
                     ...this.state
                   }).then((response) => {
-                    if(response.data != null && response.status == 200){
+                    if (response.data != null && response.status == 200) {
                       // this.props.handleOKEditClose();
                       this.state.id = response.data.id;
-                      this.setState({...this.state, isView: false})
+                      this.setState({ ...this.state, isView: false })
                       toast.success(t("mess_edit"));
                     }
                   }).catch(() => {
@@ -206,10 +196,10 @@ class EQASerumBankEditorDialog extends Component {
                   addNewEQASerumBank({
                     ...this.state
                   }).then((response) => {
-                    if(response.data != null && response.status == 200){
+                    if (response.data != null && response.status == 200) {
                       // this.props.handleOKEditClose();
                       this.state.id = response.data.id;
-                      this.setState({...this.state, isView: false})
+                      this.setState({ ...this.state, isView: false })
                       toast.success(t("mess_add"));
                     }
                   }).catch(() => {
@@ -236,10 +226,10 @@ class EQASerumBankEditorDialog extends Component {
               updateEQASerumBank({
                 ...this.state
               }).then((response) => {
-                if(response.data != null && response.status == 200){
+                if (response.data != null && response.status == 200) {
                   // this.props.handleOKEditClose();
                   this.state.id = response.data.id;
-                  this.setState({...this.state, isView: false})
+                  this.setState({ ...this.state, isView: false })
                   toast.success(t("mess_edit"));
                 }
               }).catch(() => {
@@ -250,10 +240,10 @@ class EQASerumBankEditorDialog extends Component {
               addNewEQASerumBank({
                 ...this.state
               }).then((response) => {
-                if(response.data != null && response.status == 200){
+                if (response.data != null && response.status == 200) {
                   // this.props.handleOKEditClose();
                   this.state.id = response.data.id;
-                  this.setState({...this.state, isView: false})
+                  this.setState({ ...this.state, isView: false })
                   toast.success(t("mess_add"));
                 }
               }).catch(() => {
@@ -319,8 +309,6 @@ class EQASerumBankEditorDialog extends Component {
       originalVolume,
       presentVolume,
       hivStatus,
-      hbvStatus,
-      hcvStatus,
       numberBottle,
       hasLipid,
       hemolysis,
@@ -697,218 +685,140 @@ class EQASerumBankEditorDialog extends Component {
 
               <fieldset className="mt-16" style={{ width: "100%" }}>
                 <legend>{<span className="styleColor">{t("EQASerumBank.Details")}</span>}</legend>
-                <Grid item container sm={12} xs={12} spacing={1}>
-                  <Grid item lg={7} md={7} sm={12} xs={12}>
-                    <span className="title">{t("EQASerumBank.sampleCharacteristics")}</span>
-                    <Grid item className="mt-8" container sm={12} xs={12} spacing={2}>
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="result">
-                            {<span className="font">{t("EQASerumBank.hivStatus")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hivStatus"
-                            value={typeof hivStatus == "undefined" ? '' : hivStatus}
-                            onChange={hivStatus => this.handleChange(hivStatus, "hivStatus")}
-                            // input={<Input id="hivStatus" />}
-                            inputProps={{
-                              name: "hivStatus",
-                              id: "hivStatus"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAResult_Value.negative}>
-                              {t("SampleManagement.sample-list.Result.negative")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.positive}>
-                              {t("SampleManagement.sample-list.Result.positive")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
-                              {t("SampleManagement.sample-list.Result.indertermine")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
-                              {t("SampleManagement.sample-list.Result.none")}
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="result">
-                            {<span className="font">{t("EQASerumBank.hbvStatus")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hbvStatus"
-                            value={typeof hbvStatus == "undefined" ? '' : hbvStatus}
-                            onChange={hbvStatus => this.handleChange(hbvStatus, "hbvStatus")}
-                            // input={<Input id="hbvStatus" />}
-                            inputProps={{
-                              name: "hbvStatus",
-                              id: "hbvStatus"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAResult_Value.negative}>
-                              {t("SampleManagement.sample-list.Result.negative")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.positive}>
-                              {t("SampleManagement.sample-list.Result.positive")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
-                              {t("SampleManagement.sample-list.Result.indertermine")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
-                              {t("SampleManagement.sample-list.Result.none")}
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="result">
-                            {<span className="font">{t("EQASerumBank.hcvStatus") + " "}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hcvStatus"
-                            value={typeof hcvStatus == "undefined" ? '' : hcvStatus}
-                            onChange={hcvStatus => this.handleChange(hcvStatus, "hcvStatus")}
-                            // input={<Input id="hcvStatus" />}
-                            inputProps={{
-                              name: "hcvStatus",
-                              id: "hcvStatus"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAResult_Value.negative}>
-                              {t("SampleManagement.sample-list.Result.negative")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.positive}>
-                              {t("SampleManagement.sample-list.Result.positive")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
-                              {t("SampleManagement.sample-list.Result.indertermine")}
-                            </MenuItem>
-                            <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
-                              {t("SampleManagement.sample-list.Result.none")}
-                            </MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
+                <Grid item container sm={12} xs={12} spacing={2}>
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="result">
+                        {<span className="font">{t("EQASerumBank.hivStatus")}</span>}
+                      </InputLabel>
+                      <Select
+                        // name="hivStatus"
+                        value={typeof hivStatus == "undefined" ? '' : hivStatus}
+                        onChange={hivStatus => this.handleChange(hivStatus, "hivStatus")}
+                        // input={<Input id="hivStatus" />}
+                        inputProps={{
+                          name: "hivStatus",
+                          id: "hivStatus"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAResult_Value.negative}>
+                          {t("SampleManagement.sample-list.Result.negative")}
+                        </MenuItem>
+                        <MenuItem value={LocalValue.EQAResult_Value.positive}>
+                          {t("SampleManagement.sample-list.Result.positive")}
+                        </MenuItem>
+                        <MenuItem value={LocalValue.EQAResult_Value.indertermine}>
+                          {t("SampleManagement.sample-list.Result.indertermine")}
+                        </MenuItem>
+                        <MenuItem value={LocalValue.EQAResult_Value.Not_Implemented}>
+                          {t("SampleManagement.sample-list.Result.none")}
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
 
-                  <Grid item lg={5} md={5} sm={12} xs={12} spacing={1}>
-                    <span className="title">{t("EQASerumBank.quality")}</span>
-                    <Grid item className="mt-8" container sm={12} xs={12} spacing={2}>
-                      <Grid item lg={6} md={6} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="hasLipid">
-                            {<span className="font">{t("EQASerumBank.hasLipid")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hasLipid"
-                            value={typeof hasLipid == "undefined" ? '' : hasLipid}
-                            onChange={event => this.handleChange(event)}
-                            // input={<Input id="hasLipid" />}
-                            inputProps={{
-                              name: "hasLipid",
-                              id: "hasLipid"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
-                            <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item lg={6} md={6} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="hemolysis">
-                            {<span className="font">{t("EQASerumBank.hemolysis")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hemolysis"
-                            value={typeof hemolysis == "undefined" ? '' : hemolysis}
-                            onChange={event => this.handleChange(event)}
-                            // input={<Input id="hemolysis" />}
-                            inputProps={{
-                              name: "hemolysis",
-                              id: "hemolysis"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
-                            <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="hasLipid">
+                        {<span className="font">{t("EQASerumBank.hasLipid")}</span>}
+                      </InputLabel>
+                      <Select
+                        // name="hasLipid"
+                        value={typeof hasLipid == "undefined" ? '' : hasLipid}
+                        onChange={event => this.handleChange(event)}
+                        // input={<Input id="hasLipid" />}
+                        inputProps={{
+                          name: "hasLipid",
+                          id: "hasLipid"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
+                        <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
-                  <Grid item className="mb-16" lg={7} md={7} sm={12} xs={12} spacing={2}>
-                    <span className="title">{t("EQASerumBank.sample")}</span>
-                    <Grid item className="mt-8" container sm={12} xs={12} spacing={2}>
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="hasHighSpeedCentrifugal">
-                            {<span className="font">{t("EQASerumBank.hasHighSpeedCentrifugal")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="hasHighSpeedCentrifugal"
-                            value={hasHighSpeedCentrifugal == "undefined" ? '' : hasHighSpeedCentrifugal}
-                            onChange={event => this.handleChange(event)}
-                            // input={<Input id="hasHighSpeedCentrifugal" />}
-                            inputProps={{
-                              name: "hasHighSpeedCentrifugal",
-                              id: "hasHighSpeedCentrifugal"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
-                            <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="dialysis">
-                            {<span className="font">{t("EQASerumBank.dialysis")}</span>}
-                          </InputLabel>
-                          <Select
-                            // name="dialysis"
-                            value={typeof dialysis == "undefined" ? '' : dialysis}
-                            onChange={event => this.handleChange(event)}
-                            // input={<Input id="dialysis" />}
-                            inputProps={{
-                              name: "dialysis",
-                              id: "dialysis"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
-                            <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                      <Grid item lg={4} md={4} sm={12} xs={12}>
-                        <FormControl className="w-100" variant="outlined" size="small">
-                          <InputLabel htmlFor="inactivated">
-                            {<span className="font">{t("EQASerumBank.inactivated")}</span>}
-                          </InputLabel>
-                          <Select
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="hemolysis">
+                        {<span className="font">{t("EQASerumBank.hemolysis")}</span>}
+                      </InputLabel>
+                      <Select
+                        // name="hemolysis"
+                        value={typeof hemolysis == "undefined" ? '' : hemolysis}
+                        onChange={event => this.handleChange(event)}
+                        // input={<Input id="hemolysis" />}
+                        inputProps={{
+                          name: "hemolysis",
+                          id: "hemolysis"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
+                        <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="hasHighSpeedCentrifugal">
+                        {<span className="font">{t("EQASerumBank.hasHighSpeedCentrifugal")}</span>}
+                      </InputLabel>
+                      <Select
+                        // name="hasHighSpeedCentrifugal"
+                        value={hasHighSpeedCentrifugal == "undefined" ? '' : hasHighSpeedCentrifugal}
+                        onChange={event => this.handleChange(event)}
+                        // input={<Input id="hasHighSpeedCentrifugal" />}
+                        inputProps={{
+                          name: "hasHighSpeedCentrifugal",
+                          id: "hasHighSpeedCentrifugal"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
+                        <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="dialysis">
+                        {<span className="font">{t("EQASerumBank.dialysis")}</span>}
+                      </InputLabel>
+                      <Select
+                        // name="dialysis"
+                        value={typeof dialysis == "undefined" ? '' : dialysis}
+                        onChange={event => this.handleChange(event)}
+                        // input={<Input id="dialysis" />}
+                        inputProps={{
+                          name: "dialysis",
+                          id: "dialysis"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
+                        <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item lg={4} md={4} sm={12} xs={12}>
+                    <FormControl className="w-100" variant="outlined" size="small">
+                      <InputLabel htmlFor="inactivated">
+                        {<span className="font">{t("EQASerumBank.inactivated")}</span>}
+                      </InputLabel>
+                      <Select
 
-                            value={typeof inactivated == "undefined" ? '' : inactivated}
-                            onChange={event => this.handleChange(event)}
-                            // input={<Input id="inactivated" />}
-                            inputProps={{
-                              name: "inactivated",
-                              id: "inactivated"
-                            }}
-                          >
-                            <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
-                            <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
+                        value={typeof inactivated == "undefined" ? '' : inactivated}
+                        onChange={event => this.handleChange(event)}
+                        // input={<Input id="inactivated" />}
+                        inputProps={{
+                          name: "inactivated",
+                          id: "inactivated"
+                        }}
+                      >
+                        <MenuItem value={LocalValue.EQAStatusSample_value.yes}>{t("Yes")}</MenuItem>
+                        <MenuItem value={LocalValue.EQAStatusSample_value.no}>{t("No")}</MenuItem>
+                      </Select>
+                    </FormControl>
                   </Grid>
                 </Grid>
               </fieldset>
-
 
               <fieldset className="mt-16" style={{ width: "100%" }}>
                 <legend>{<span className="styleColor">{t("EQASerumBank.divideBottle")}</span>}</legend>

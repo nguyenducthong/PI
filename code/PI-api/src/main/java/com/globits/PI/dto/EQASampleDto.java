@@ -1,9 +1,11 @@
 package com.globits.PI.dto;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.globits.PI.domain.EQASample;
+import com.globits.PI.domain.EQASampleBottle;
 import com.globits.core.dto.BaseObjectDto;
 
 public class EQASampleDto extends BaseObjectDto{
@@ -236,6 +238,13 @@ public class EQASampleDto extends BaseObjectDto{
 
 			if(entity.getRound()!=null) {
 				this.round = new EQARoundDto(entity.getRound(),true);
+			}
+
+			if (entity.getEqaSampleBottles() != null && entity.getEqaSampleBottles().size() > 0) {
+				this.eqaSampleBottles = new HashSet<EQASampleBottleDto>();
+				for (EQASampleBottle sb : entity.getEqaSampleBottles()) {
+					this.eqaSampleBottles.add(new EQASampleBottleDto(sb));
+				}
 			}
 		}
 	}

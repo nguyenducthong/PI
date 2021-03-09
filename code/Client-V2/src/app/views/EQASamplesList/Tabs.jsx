@@ -179,7 +179,7 @@ export default function CreateStaff(props) {
   return (
     <div className={classes.root} value={value} index={0} >
 
-      <AppBar position="static" color="#ffffff">
+      {/* <AppBar position="static" color="#ffffff">
         <Tabs orientation="horizontal"
           value={value}
           onChange={handleChangeValue}
@@ -192,19 +192,19 @@ export default function CreateStaff(props) {
         
         <Tab label={t('SampleManagement.sample-list.information')} />
         <Tab label={t('SampleManagement.sample-list.attachment')} />
-        {/* <Tab label={t('human_resources_information.working_process')} /> */}
+        <Tab label={t('human_resources_information.working_process')} />
         </Tabs>
-      </AppBar>
+      </AppBar> */}
      <TabPanel  value={value} index={0} style={{height:"450px"}} color="#ffffff">
         <EQASampleInformation t={t} 
         useStyles={useStyles} 
         item ={props.item ? props.item:{}} />
       </TabPanel>
-      <TabPanel  value={value} index={1} style={{height:"450px"}} color="#ffffff">
+      {/* <TabPanel  value={value} index={1} style={{height:"450px"}} color="#ffffff">
         <EQASampleFileAttachment t={t} 
         useStyles={useStyles} 
         item ={props.item  ? props.item:{}} />
-      </TabPanel>
+      </TabPanel> */}
     </div>
   )
 }

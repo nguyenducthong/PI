@@ -113,7 +113,7 @@ public class ReagentServiceImpl extends GenericServiceImpl<Reagent, UUID> implem
 			entity.setPacking(dto.getPacking());
 			entity.setRegisteredFacilityName(dto.getRegisteredFacilityName());
 			entity.setProductionFacilityName(dto.getProductionFacilityName());
-
+			entity.setTestType(dto.getTestType());
 			entity = reagentRepository.save(entity);
 			if (entity != null ) {
 				return new ReagentDto(entity);

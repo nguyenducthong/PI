@@ -12,9 +12,7 @@ import {
 } from "@material-ui/pickers";
 import { ValidatorForm, TextValidator, TextField, SelectValidator } from "react-material-ui-form-validator";
 import { getByPage, deleteItem, saveItem, getItemById, checkCode, checkEmail } from "./EQAHealthOrgService";
-import { getAllEQAhealthOrgLevels } from "../HealthOrgLevel/HealthOrgLevelService"
 import { searchByPage } from "../EQAHealthOrgType/EQAHealthOrgTypeService";
-import { getAllQualifications, getQualificationById } from '../Qualification/QualificationService';
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -34,7 +32,6 @@ import EQAPOrgTypeSearchDialog from './EQAPOrgTypeSearchDialog';
 import EQAHealthOrg from "./EQAHealthOrg";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getAll } from "../AllocationSampleSet/AllocationSampleSetService";
 import '../../../styles/views/_loadding.scss';
 import clsx from 'clsx';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -146,10 +143,6 @@ class EQAHealthOrgEditorDialog extends Component {
     let { t } = this.props;
     this.setState({ loading: true });
 
-    if (levelId == "") {
-      this.setState({ hasErrorLever: true, loading: false });
-      return
-    }
     if (email != null) {
       checkEmail(id, email).then(res => {
         if (res.data) {
@@ -265,32 +258,32 @@ class EQAHealthOrgEditorDialog extends Component {
     this.setState({
       ...this.props.item, isHealthOrg: isHealthOrg
     }, function () {
-      let { qualification, level, healthOrgType } = this.state;
-      if (healthOrgType != null && healthOrgType.id != null) {
-        this.setState({ healthOrgTypeId: healthOrgType.id })
-      }
-      if (qualification != null && qualification.id != null) {
-        this.setState({ qualificationId: qualification.id })
-      }
+      // let { qualification, level, healthOrgType } = this.state;
+      // if (healthOrgType != null && healthOrgType.id != null) {
+      //   this.setState({ healthOrgTypeId: healthOrgType.id })
+      // }
+      // if (qualification != null && qualification.id != null) {
+      //   this.setState({ qualificationId: qualification.id })
+      // }
 
-      if (level != null && level.id != null) {
-        this.setState({ levelId: level.id })
-      }
+      // if (level != null && level.id != null) {
+      //   this.setState({ levelId: level.id })
+      // }
     }
     );
   }
   componentDidMount() {
 
-    getAllQualifications().then((data) => {
-      let qualificationSelect = data.data;
-      this.setState({ qualificationSelect: qualificationSelect });
-    });
+    // getAllQualifications().then((data) => {
+    //   let qualificationSelect = data.data;
+    //   this.setState({ qualificationSelect: qualificationSelect });
+    // });
 
 
-    getAllEQAhealthOrgLevels().then((data) => {
-      let levelHealOrg = data.data;
-      this.setState({ levelHealOrg: levelHealOrg })
-    });
+    // getAllEQAhealthOrgLevels().then((data) => {
+    //   let levelHealOrg = data.data;
+    //   this.setState({ levelHealOrg: levelHealOrg })
+    // });
     ValidatorForm.addValidationRule("isLengthNumber", value => {
       if (value.length > 10) {
         return false;
@@ -322,22 +315,17 @@ class EQAHealthOrgEditorDialog extends Component {
     let {
       id,
       name,
-      publishDate,
       code,
-      description,
       isManualSetCode,
       address,
       isView,
-      contactName, levelId, shouldOpenAdministrativeUnitsPopup,
-      contactPhone, levelHealOrg,
-      shouldOpenSearchOrgTypeDialog,
-      shouldOpenConfirmationDialog, isManagementUnit,
-      shouldOpenSearchDialog, sampleReceiptDate,
+      contactName, shouldOpenAdministrativeUnitsPopup,
+      contactPhone, 
       administrativeUnit,
-      email, qualificationId, qualificationSelect, specifyQualification, officerPosion, unitCodeOfProgramPEQAS, fax,
-      sampleStatus, healthOrgTypeSelect, healthOrgType, healthOrgTypeId,
-      technician, specifyTechnician, positiveAffirmativeRight, sampleRecipient, specifySampleStatus, specifyLevel, taxCodeOfTheUnit,
-      hasErrorLever, loading
+      email, officerPosion, unitCodeOfProgramPEQAS, fax,
+       healthOrgType, healthOrgTypeId,
+     sampleRecipient, specifySampleStatus, specifyLevel, taxCodeOfTheUnit,
+      loading, positiveAffirmativeRight, specifyQualification
     } = this.state;
     let searchObject = { pageIndex: 0, pageSize: 1000000 };
     let { open, handleClose, handleOKEditClose, t, i18n, isHealthOrg } = this.props;
@@ -362,7 +350,7 @@ class EQAHealthOrgEditorDialog extends Component {
         }}>
           <DialogContent dividers>
             <Grid className="" container spacing={2}>
-              <Grid item lg={4} md={4} sm={12} xs={12}>
+              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
                 <AsynchronousAutocomplete
                   label={
                     <span className="font">
@@ -383,7 +371,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   variant="outlined"
                   size="small"
                 />
-              </Grid>
+              </Grid> */}
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator
                   className="w-100 "
@@ -601,7 +589,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   size="small"
                 />
               </Grid>
-              <Grid item lg={4} md={4} sm={12} xs={12}>
+              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
                 <FormControl className="w-100" variant="outlined" size="small">
                   <InputLabel htmlFor="qualification">{<span className="font">{t("EQAHealthOrg.qualification")}</span>}</InputLabel>
                   <Select
@@ -621,7 +609,7 @@ class EQAHealthOrgEditorDialog extends Component {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
+              </Grid> */}
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator
                   className="w-100 "
@@ -634,7 +622,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   size="small"
                 />
               </Grid>
-              <Grid item lg={4} md={4} sm={12} xs={12}>
+              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
                 <FormControl className="w-100" error={hasErrorLever} variant="outlined" size="small">
                   <InputLabel htmlFor="levelHealOrg"><span className="font">
                     <span style={{ color: "red" }}> * </span>
@@ -656,7 +644,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   </Select>
                   {hasErrorLever && <FormHelperText>{t("general.errorMessages_required")}</FormHelperText>}
                 </FormControl>
-              </Grid>
+              </Grid> */}
 
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator

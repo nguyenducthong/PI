@@ -13,16 +13,12 @@ import MenuRoutes from "./views/Menus/MenuRoutes";
 import pageLayoutRoutes from "./views/page-layouts/PageLayoutRoutees";
 import eqaPlanningRoutes from "./views/EQAPlanning/EQAPlanningRoutes";
 import eqaRoundRoutes from "./views/EQARound/EQARoundRoutes";
-import eQAHealthOrgTypeRoutes from "./views/EQAHealthOrgType/EQAHealthOrgTypeRoutes";
 import eQAHealthOrgRoutes from "./views/EQAHealthOrg/EQAHealthOrgRoutes";
 import eQAHealthOrgRoundRegisterRoutes from "./views/EQAHealthOrgRoundRegister/EQAHealthOrgRoundRegisterRoutes";
 import healthOrgRegisterFormRoutes from "./views/HealthOrgRegisterForm/HealthOrgRegisterFormRoutes";
-import qualificationRoutes from "./views/Qualification/QualificationRoutes";
 import reagentRoutes from "./views/Reagent/ReagentRoutes";
 import personnelRoutes from "./views/Personnel/PersonnelRoutes";
-import healthOrgLevelRoutes from "./views/HealthOrgLevel/HealthOrgLevelRoutes";
 import eQASerumBankRoutes from "./views/EQASerumBank/EQASerumBankRoutes";
-import conceptClassRoutes from "./views/ConceptClass/ConceptClassRoutes";
 import eQASampleRoutes from "./views/EQASamplesList/EQASampleRoutes";
 import eQASampleSetRoutes from "./views/EQASampleSet/EQASampleSetRoutes";
 import testMethodRoutes from "./views/TestMethod/TestMethodRoutes";
@@ -44,7 +40,6 @@ import ReferenceResultsRoutes from "./views/ReferenceResults/ReferenceResultsRou
 import ReportSimilarityReagentRoutes from "./views/ReportSimilarityReagent/ReportSimilarityReagentRoutes";
 import ResultsOfUnitsByReagentGroupRoutes from "./views/ResultsOfUnitsByReagentGroup/ResultsOfUnitsByReagentGroupRoutes";
 import ReferenceResultRoutes from "./views/ReferenceResult/ReferenceResultRoutes";
-import Contact from "./views/Contact/ContactRoutes";
 import EQAReferenceDocument from "./views/EQAReferenceDocument/EQAReferenceDocumentRoutes";
 
 const redirectRoute = [
@@ -71,11 +66,7 @@ const routes = [
   ...eQASampleSetRoutes,
   ...reagentRoutes,
   ...eQASerumBankRoutes,
-  ...conceptClassRoutes,
   ...ResultsOfUnitsByReagentGroupRoutes,
-  ...qualificationRoutes,
-  ...eQAHealthOrgTypeRoutes,
-  ...healthOrgLevelRoutes,
   ...eQAHealthOrgRoutes,
   ...eQAHealthOrgRoundRegisterRoutes,
   ...healthOrgRegisterFormRoutes,
@@ -105,7 +96,6 @@ const routes = [
   ...ReferenceResultsRoutes,
   ...ReportSimilarityReagentRoutes,
   ...ReferenceResultRoutes,
-  ...Contact,
   ...EQAReferenceDocument,
   ...errorRoute
 

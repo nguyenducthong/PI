@@ -117,6 +117,7 @@ public class ReagentDto extends BaseObjectDto{
 			this.packing = entity.getPacking();
 			this.registeredFacilityName = entity.getRegisteredFacilityName();
 			this.productionFacilityName = entity.getProductionFacilityName();
+			this.testType = entity.getTestType();
 		}
 	}
 	
@@ -133,6 +134,7 @@ public class ReagentDto extends BaseObjectDto{
 			this.dosageForms = entity.getDosageForms();
 			this.packing = entity.getPacking();
 			this.registeredFacilityName = entity.getRegisteredFacilityName();
+			this.testType = entity.getTestType();
 			this.productionFacilityName = entity.getProductionFacilityName();
 		}
 	}

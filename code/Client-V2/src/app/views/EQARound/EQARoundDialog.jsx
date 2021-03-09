@@ -193,17 +193,7 @@ class OrganizationEditorDialog extends Component {
                 if (response.data != null && response.status == 200) {
                   // this.props.handleOKEditClose();
                   this.state.id = response.data.id;
-                  if (response.data.detailRound != null && response.data.detailRound.length > 0) {
-                    response.data.detailRound.sort( function (a, b){
-                      return a.type - b.type
-                     })
-                    response.data.detailRound.forEach(res => {
-                      if (res != null && res.personnel != null && res.personnel.id) {
-                        res.personnel = res.personnel.id;
-                      }
-                    });
-                    this.state.item.detailRound = response.data.detailRound;
-                  }
+           
                   this.setState({...this.state, isView:false});
                   toast.success(t("EQARound.notify.editSucess"));
                 } else {
@@ -220,17 +210,7 @@ class OrganizationEditorDialog extends Component {
                 if (response.data != null && response.status == 200) {
                   // this.props.handleOKEditClose();
                   this.state.id = response.data.id;
-                  if (response.data.detailRound != null && response.data.detailRound.length > 0) {
-                    response.data.detailRound.sort( function (a, b){
-                      return a.type - b.type
-                     })
-                    response.data.detailRound.forEach(res => {
-                      if (res != null && res.personnel != null && res.personnel.id) {
-                        res.personnel = res.personnel.id;
-                      }
-                    });
-                    this.state.item.detailRound = response.data.detailRound;
-                  }
+                  
                   this.setState({...this.state, isView:false});
                   toast.success(t("EQARound.notify.addSucess"));
                 } else {

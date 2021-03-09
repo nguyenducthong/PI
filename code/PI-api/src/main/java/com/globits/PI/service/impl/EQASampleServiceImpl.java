@@ -130,23 +130,7 @@ public class EQASampleServiceImpl extends GenericServiceImpl<EQASample, UUID> im
 	public EQASampleDto saveOrUpdate(EQASampleDto dto, UUID id) {
 		if (dto != null) {
 			UserInfoDto userInfo = userInHealthOrgService.getUserInfoByUserLogin();
-			// log
-			ActivityLogDto activityLogDto = new ActivityLogDto();
-			if(userInfo!= null && userInfo.getUser()!= null && userInfo.getUser().getUsername() != null) {
-				activityLogDto.setUserName(userInfo.getUser().getUsername());	
-			}
-			String moduleLog = "EQA";
-			LocalDateTime logDate = LocalDateTime.now();
-			activityLogDto.setModuleLog(moduleLog);
-			activityLogDto.setLogDate(logDate);
-			activityLogDto.setLogType(PIConst.LogType.Log_Sample.getValue());
-			String contentLog ="";
-			if(dto.getCode() != null) {
-				contentLog += dto.getCode()+ " - ";
-			}
-			if(dto.getRound() != null && dto.getRound().getName() != null) {
-				contentLog +=dto.getRound().getName() + " - ";
-			}
+
 //			if(dto.getRound()!=null && id == null) {
 //				EQARound round = eqaRoundService.findById(dto.getRound().getId());
 //				String code = this.genCode(round, dto.getOrderNumberSample());
@@ -162,14 +146,9 @@ public class EQASampleServiceImpl extends GenericServiceImpl<EQASample, UUID> im
 			}
 			if(entity==null) {
 				entity = new EQASample();
-				contentLog +="Thêm";
+
 			}
-			if(entity !=null) {
-				contentLog +="Sửa";
-			}
-			//
-			activityLogDto.setEntityObjectType(entity.getClass().getName());
-			activityLogDto.setContentLog(contentLog);
+
 			//
 			entity.setName(dto.getName());
 			entity.setResult(dto.getResult());
@@ -203,9 +182,7 @@ public class EQASampleServiceImpl extends GenericServiceImpl<EQASample, UUID> im
 			Set<EQASampleBottle> listEQASampleBottle = new HashSet<EQASampleBottle>();
 			if (dto.getEqaSampleBottles() != null && dto.getEqaSampleBottles().size() > 0) {
 				for (EQASampleBottleDto sbDto : dto.getEqaSampleBottles()) {
-					
 					EQASampleBottle eQASampleBottle = null;
-					
 					if (sbDto.getId() != null) {
 						eQASampleBottle = eQASampleBottleRepository.getOne(sbDto.getId());
 						if (eQASampleBottle == null) {

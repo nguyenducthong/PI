@@ -45,7 +45,8 @@ public class Reagent extends BaseObject {
 	@Column(name="production_facility_name")
 	private String productionFacilityName; //Tên cơ sở sản xuất
 
-
+	@Column(name = "test_type")
+	private Integer testType; //Loại xét nghiệm
 	
 	public String getActiveIngredients() {
 		return activeIngredients;
@@ -112,6 +113,13 @@ public class Reagent extends BaseObject {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public Integer getTestType() {
+		return testType;
+	}
+	public void setTestType(Integer testType) {
+		this.testType = testType;
 	}
 	public Reagent() {
 		super();

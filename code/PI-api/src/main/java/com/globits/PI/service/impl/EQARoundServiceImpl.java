@@ -109,7 +109,7 @@ public class EQARoundServiceImpl extends GenericServiceImpl<EQARound, UUID> impl
 			EQARound entity = null;
 			if(dto.getId()!=null) {
 				entity = repository.getOne(dto.getId());
-
+			}
 			LocalDateTime currentDate = org.joda.time.LocalDateTime.now();
 			String currentUserName = "Unknown User";
 			if(entity==null) {
@@ -166,7 +166,7 @@ public class EQARoundServiceImpl extends GenericServiceImpl<EQARound, UUID> impl
 				return new EQARoundDto(entity);
 			}
 		}
-		}
+
 		return null;
 	}
 
