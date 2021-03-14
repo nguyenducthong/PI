@@ -42,12 +42,101 @@ public class EQAResultReportDto extends BaseObjectDto{
 	private Boolean isFinalResult;//Có phải kết quả cuối cùng 
 	private Boolean isEditAble;//User đang đăng nhập có quyền sửa hay không?
 	private String reagentName;//tên sinh phẩm
-	private String technicianName; //tên người thực hiện
+	private String technician; ; //tên người thực hiện
 	private Boolean otherReagent = false; //Có check trùng sinh phẩm hay không
 	private String noteOtherReagent;
 	private Integer dayReagentExpiryDate;
 	private Integer monthReagentExpiryDate;
 	private Integer yeahReagentExpiryDate;
+	
+	public EQAResultReportDto() {
+
+	}
+	
+	public EQAResultReportDto(EQAResultReport entity) {
+		this.id = entity.getId();
+		this.reagentLot = entity.getReagentLot();
+		this.technician = entity.getTechnician();
+		this.reagentExpiryDate = entity.getReagentExpiryDate();//Hạn sử dụng sinh phẩm
+		this.reagentUnBoxDate = entity.getReagentUnBoxDate();
+		this.typeMethod = entity.getTypeMethod();
+		this.note = entity.getNote();// Ghi chú
+		this.isFinalResult = entity.getIsFinalResult();//Có phải kết quả cuối cùng
+		if (entity.getReagent() != null) {
+			this.reagent = new ReagentDto(entity.getReagent());
+			this.reagentName = entity.getReagent().getName();
+		}
+		this.supplyOfReagent = entity.getSupplyOfReagent();// Nguồn cung cấp sinh phẩm
+		this.personBuyReagent = entity.getPersonBuyReagent();// Người mua sinh phẩm
+		this.orderTest = entity.getOrderTest();// Thứ tự xét nghiệm
+		this.testDate = entity.getTestDate();// Ngày xét nghiệm
+		this.dateSubmitResults = entity.getDateSubmitResults(); // Ngày nộp kết quả cuối cùng
+		// Xet nghiem nhanh
+	
+		if(entity.getReagentExpiryDate() != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(entity.getReagentExpiryDate());
+			this.dayReagentExpiryDate =  calendar.get(Calendar.DATE);
+			this.monthReagentExpiryDate = calendar.get(Calendar.MONTH) + 1;
+			this.yeahReagentExpiryDate = calendar.get(Calendar.YEAR);
+		}
+	
+		if (entity.getHealthOrgRound() != null) {
+			this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound());
+			this.healthOrgId = entity.getHealthOrgRound().getHealthOrg().getId();
+		}
+			
+		if (entity.getDetails() != null) {
+			this.details = new HashSet<EQAResultReportDetailDto>();
+			for (EQAResultReportDetail eQAResultReportDetail : entity.getDetails()) {
+				this.details.add(new EQAResultReportDetailDto(eQAResultReportDetail));
+			}
+		}
+	}
+
+	public EQAResultReportDto(EQAResultReport entity, boolean simple) {
+		this.id = entity.getId();
+		this.reagentLot = entity.getReagentLot();
+		this.technician = entity.getTechnician();
+		this.reagentExpiryDate = entity.getReagentExpiryDate();
+		this.reagentUnBoxDate = entity.getReagentUnBoxDate();
+		this.typeMethod = entity.getTypeMethod();
+		this.note = entity.getNote();// Ghi chú
+		this.isFinalResult = entity.getIsFinalResult();//Có phải kết quả cuối cùng
+		if(!simple) {
+			if (entity.getReagent() != null)
+				this.reagent = new ReagentDto(entity.getReagent());
+		}
+		if (entity.getReagent() != null)
+			this.reagentName = entity.getReagent().getName();
+		
+		this.supplyOfReagent = entity.getSupplyOfReagent();// Nguồn cung cấp sinh phẩm
+		this.personBuyReagent = entity.getPersonBuyReagent();// Người mua sinh phẩm
+		this.orderTest = entity.getOrderTest();// Thứ tự xét nghiệm
+		this.testDate = entity.getTestDate();// Ngày xét nghiệm
+		this.dateSubmitResults = entity.getDateSubmitResults(); // Ngày nộp kết quả cuối cùng
+		if(entity.getReagentExpiryDate() != null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(entity.getReagentExpiryDate());
+			this.dayReagentExpiryDate =  calendar.get(Calendar.DATE);
+			this.monthReagentExpiryDate = calendar.get(Calendar.MONTH) + 1;
+			this.yeahReagentExpiryDate = calendar.get(Calendar.YEAR);
+		}
+		if (entity.getHealthOrgRound() != null) {
+			if(simple) {
+				this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound(),true);
+			}
+			else {
+				this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound());
+			}			
+		}			
+	}
+
+	public EQAResultReportDto(EQAResultReport entity, boolean simple, int type) {
+		this.id = entity.getId();
+		this.typeMethod = entity.getTypeMethod();
+	}
+	
 	public Integer getTypeMethod() {
 		return typeMethod;
 	}
@@ -296,12 +385,12 @@ public class EQAResultReportDto extends BaseObjectDto{
 		this.reagentName = reagentName;
 	}
 
-	public String getTechnicianName() {
-		return technicianName;
+	public String getTechnician() {
+		return technician;
 	}
 
-	public void setTechnicianName(String technicianName) {
-		this.technicianName = technicianName;
+	public void setTechnician(String technician) {
+		this.technician = technician;
 	}
 
 	public Boolean getOtherReagent() {
@@ -344,89 +433,5 @@ public class EQAResultReportDto extends BaseObjectDto{
 		this.yeahReagentExpiryDate = yeahReagentExpiryDate;
 	}
 
-	public EQAResultReportDto() {
-
-	}
 	
-	public EQAResultReportDto(EQAResultReport entity) {
-		this.id = entity.getId();
-		this.reagentLot = entity.getReagentLot();
-		this.reagentExpiryDate = entity.getReagentExpiryDate();//Hạn sử dụng sinh phẩm
-		this.reagentUnBoxDate = entity.getReagentUnBoxDate();
-		this.typeMethod = entity.getTypeMethod();
-		this.note = entity.getNote();// Ghi chú
-		this.isFinalResult = entity.getIsFinalResult();//Có phải kết quả cuối cùng
-		if (entity.getReagent() != null) {
-			this.reagent = new ReagentDto(entity.getReagent());
-			this.reagentName = entity.getReagent().getName();
-		}
-		this.supplyOfReagent = entity.getSupplyOfReagent();// Nguồn cung cấp sinh phẩm
-		this.personBuyReagent = entity.getPersonBuyReagent();// Người mua sinh phẩm
-		this.orderTest = entity.getOrderTest();// Thứ tự xét nghiệm
-		this.testDate = entity.getTestDate();// Ngày xét nghiệm
-		this.dateSubmitResults = entity.getDateSubmitResults(); // Ngày nộp kết quả cuối cùng
-		// Xet nghiem nhanh
-	
-		if(entity.getReagentExpiryDate() != null) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(entity.getReagentExpiryDate());
-			this.dayReagentExpiryDate =  calendar.get(Calendar.DATE);
-			this.monthReagentExpiryDate = calendar.get(Calendar.MONTH) + 1;
-			this.yeahReagentExpiryDate = calendar.get(Calendar.YEAR);
-		}
-	
-		if (entity.getHealthOrgRound() != null) {
-			this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound());
-			this.healthOrgId = entity.getHealthOrgRound().getHealthOrg().getId();
-		}
-			
-		if (entity.getDetails() != null) {
-			this.details = new HashSet<EQAResultReportDetailDto>();
-			for (EQAResultReportDetail eQAResultReportDetail : entity.getDetails()) {
-				this.details.add(new EQAResultReportDetailDto(eQAResultReportDetail));
-			}
-		}
-	}
-
-	public EQAResultReportDto(EQAResultReport entity, boolean simple) {
-		this.id = entity.getId();
-		this.reagentLot = entity.getReagentLot();
-		this.reagentExpiryDate = entity.getReagentExpiryDate();
-		this.reagentUnBoxDate = entity.getReagentUnBoxDate();
-		this.typeMethod = entity.getTypeMethod();
-		this.note = entity.getNote();// Ghi chú
-		this.isFinalResult = entity.getIsFinalResult();//Có phải kết quả cuối cùng
-		if(!simple) {
-			if (entity.getReagent() != null)
-				this.reagent = new ReagentDto(entity.getReagent());
-		}
-		if (entity.getReagent() != null)
-			this.reagentName = entity.getReagent().getName();
-		
-		this.supplyOfReagent = entity.getSupplyOfReagent();// Nguồn cung cấp sinh phẩm
-		this.personBuyReagent = entity.getPersonBuyReagent();// Người mua sinh phẩm
-		this.orderTest = entity.getOrderTest();// Thứ tự xét nghiệm
-		this.testDate = entity.getTestDate();// Ngày xét nghiệm
-		this.dateSubmitResults = entity.getDateSubmitResults(); // Ngày nộp kết quả cuối cùng
-		if(entity.getReagentExpiryDate() != null) {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(entity.getReagentExpiryDate());
-			this.dayReagentExpiryDate =  calendar.get(Calendar.DATE);
-			this.monthReagentExpiryDate = calendar.get(Calendar.MONTH) + 1;
-			this.yeahReagentExpiryDate = calendar.get(Calendar.YEAR);
-		}
-		if (entity.getHealthOrgRound() != null) {
-			if(simple) {
-				this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound(),true);
-			}
-			else {
-				this.healthOrgRound = new HealthOrgEQARoundDto(entity.getHealthOrgRound());
-			}			
-		}			
-	}
-
-	public EQAResultReportDto(EQAResultReport entity, boolean simple, int type) {
-		this.id = entity.getId();
-		this.typeMethod = entity.getTypeMethod();
-	}
 }

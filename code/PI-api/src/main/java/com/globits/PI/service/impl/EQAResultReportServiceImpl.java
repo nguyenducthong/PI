@@ -264,6 +264,12 @@ public class EQAResultReportServiceImpl extends GenericServiceImpl<EQAResultRepo
 					entity = entities.get(0);
 				}
 			}
+			if (id != null) {
+				entity = eQAResultReportRepository.getOne(id);
+			}
+			if(entity == null) {
+				entity = new EQAResultReport();
+			}
 			entity.setReagentLot(dto.getReagentLot());
 //			entity.setReagentExpiryDate(dto.getReagentExpiryDate());
 			if(dto.getDayReagentExpiryDate() != null && dto.getMonthReagentExpiryDate() != null && dto.getYeahReagentExpiryDate() != null) {
@@ -278,10 +284,9 @@ public class EQAResultReportServiceImpl extends GenericServiceImpl<EQAResultRepo
 				entity.setReagentExpiryDate(date);				
 			}
 			entity.setReagentUnBoxDate(dto.getReagentUnBoxDate());
+			entity.setTechnician(dto.getTechnician()); 
 			entity.setNote(dto.getNote());
-
 			entity.setIsFinalResult(dto.getIsFinalResult());
-		
 			entity.setTypeMethod(dto.getTypeMethod());
 			
 			Reagent reagent = null;

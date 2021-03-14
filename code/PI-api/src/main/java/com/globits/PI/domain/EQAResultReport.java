@@ -40,6 +40,9 @@ public class EQAResultReport extends BaseObject {
 	@Column(name="supply_of_reagent")//Nguồn cung cấp sinh phẩm
 	private String supplyOfReagent;
 	
+	@Column(name="technician")//Kĩ thuật viên
+	private String technician; 
+	
 	@Column(name="person_buy_reagent")//Người mua sinh phẩm
 	private String personBuyReagent; 
 	
@@ -187,6 +190,13 @@ public class EQAResultReport extends BaseObject {
 		this.dateSubmitResults = dateSubmitResults;
 	}
 
+	public String getTechnician() {
+		return technician;
+	}
+
+	public void setTechnician(String technician) {
+		this.technician = technician;
+	}
 
 	public EQAResultReport() {
 		super();
