@@ -50,9 +50,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NumberFormat from 'react-number-format';
 import Card from "@material-ui/core/Card";
 import EQARoundInformation from "./EQARoundInformation";
-import EQAPreparationThePanel from "./EQAPreparationThePanel";
-import EQASamplePackageAndDelivery from "./EQASamplePackageAndDelivery";
-import EQARoundAnalysisReporting from "./EQARoundAnalysisReporting";
+
 const LightTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,

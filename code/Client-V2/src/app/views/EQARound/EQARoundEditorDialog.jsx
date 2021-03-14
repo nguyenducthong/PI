@@ -17,7 +17,6 @@ import Paper from '@material-ui/core/Paper';
 import AsynchronousAutocomplete from "../utilities/AsynchronousAutocomplete";
 import { MuiPickersUtilsProvider, DatePicker,DateTimePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import EQAPlanningSearchDialog from './EQAPlanningSearchDialog';
 import '../../../styles/views/_style.scss';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

@@ -502,7 +502,7 @@ class EQAHealthOrgTable extends React.Component {
                 {t("Delete")}
               </Button>
             )}
-            {!isHealthOrg && (
+            {/* {!isHealthOrg && (
               <Button
                 className="align-bottom mb-16"
                 variant="contained"
@@ -511,7 +511,7 @@ class EQAHealthOrgTable extends React.Component {
               >
                 {t("general.importExcel")}
               </Button>
-            )}
+            )} */}
             {shouldOpenImportExcelDialog && (
               <ImportExcelDialog
                 t={t}

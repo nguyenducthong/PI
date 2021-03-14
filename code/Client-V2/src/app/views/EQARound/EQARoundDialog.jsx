@@ -23,12 +23,6 @@ import {
   getItemById,
   checkCode
 } from "./EQARoundService";
-import EQARoundDialog from "./EQARoundDialog";
-import { generateRandomId } from "utils";
-import { useTranslation, withTranslation, Trans } from "react-i18next";
-import { Breadcrumb, ConfirmationDialog } from "egret";
-import { search as searchByPage } from "../EQAPlanning/EQAPlanningService";
-import AsynchronousAutocomplete from "../utilities/AsynchronousAutocomplete";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -37,7 +31,6 @@ import Draggable from "react-draggable";
 import Paper from "@material-ui/core/Paper";
 import { MuiPickersUtilsProvider, DatePicker,KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import EQAPlanningSearchDialog from "./EQAPlanningSearchDialog";
 import '../../../styles/views/_style.scss';
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

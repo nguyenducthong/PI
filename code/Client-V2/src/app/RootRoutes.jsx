@@ -34,7 +34,6 @@ import allocationSampleSet from "./views/AllocationSampleSet/AllocationSampleSet
 import ReferenceResultsRoutes from "./views/ReferenceResults/ReferenceResultsRoutes";
 import ReportSimilarityReagentRoutes from "./views/ReportSimilarityReagent/ReportSimilarityReagentRoutes";
 import ReferenceResultRoutes from "./views/ReferenceResult/ReferenceResultRoutes";
-import EQAReferenceDocument from "./views/EQAReferenceDocument/EQAReferenceDocumentRoutes";
 import Contact from "./views/Contact/ContactRoutes";
 
 const redirectRoute = [
@@ -86,7 +85,6 @@ const routes = [
   ...ReferenceResultsRoutes,
   ...ReportSimilarityReagentRoutes,
   ...ReferenceResultRoutes,
-  ...EQAReferenceDocument,
   ...Contact,
   ...errorRoute
 
