@@ -18,7 +18,6 @@ import {
 } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import {
-  technicianSearchByPage,
   saveItem,
   checkReagentByHealthOrgRound,
   getEQASampleTubeByHealthOrgEQARoundId
@@ -81,7 +80,6 @@ class EQAResultReportFastTestViewDialog extends Component {
     shouldOpenSearchEQASampleSearchDialog: false,
     listHealthOrgRound: [],
     listReagent: [],
-    listTechnician: [],
     listEQARound: [],
     shouldOpenHealthOrgRoundPopup: false,
     isView: false,
@@ -125,48 +123,12 @@ class EQAResultReportFastTestViewDialog extends Component {
   };
 
   handleChange = (event, source) => {
-    // event.persist();
-    // if (source === "switch") {
-    //   this.setState({ isActive: event.target.checked });
-    //   return;
-    // }
-    // if(source === "isFinalResult"){
-    //   this.setState({isFinalResult: event.target.checked})
-    // }
-    // this.setState({
-    //   [event.target.name]: event.target.value
-    // });
+  
   };
 
   handleRowDataCellChange = (rowData, event) => {
     let { details } = this.state;
-    // if (details != null && details.length > 0) {
-    //   details.forEach(element => {
-    //     if (element.tableData != null && rowData != null && rowData.tableData != null
-    //       && element.tableData.id == rowData.tableData.id) {
-    //       if (event.target.name == "cLine") {
-    //         if(element.result == LocalConstants.EQAResultReportDetail_TestValue.Not_Implemented){
-    //           element.result =""
-    //         }
-    //         element.cLine = event.target.value;
-    //       }
-    //       else if (event.target.name == "tLine") {
-    //         if(element.result == LocalConstants.EQAResultReportDetail_TestValue.Not_Implemented){
-    //           element.result =""
-    //         }
-    //         element.tLine = event.target.value;
-    //       }
-    //       else if (event.target.name == "result") {
-    //         if(event.target.value == LocalConstants.EQAResultReportDetail_TestValue.Not_Implemented){
-    //           element.cLine =""
-    //           element.tLine =""
-    //         }
-    //         element.result = event.target.value;
-    //       }
-    //     }
-    //   });
-    //   this.setState({ details: details });
-    // }
+ 
   };
 
   handleFormSubmit = () => {
@@ -286,27 +248,6 @@ class EQAResultReportFastTestViewDialog extends Component {
     });
   };
 
-  // selectEQARound = (round) => {
-  //   let listHealthOrgRound = [];
-  //   if (round != null && round.id != null) {
-  //     this.setState({ round: round, roundId: round.id }, function () {
-  //       getListHealthOrgEQARoundByEQARoundId(round.id).then((result) => {
-  //         listHealthOrgRound = result.data;
-  //         this.setState({ listHealthOrgRound: listHealthOrgRound, healthOrgRoundId: '', details: [] });
-  //       });
-  //     });
-  //   } else {
-  //     this.setState({ listHealthOrgRound: listHealthOrgRound, healthOrgRoundId: '', details: [] });
-  //   }
-  // }
-
-  selectTechnician = (technician) => {
-    if (technician != null && technician.id != null) {
-      this.setState({ technician: technician }, function () {
-      });
-    }
-  }
-
   selectReagent = (reagent) => {
     if (reagent != null && reagent.id != null) {
       this.setState({ reagent: reagent }, function () {
@@ -364,8 +305,6 @@ class EQAResultReportFastTestViewDialog extends Component {
     }
   }
   handleDialogFinalResultClose = ()=>{
-    // this.setState({isFinalResult:false, dateSubmitResults: null},()=>{
-    // })
     this.handleDialogClose()
   }
 
@@ -396,7 +335,6 @@ class EQAResultReportFastTestViewDialog extends Component {
       timeToResult,
       round,
       listReagent,
-      listTechnician,
       shouldOpenHealthOrgRoundPopup,
       reagentUnBoxDate,note,isFinalResult,isRoleAdmin
     } = this.state;
@@ -583,17 +521,16 @@ class EQAResultReportFastTestViewDialog extends Component {
               </Grid>
               
               <Grid item lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className= "font">{t("EQAResultReportFastTest.technicianName")}</span>}
-                  variant="outlined"
+                <TextValidator
                   size="small"
-                  disabled={true}
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={technician}
+                  variant = "outlined"
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
                   value={technician}
-                  valueTextValidator={technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  disabled={isView }
                 />
               </Grid>
               <Grid item lg={4} md={4} sm={12} xs={12}>

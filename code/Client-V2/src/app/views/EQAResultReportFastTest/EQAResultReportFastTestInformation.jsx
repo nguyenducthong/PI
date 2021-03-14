@@ -18,7 +18,6 @@ import {
 } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import {
-  technicianSearchByPage,
   saveItem,
   getEQASampleTubeByHealthOrgEQARoundId,
   checkReagentByHealthOrgRound
@@ -159,7 +158,6 @@ class EQAResultReportFastTestInformation extends Component {
     shouldOpenSearchEQASampleSearchDialog: false,
     listHealthOrgRound: [],
     listReagent: [],
-    listTechnician: [],
     listEQARound: [],
     shouldOpenHealthOrgRoundPopup: false,
     isView: false,
@@ -291,18 +289,6 @@ class EQAResultReportFastTestInformation extends Component {
     });
   };
 
-  selectTechnician = (technician) => {
-    let {item} = this.state
-    if(item == null){
-      item = {}
-    }
-    if (technician != null && technician.id != null) {
-      item["technician"] = technician
-      this.setState({ item: item }, function () {
-      });
-    }
-  }
-
   selectReagent = (reagent) => {
     let {item} = this.state
     if(item == null){
@@ -390,6 +376,7 @@ class EQAResultReportFastTestInformation extends Component {
   render() {
     let {
       isRoleAdmin,
+      technician,
       isView,
       item
     } = this.state;
@@ -575,17 +562,16 @@ class EQAResultReportFastTestInformation extends Component {
                 </MuiPickersUtilsProvider>
               </Grid>
               <Grid item lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                <TextValidator
                   size="small"
                   variant = "outlined"
-                  disabled={isRoleAdmin}
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={this.state.item?.technician}
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
                   value={this.state.item?.technician}
-                  valueTextValidator={this.state.item?.technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  disabled={isView }
                 />
               </Grid>
 

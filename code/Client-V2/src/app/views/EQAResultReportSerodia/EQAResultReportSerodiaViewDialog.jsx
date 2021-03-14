@@ -18,7 +18,6 @@ import {
 } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import {
-  technicianSearchByPage,
   saveItem,
   checkReagentByHealthOrgRound,
   getEQASampleTubeByHealthOrgEQARoundId
@@ -78,7 +77,6 @@ class EQAResultReportSerodiaViewDialog extends Component {
     shouldOpenSearchDialog: false,
     shouldOpenConfirmationDialog: false,
     listReagent: [],
-    listTechnician: [],
     reagentExpiryDate: null,
     testDate: new Date(),
     reagentUnBoxDate: null,
@@ -306,13 +304,6 @@ class EQAResultReportSerodiaViewDialog extends Component {
   handleStartDateChange = startDate => {
     this.setState({ startDate });
   };
-
-  selectTechnician = (technician) => {
-    if (technician != null && technician.id != null) {
-      this.setState({ technician: technician }, function () {
-      });
-    }
-  }
 
   selectReagent = (reagent) => {
     if (reagent != null && reagent.id != null) {
@@ -610,17 +601,16 @@ class EQAResultReportSerodiaViewDialog extends Component {
                 </MuiPickersUtilsProvider>
               </Grid>
               <Grid item lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className="font">{t("EQAResultReportFastTest.technicianName")}</span>}
-                  variant="outlined"
+                <TextValidator
                   size="small"
-                  disabled={true}
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={technician}
+                  variant = "outlined"
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
                   value={technician}
-                  valueTextValidator={technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  disabled={isView }
                 />
               </Grid>
               <Grid item lg={4} md={4} sm={12} xs={12}>

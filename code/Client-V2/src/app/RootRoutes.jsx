@@ -31,7 +31,6 @@ import eqaResultReportConclusionRoutes from "./views/EQAResultReportConclusion/E
 import eqaResultReportConclusionAllRoutes from "./views/EQAResultReportConclusionAll/EQAResultReportConclusionAllRoutes";
 import resultsOfTheUnitsRoutes from "./views/ResultsOfTheUnits/ResultsOfTheUnitsRoutes";
 import allocationSampleSet from "./views/AllocationSampleSet/AllocationSampleSetRoutes";
-import roundConclusionsRoutes from "./views/EQARoundConclusions/EQARoundConclusionsRoutes";
 import ReferenceResultsRoutes from "./views/ReferenceResults/ReferenceResultsRoutes";
 import ReportSimilarityReagentRoutes from "./views/ReportSimilarityReagent/ReportSimilarityReagentRoutes";
 import ReferenceResultRoutes from "./views/ReferenceResult/ReferenceResultRoutes";
@@ -67,7 +66,6 @@ const routes = [
   ...eqaResultReportElisaRoute,
   ...eQAResultReportSerodiaRoutes,
   ...eQAResultReportFastTestRoutes,
-  ...roundConclusionsRoutes,
   ...eQAResultReportEcliaRoutes,
   ...eqaResultReportConclusionRoutes,
   ...eqaHealthOrgSampleTransferStatusRoutes,

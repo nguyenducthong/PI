@@ -48,7 +48,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NumberFormat from 'react-number-format';
 import Card from "@material-ui/core/Card";
 import EQAResultReportFastTestInformation from "./EQAResultReportFastTestInformation";
-import EQAResultReportFastTestFileAttachment from "./EQAResultReportFastTestFileAttachment";
 const LightTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -151,12 +150,6 @@ const useStyles = makeStyles((theme) => ({
   textHeader:{fontSize:'0.75rem',}
 }))
 
-// const textHeader = {
-//   fontSize:{fontSize:'0.5rem',}
-    
-  
-// }
-
 export default function CreateStaff(props) {
   const t = props.t
   const i18n = props.i18n
@@ -180,7 +173,7 @@ export default function CreateStaff(props) {
 
   return (
     <div className={classes.root} value={value} index={0} >
-
+{/* 
       <AppBar position="static" color="#ffffff">
         <Tabs orientation="horizontal"
           value={value}
@@ -194,10 +187,9 @@ export default function CreateStaff(props) {
         
         <Tab label={t('EQAResultReportFastTest.information')} />
         <Tab label={t('fileAttachment')} />
-        {/* <Tab label={t('human_resources_information.working_process')} /> */}
         </Tabs>
       </AppBar>
-     <TabPanel  value={value} index={0} color="#ffffff">
+     <TabPanel  value={value} index={0} color="#ffffff"> */}
         <EQAResultReportFastTestInformation t={t} 
         useStyles={useStyles} 
         item ={props.item ? props.item:{}}
@@ -205,13 +197,7 @@ export default function CreateStaff(props) {
         isRoleAdmin={props.isRoleAdmin}
         listHealthOrgRound ={props.listHealthOrgRound ? props.listHealthOrgRound:[]}
          />
-      </TabPanel>
-      <TabPanel  value={value} index={1} color="#ffffff">
-        <EQAResultReportFastTestFileAttachment t={t} 
-        useStyles={useStyles} 
-        item ={props.item  ? props.item:{}}
-        isRoleAdmin={props.isRoleAdmin} />
-      </TabPanel>
+     
     </div>
   )
 }
