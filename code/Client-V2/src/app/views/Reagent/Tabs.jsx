@@ -48,7 +48,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NumberFormat from 'react-number-format';
 import Card from "@material-ui/core/Card";
 import ReagentInformation from "./ReagentInformation";
-import ReagentFileAttachment from "./ReagentFileAttachment";
 const LightTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -122,7 +121,7 @@ function TabPanel(props) {
           </Box>
         )
         }
-      </div >
+      </div>
     </React.Fragment>
   )
 }
@@ -149,12 +148,6 @@ const useStyles = makeStyles((theme) => ({
   textHeader:{fontSize:'0.75rem',}
 }))
 
-// const textHeader = {
-//   fontSize:{fontSize:'0.5rem',}
-    
-  
-// }
-
 export default function CreateStaff(props) {
   const t = props.t
   const i18n = props.i18n
@@ -178,33 +171,9 @@ export default function CreateStaff(props) {
 
   return (
     <div className={classes.root} value={value} index={0} >
-
-      <AppBar position="static" color="#ffffff">
-        <Tabs orientation="horizontal"
-          value={value}
-          onChange={handleChangeValue}
-          variant="scrollable"
-          scrollButtons="on"
-          indicatorColor="primary"
-          textColor="primary"
-          aria-label="scrollable force tabs example"
-        >
-        
-        <Tab label={t('reagent.information')} />
-        <Tab label={t('fileAttachment')} />
-        {/* <Tab label={t('human_resources_information.working_process')} /> */}
-        </Tabs>
-      </AppBar>
-     <TabPanel  value={value} index={0} style={{height:"450px"}} color="#ffffff">
         <ReagentInformation t={t} 
         useStyles={useStyles} 
         item ={props.item ? props.item:{}} />
-      </TabPanel>
-      <TabPanel  value={value} index={1} style={{height:"450px"}} color="#ffffff">
-        <ReagentFileAttachment t={t} 
-        useStyles={useStyles} 
-        item ={props.item  ? props.item:{}} />
-      </TabPanel>
     </div>
   )
 }

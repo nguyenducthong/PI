@@ -1278,3 +1278,6 @@
 2021-03-14 21:34:07,842 [Worker-85: Launching code] INFO  o.e.m.i.launch.MavenLaunchDelegate - E:\DoAnTotNghiep\code
 2021-03-14 21:34:07,842 [Worker-85: Launching code] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B install -U
 2021-03-14 21:38:10,331 [Worker-78: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier null to /PI-api/target/classes
+2021-03-15 00:52:47,239 [Stop Help Server] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@298838bf{HTTP/1.1, (http/1.1)}{127.0.0.1:0}
+2021-03-15 00:52:47,240 [Stop Help Server] INFO  org.eclipse.jetty.server.session - node0 Stopped scavenging
+2021-03-15 00:52:47,261 [Stop Help Server] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@657f7c2c{/help,null,UNAVAILABLE}
