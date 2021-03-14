@@ -18,7 +18,6 @@ import {
 } from "@material-ui/core";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import {
-  technicianSearchByPage,
   saveItem,
   checkReagentByHealthOrgRound,
   getEQASampleTubeByHealthOrgEQARoundId
@@ -82,7 +81,6 @@ class EQAResultReportViewDialog extends Component {
     shouldOpenSearchEQASampleSearchDialog: false,
     listHealthOrgRound: [],
     listReagent: [],
-    listTechnician: [],
     listEQARound: [],
     isFinalResult: false,
     isRoleAdmin: false,
@@ -222,12 +220,6 @@ class EQAResultReportViewDialog extends Component {
     }
   }
 
-  selectTechnician = (technician) => {
-    if (technician != null && technician.id != null) {
-      this.setState({ technician: technician }, function () {
-      });
-    }
-  }
   notificationFinalResult = () => {
     this.setState({ shouldOpenConfirmationDialog: true })
   }
@@ -464,18 +456,19 @@ class EQAResultReportViewDialog extends Component {
                 </MuiPickersUtilsProvider>
               </Grid>
               <Grid item lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className="font">{t("EqaResult.technician")}</span>}
+              <Grid item lg={3} md={3} sm={12} xs={12}>
+                <TextValidator
                   size="small"
                   variant = "outlined"
-                  disabled={true}
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={technician}
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
                   value={technician}
-                  valueTextValidator={technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  disabled={true}
                 />
+            </Grid>
               </Grid>
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <AsynchronousAutocomplete label={<span className="font">{t("EqaResult.reagent")}</span>}

@@ -20,8 +20,6 @@ import
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import
   {
-    technicianSearchByPage,
-    saveItem,
     getEQASampleTubeByHealthOrgEQARoundId,
     checkReagentByHealthOrgRound
   } from "./EQAResultReportElisaService";
@@ -42,8 +40,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { getCurrentUser, getListHealthOrgByUser } from "../User/UserService";
 import '../../../styles/views/_loadding.scss';
 import '../../../styles/views/_style.scss';
-import clsx from 'clsx';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
 toast.configure( {
   autoClose: 1000,
@@ -147,7 +143,6 @@ class EQAResultReportElisaInformation extends Component
   state = {
     rowsPerPage: 1000,
     page: 0,
-    // isView: false,
     typeMethod: 1, healthOrg: [],
     listHealthOrgRound: [],
     reagent: null,
@@ -259,14 +254,7 @@ class EQAResultReportElisaInformation extends Component
               element.result = null
               return
             }
-            //Check od/co < 1 ket luan am
-            // if(event.target.value ===LocalConstants.EQAResultReportDetail_TestValue.negative){
-            //   if(element.ratioOdAndCutOff != '' && element.ratioOdAndCutOff != null && element.ratioOdAndCutOff < 1){
-            //     toast.warning(t("EQAResultReportElisa.warningResult"))
-            //   element.result = null
-            //   return
-            //   }
-            // }
+
             if ( event.target.value === LocalConstants.EQAResultReportDetail_TestValue.Not_Implemented )
             {
               element.oDvalue = '';
@@ -291,12 +279,6 @@ class EQAResultReportElisaInformation extends Component
   {
     this.setState( { loading: true } );
   };
-  // handleSubmit = async () => {
-  //   await this.openCircularProgress();
-  //   var time = setTimeout(() => {
-  //     this.handleFormSubmit()
-  //   }, 500);
-  // }
 
 
   componentWillMount ()
@@ -343,21 +325,7 @@ class EQAResultReportElisaInformation extends Component
     } );
   };
 
-  selectTechnician = ( technician ) =>
-  {
-    let { item } = this.state
-    if ( item == null )
-    {
-      item = {}
-    }
-    if ( technician != null && technician.id != null )
-    {
-      item[ "technician" ] = technician
-      this.setState( { item: item }, function ()
-      {
-      } );
-    }
-  }
+ 
 
   selectReagent = ( reagent ) =>
   {
@@ -435,9 +403,6 @@ class EQAResultReportElisaInformation extends Component
   }
   notificationFinalResult = () =>
   {
-    // if(!this.state.item.isFinalResult || this.state.item.isFinalResult == null){
-    //   this.setState({shouldOpenConfirmationDialog:true})
-    // }
     this.setState( { shouldOpenConfirmationDialog: true } )
   }
   handleFinalResult = () =>
@@ -466,8 +431,6 @@ class EQAResultReportElisaInformation extends Component
   }
   handleDialogFinalResultClose = () =>
   {
-    // this.setState({isFinalResult:false, dateSubmitResults: null},()=>{
-    // })
     this.handleDialogClose()
   }
   render ()
@@ -758,20 +721,19 @@ class EQAResultReportElisaInformation extends Component
               />
             </MuiPickersUtilsProvider>
           </Grid>
-          <Grid item lg={ 3 } md={ 3 } sm={ 12 } xs={ 12 }>
-            <AsynchronousAutocomplete label={ <span className="font">{ t( "EQAResultReportElisa.technician" ) }</span> }
-              size="small"
-              variant="outlined"
-              disabled={ isRoleAdmin }
-              searchFunction={ technicianSearchByPage }
-              searchObject={ technicianSearchObject }
-              defaultValue={ this.state.item?.technician }
-              value={ this.state.item?.technician }
-              valueTextValidator={ this.state.item?.technician }
-              displayLable={ 'displayName' }
-              onSelect={ this.selectTechnician }
-            />
-          </Grid>
+          <Grid item lg={3} md={3} sm={12} xs={12}>
+                <TextValidator
+                  size="small"
+                  variant = "outlined"
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
+                  value={technician}
+                  disabled={isView }
+                />
+            </Grid>
 
           <Grid item lg={ 4 } md={ 4 } sm={ 12 } xs={ 12 }>
             <AsynchronousAutocomplete

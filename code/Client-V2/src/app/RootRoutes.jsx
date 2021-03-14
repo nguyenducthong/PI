@@ -4,9 +4,7 @@ import homeRoutes from "./views/home/HomeRoutes";
 import sessionRoutes from "./views/sessions/SessionRoutes";
 import dashboardRoutes from "./views/dashboard/DashboardRoutes";
 import administrativeUnitRoutes from "./views/AdministrativeUnit/AdministrativeUnitRoutes";
-import otherRoutes from "./views/others/OtherRoutes";
 import UserRoutes from "./views/User/UserRoutes";
-import departmentRoutes from "./views/Department/DepartmentRoutes";
 import roleRoutes from "./views/Role/RoleRoutes";
 import ConstantList from "./appConfig";
 import MenuRoutes from "./views/Menus/MenuRoutes";
@@ -22,7 +20,6 @@ import eQASerumBankRoutes from "./views/EQASerumBank/EQASerumBankRoutes";
 import eQASampleRoutes from "./views/EQASamplesList/EQASampleRoutes";
 import eQASampleSetRoutes from "./views/EQASampleSet/EQASampleSetRoutes";
 import testMethodRoutes from "./views/TestMethod/TestMethodRoutes";
-import technicianRoutes from "./views/Technician/TechnicianRoutes";
 import eQASerumBottleRoutes from "./views/EQASerumBottle/EQASerumBottleRoutes";
 import eqaHealthOrgSampleTransferStatusRoutes from "./views/EQAHealthOrgSampleTransferStatus/EQAHealthOrgSampleTransferStatusRoutes";
 import labelPrintingRoutes from "./views/LabelPrinting/LabelPrintingRoutes";
@@ -35,12 +32,11 @@ import eqaResultReportConclusionAllRoutes from "./views/EQAResultReportConclusio
 import resultsOfTheUnitsRoutes from "./views/ResultsOfTheUnits/ResultsOfTheUnitsRoutes";
 import allocationSampleSet from "./views/AllocationSampleSet/AllocationSampleSetRoutes";
 import roundConclusionsRoutes from "./views/EQARoundConclusions/EQARoundConclusionsRoutes";
-import EQAActivityLogRoutes from "./views/EQAActivityLog/EQAActivityLogRoutes";
 import ReferenceResultsRoutes from "./views/ReferenceResults/ReferenceResultsRoutes";
 import ReportSimilarityReagentRoutes from "./views/ReportSimilarityReagent/ReportSimilarityReagentRoutes";
-import ResultsOfUnitsByReagentGroupRoutes from "./views/ResultsOfUnitsByReagentGroup/ResultsOfUnitsByReagentGroupRoutes";
 import ReferenceResultRoutes from "./views/ReferenceResult/ReferenceResultRoutes";
 import EQAReferenceDocument from "./views/EQAReferenceDocument/EQAReferenceDocumentRoutes";
+import Contact from "./views/Contact/ContactRoutes";
 
 const redirectRoute = [
   {
@@ -61,12 +57,10 @@ const routes = [
   ...sessionRoutes,
   ...dashboardRoutes,
   ...administrativeUnitRoutes,
-  ...departmentRoutes,
   ...pageLayoutRoutes,
   ...eQASampleSetRoutes,
   ...reagentRoutes,
   ...eQASerumBankRoutes,
-  ...ResultsOfUnitsByReagentGroupRoutes,
   ...eQAHealthOrgRoutes,
   ...eQAHealthOrgRoundRegisterRoutes,
   ...healthOrgRegisterFormRoutes,
@@ -85,18 +79,17 @@ const routes = [
   ...labelPrintingRoutes,
   ...eQASerumBottleRoutes,
   ...testMethodRoutes,
-  ...technicianRoutes,
   ...allocationSampleSet,
   ...UserRoutes,
   ...roleRoutes,
   ...MenuRoutes,
   ...resultsOfTheUnitsRoutes,
   ...redirectRoute,
-  ...EQAActivityLogRoutes,
   ...ReferenceResultsRoutes,
   ...ReportSimilarityReagentRoutes,
   ...ReferenceResultRoutes,
   ...EQAReferenceDocument,
+  ...Contact,
   ...errorRoute
 
 ];

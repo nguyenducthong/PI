@@ -16,7 +16,6 @@ import MaterialTable, {
     MTableBody,
     MTableHeader,
 } from "material-table";
-import { saveItem } from "./ContactService";
 import { Helmet } from 'react-helmet';
 import { Breadcrumb, ConfirmationDialog } from "egret";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -54,13 +53,7 @@ class Contact extends React.Component {
         });
     };
     handleFormSubmit = () =>{
-        let { t } = this.props;
-        saveItem({...this.state}).then((data) =>{
-            toast.info(t("Yêu cầu của bạn đã được gửi"));
-            this.clean();
-        }).catch(()=>{
-            toast.warning(t("Có lỗi trong quá trình gửi"))
-        })
+        
     }
 
     clean = () =>{

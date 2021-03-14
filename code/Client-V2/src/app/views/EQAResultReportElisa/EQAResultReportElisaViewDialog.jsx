@@ -264,13 +264,6 @@ class EQAResultReportElisaViewDialog extends Component {
     });
   };
 
-  selectTechnician = (technician) => {
-    if (technician != null && technician.id != null) {
-      this.setState({ technician: technician }, function () {
-      });
-    }
-  }
-
   selectReagent = (reagent) => {
     if (reagent != null && reagent.id != null) {
       this.setState({ reagent: reagent }, function () {
@@ -655,17 +648,16 @@ class EQAResultReportElisaViewDialog extends Component {
                 </MuiPickersUtilsProvider>
               </Grid>
               <Grid item lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                <TextValidator
                   size="small"
                   variant = "outlined"
-                  disabled={isView }
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={technician}
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
                   value={technician}
-                  valueTextValidator={technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  disabled={isView }
                 />
               </Grid>
 

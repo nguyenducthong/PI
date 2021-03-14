@@ -50,7 +50,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NumberFormat from 'react-number-format';
 import Card from "@material-ui/core/Card";
 import EQAResultReportElisaInformation from "./EQAResultReportElisaInformation";
-import EQAResultReportElisaFileAttachment from "./EQAResultReportElisaFileAttachment";
 const LightTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: theme.palette.common.white,
@@ -69,11 +68,9 @@ function MaterialButton(props) {
   const item = props.item;
   return (
     <span>
-      {/* <LightTooltip title={t('Asset.reload_code')} placement="top" enterDelay={300} leaveDelay={200}> */}
       <IconButton onClick={() => props.onSelect(item, 1)}>
         <Icon color="primary">delete</Icon>
       </IconButton>
-      {/* </LightTooltip> */}
     </span>
   )
 }
@@ -153,12 +150,6 @@ const useStyles = makeStyles((theme) => ({
   textHeader: { fontSize: '0.75rem', }
 }))
 
-// const textHeader = {
-//   fontSize:{fontSize:'0.5rem',}
-
-
-// }
-
 export default function CreateStaff(props) {
   const t = props.t
   const i18n = props.i18n
@@ -182,7 +173,7 @@ export default function CreateStaff(props) {
 
   return (
     <div className={classes.root} value={value} index={0} >
-
+{/* 
       <AppBar position="static" color="#ffffff">
         <Tabs orientation="horizontal"
           value={value}
@@ -196,24 +187,17 @@ export default function CreateStaff(props) {
 
           <Tab label={t('EQAResultReportElisa.information')} />
           <Tab label={t('fileAttachment')} />
-          {/* <Tab label={t('human_resources_information.working_process')} /> */}
         </Tabs>
-      </AppBar>
-      <TabPanel value={value} index={0} color="#ffffff">
+      </AppBar> */}
+      {/* <TabPanel value={value} index={0} color="#ffffff"> */}
         <EQAResultReportElisaInformation t={t}
           useStyles={useStyles}
           item={props.item ? props.item : {}}
-          // isView = {props.isView ? props.isView : {}}
           isRoleAdmin={props.isRoleAdmin}
           listHealthOrgRound={props.listHealthOrgRound ? props.listHealthOrgRound : []}
         />
-      </TabPanel>
-      <TabPanel value={value} index={1} color="#ffffff">
-        <EQAResultReportElisaFileAttachment t={t}
-          useStyles={useStyles}
-          isRoleAdmin={props.isRoleAdmin}
-          item={props.item ? props.item : {}} />
-      </TabPanel>
+      {/* </TabPanel> */}
+  
     </div>
   )
 }

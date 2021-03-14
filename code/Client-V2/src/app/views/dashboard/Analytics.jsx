@@ -107,7 +107,7 @@ class Dashboard1 extends Component {
         </div>
         <Grid container spacing={3}>
           <Grid item lg={12} md={12} sm={12} xs={12}>   
-      
+          <DashboardWelcomeHealthOrgCard t={t}/>
           {/* {isAdmin && (
             <Tab t={t}/>
           )}

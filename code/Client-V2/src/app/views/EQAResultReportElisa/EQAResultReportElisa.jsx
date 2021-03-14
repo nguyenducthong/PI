@@ -554,7 +554,7 @@ class EQAResultReportElisa extends React.Component
           ( rowData.testDate ) ? <span>{ moment( rowData.testDate ).format( 'DD/MM/YYYY' ) }</span> : ''
       },
       {
-        title: t( "EqaResult.technician" ), field: "technicianName", align: "left", width: "150",
+        title: t( "EqaResult.technician" ), field: "technician", align: "left", width: "150",
         headerStyle: {
           minWidth: "150px",
           paddingLeft: "10px",

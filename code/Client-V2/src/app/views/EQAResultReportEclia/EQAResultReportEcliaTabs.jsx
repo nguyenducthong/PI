@@ -50,7 +50,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import NumberFormat from 'react-number-format';
 import Card from "@material-ui/core/Card";
 import EQAResultReportEcliaInformation from "./EQAResultReportEcliaInformation";
-import EQAResultReportEcliaFileAttachment from "./EQAResultReportEcliaFileAttachment";
 
 const LightTooltip = withStyles((theme) => ({
     tooltip: {
@@ -184,7 +183,7 @@ export default function CreateStaff(props) {
     return (
         <div className={classes.root} value={value} index={0} >
 
-            <AppBar position="static" color="#ffffff">
+            {/* <AppBar position="static" color="#ffffff">
                 <Tabs orientation="horizontal"
                     value={value}
                     onChange={handleChangeValue}
@@ -196,10 +195,9 @@ export default function CreateStaff(props) {
                 >
                     <Tab label={t('EQAResultReportEclia.information')} />
                     <Tab label={t('fileAttachment')} />
-                    {/* <Tab label={t('human_resources_information.working_process')} /> */}
                 </Tabs>
-            </AppBar>
-            <TabPanel value={value} index={0} color="#ffffff">
+            </AppBar> */}
+            {/* <TabPanel value={value} index={0} color="#ffffff"> */}
                 <EQAResultReportEcliaInformation t={t}
                     useStyles={useStyles}
                     item={props.item ? props.item : {}}
@@ -207,14 +205,8 @@ export default function CreateStaff(props) {
                     isRoleAdmin={props.isRoleAdmin}
                     listHealthOrgRound={props.listHealthOrgRound ? props.listHealthOrgRound : []}
                 />
-            </TabPanel>
-            <TabPanel value={value} index={1} color="#ffffff">
-                <EQAResultReportEcliaFileAttachment
-                    t={t}
-                    useStyles={useStyles}
-                    item={props.item ? props.item : {}}
-                    isRoleAdmin={props.isRoleAdmin} />
-            </TabPanel>
+            {/* </TabPanel> */}
+    
         </div>
     )
 }

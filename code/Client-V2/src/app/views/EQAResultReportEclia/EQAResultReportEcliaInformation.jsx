@@ -280,18 +280,6 @@ class EQAResultReportElisaInformation extends Component {
     });
   };
 
-  selectTechnician = (technician) => {
-    let {item} = this.state
-    if(item == null){
-      item = {}
-    }
-    if (technician != null && technician.id != null) {
-      item["technician"] = technician
-      this.setState({ item: item }, function () {
-      });
-    }
-  }
-
   selectReagent = (reagent) => {
     let {item} = this.state
     
@@ -602,20 +590,18 @@ class EQAResultReportElisaInformation extends Component {
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
-              <Grid item  lg={3} md={3} sm={12} xs={12}>
-                <AsynchronousAutocomplete label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+              <Grid item lg={3} md={3} sm={12} xs={12}>
+                <TextValidator
                   size="small"
                   variant = "outlined"
-                  disabled={isRoleAdmin }
-                  searchFunction={technicianSearchByPage}
-                  searchObject={technicianSearchObject}
-                  defaultValue={this.state.item?.technician}
-                  value={this.state.item?.technician}
-                  valueTextValidator={this.state.item?.technician}
-                  displayLable={'displayName'}
-                  onSelect={this.selectTechnician}
+                  className="w-100"
+                  label={<span className="font">{t("EQAResultReportElisa.technician")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="technician"
+                  value={technician}
                 />
-              </Grid>
+            </Grid>
 
               <Grid item  lg={4} md={4} sm={12} xs={12}>
                 <AsynchronousAutocomplete
