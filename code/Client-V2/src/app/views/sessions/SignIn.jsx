@@ -135,7 +135,7 @@ class SignIn extends Component {
                         {t("forgot_password")}
                         </Button>
                       </div>
-                    <p class="bold" style={{textAlign: "center", marginBottom: 0}}>Hotline: 034.888.6670</p>
+                    <p class="bold" style={{textAlign: "center", marginBottom: 0}}>Hotline: 0393.876.111</p>
                   </ValidatorForm>
                 </div>
               </Grid>

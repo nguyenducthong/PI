@@ -25,7 +25,6 @@ import Paper from '@material-ui/core/Paper';
 import AsynchronousAutocomplete from "../utilities/AsynchronousAutocomplete";
 import { MuiPickersUtilsProvider, DateTimePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
-import EQAHealthOrg from "./EQAHealthOrg";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../../styles/views/_loadding.scss';
@@ -54,20 +53,15 @@ class EQAHealthOrgEditorDialog extends Component {
     positiveAffirmativeRight: true,
     shouldOpenSearchDialog: false,
     shouldOpenConfirmationDialog: false,
-    qualificationSelect: [],
-    qualification: {}, officerPosion: "", unitCodeOfProgramPEQAS: "",
-    levelHealOrg: [],
-    healthOrgTypeSelect: [],
-    healthOrgType: [],
+    unitCodeOfProgramPEQAS: "",
     administrativeUnit: "",
     fax: "",
     isView: false,
     shouldOpenAdministrativeUnitsPopup: false,
-    level: {}, sampleReceiptDate: new Date(),
+    sampleReceiptDate: new Date(),
     sampleRecipient: "", specifySampleStatus: "", specifyQualification: "",
     isManualSetCode: false,
     hasErrorLever: false,
-    levelId: "",
     loading: false
   };
   handleDateChange = date => {
@@ -77,10 +71,6 @@ class EQAHealthOrgEditorDialog extends Component {
     event.persist();
     if (source === "switch") {
       this.setState({ isActive: event.target.checked });
-      return;
-    }
-    if (source === "isManagementUnit") {
-      this.setState({ isManagementUnit: event.target.checked });
       return;
     }
 
@@ -108,30 +98,6 @@ class EQAHealthOrgEditorDialog extends Component {
       this.setState({ administrativeUnit });
       this.handleChangeAdministrativeUnitPopupClose();
     }
-  }
-  handleChangeQualification = (event, source) => {
-    let { qualificationSelect } = this.state;
-    this.setState({
-      qualification: qualificationSelect.find(item => item.id == event.target.value),
-      qualificationId: event.target.value
-    })
-  }
-
-  handleChangelevel = (event, source) => {
-    let { levelHealOrg } = this.state;
-    this.setState({
-      level: levelHealOrg.find(item => item.id == event.target.value),
-      levelId: event.target.value,
-      hasErrorLever: false
-    })
-  }
-
-  handleChangeType = (event, source) => {
-    let { healthOrgTypeSelect } = this.state;
-    this.setState({
-      healthOrgType: healthOrgTypeSelect.find(item => item.id == event.target.value),
-      healthOrgTypeId: event.target.value
-    })
   }
 
   handleFormSubmit = () => {
@@ -254,32 +220,11 @@ class EQAHealthOrgEditorDialog extends Component {
     this.setState({
       ...this.props.item, isHealthOrg: isHealthOrg
     }, function () {
-      // let { qualification, level, healthOrgType } = this.state;
-      // if (healthOrgType != null && healthOrgType.id != null) {
-      //   this.setState({ healthOrgTypeId: healthOrgType.id })
-      // }
-      // if (qualification != null && qualification.id != null) {
-      //   this.setState({ qualificationId: qualification.id })
-      // }
-
-      // if (level != null && level.id != null) {
-      //   this.setState({ levelId: level.id })
-      // }
+  
     }
     );
   }
   componentDidMount() {
-
-    // getAllQualifications().then((data) => {
-    //   let qualificationSelect = data.data;
-    //   this.setState({ qualificationSelect: qualificationSelect });
-    // });
-
-
-    // getAllEQAhealthOrgLevels().then((data) => {
-    //   let levelHealOrg = data.data;
-    //   this.setState({ levelHealOrg: levelHealOrg })
-    // });
     ValidatorForm.addValidationRule("isLengthNumber", value => {
       if (value.length > 10) {
         return false;
@@ -319,7 +264,6 @@ class EQAHealthOrgEditorDialog extends Component {
       contactPhone, 
       administrativeUnit,
       email, officerPosion, unitCodeOfProgramPEQAS, fax,
-       healthOrgType, healthOrgTypeId,
      sampleRecipient, specifySampleStatus, specifyLevel, taxCodeOfTheUnit,
       loading, positiveAffirmativeRight, specifyQualification
     } = this.state;
@@ -346,28 +290,7 @@ class EQAHealthOrgEditorDialog extends Component {
         }}>
           <DialogContent dividers>
             <Grid className="" container spacing={2}>
-              {/* <Grid item lg={4} md={4} sm={12} xs={12}>
-                <AsynchronousAutocomplete
-                  label={
-                    <span className="font">
-                      <span style={{ color: "red" }}> * </span>
-                      {t("EQAHealthOrg.HealthOrgType")}
-                    </span>
-                  }
-                  size="small"
-                  searchFunction={getAllHealthOrgType}
-                  searchObject={searchObject}
-                  defaultValue={healthOrgType}
-                  value={healthOrgType}
-                  displayLable={'name'}
-                  valueTextValidator={healthOrgType}
-                  onSelect={this.handleSelectHealthOrgType}
-                  validators={["required"]}
-                  errorMessages={[t("general.errorMessages_required")]}
-                  variant="outlined"
-                  size="small"
-                />
-              </Grid> */}
+            
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator
                   className="w-100 "
@@ -436,7 +359,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   size="small"
                 />
               </Grid>
-
+{/* 
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <FormControlLabel
                   variant="outlined"
@@ -450,7 +373,7 @@ class EQAHealthOrgEditorDialog extends Component {
                   />}
                 />
        
-              </Grid>
+              </Grid> */}
               <Grid item lg={4} md={4} sm={12} xs={12}>
                 <TextValidator
                   size="small"

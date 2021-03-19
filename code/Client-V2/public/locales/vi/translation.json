@@ -42,6 +42,7 @@
   "Delete": "Xóa",
   "mess_code": "Mã đã được sử dụng, Vui Lòng chọn mã khác",
   "mess_edit": "Sửa thành công",
+  "mess_update": "Cập nhật thành công",
   "mess_add": "Thêm thành công",
   "update":"Cập nhật",
   "mess_add_error": "Có lỗi xảy ra khi thêm mới",
@@ -387,7 +388,7 @@
       "title": "Cập nhật đơn vị"
     },
     "levelHealOrg": "Cấp độ phòng xét nghiệm",
-    "specifyLevel": "Cấp độ phòng xét nghiệm khác(nếu có)",
+    "specifyLevel": "Cấp độ phòng xét nghiệm(nếu có)",
     "testurpose1": "Mục đích 1",
     "testurpose2": "Mục đích 2",
     "testurpose3": "Mục đích 3",

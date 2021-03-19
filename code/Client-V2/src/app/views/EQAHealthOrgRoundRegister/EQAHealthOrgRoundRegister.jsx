@@ -992,14 +992,14 @@ class EQAHealthOrgRoundRegister extends React.Component {
             >
               {t("general.update")}
             </Button>
-            <Button
+            {/* <Button
               className="mb-16 mr-16 align-bottom"
               variant="contained"
               color="primary"
               onClick={this.handleExportExcel}
             >
               {t("exportExcel")}
-            </Button>
+            </Button> */}
 
             <Button
               className="mb-16 align-bottom"

@@ -162,7 +162,6 @@ class EQASampleEditorDialog extends Component {
                                     ...this.state.item
                                 }).then((response) => {
                                     if(response.data != null && response.status == 200){
-                                        item.personnel = response.data.personnel.id
                                         this.setState({...item})
                                         toast.success(t('mess_edit'));
                                     }
@@ -181,7 +180,6 @@ class EQASampleEditorDialog extends Component {
                             }).then((response) => {
                                 if(response.data != null && response.status == 200){
                                     item.id = response.data.id
-                                    item.personnel = response.data.personnel.id
                                     this.setState({...item})
                                     toast.success(t('mess_add'));
                                 }
@@ -201,7 +199,6 @@ class EQASampleEditorDialog extends Component {
                             ...this.state.item
                         }).then((response) => {
                             if(response.data != null && response.status == 200){
-                                item.personnel = response.data.personnel.id
                                 this.setState({...item})
                                 toast.success(t('mess_edit'));
                             }
@@ -220,7 +217,6 @@ class EQASampleEditorDialog extends Component {
                         // this.props.handleOKEditClose();
                         if(response.data != null && response.status == 200){
                             item.id = response.data.id
-                            item.personnel = response.data.personnel.id
                             this.setState({...item})
                             toast.success(t('mess_add'));
                         }

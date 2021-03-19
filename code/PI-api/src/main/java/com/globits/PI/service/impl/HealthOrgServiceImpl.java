@@ -184,7 +184,6 @@ public class HealthOrgServiceImpl extends GenericServiceImpl<HealthOrg, UUID> im
 			
 			if (entity == null) {
 				entity = new HealthOrg();
-				// importExcel thì dto.getHealthOrgCode() != null
 				if (dto.getIsManualSetCode() != null && dto.getIsManualSetCode() == true) {
 					String code = dto.getCode();
 					code=code.replace("s", "").replace("S", "").replace("-", "").replace(" ", "");

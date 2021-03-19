@@ -132,7 +132,6 @@ class ReagentInformation extends Component {
 
 
   componentWillMount() {
-    //getUserById(this.props.uid).then(data => this.setState({ ...data.data }));
     let { open, handleClose, item } = this.props;
     if (item == null) {
       item = {}
@@ -404,7 +403,7 @@ class ReagentInformation extends Component {
             </FormControl>
           </Grid>
 
-          <Grid item lg={6} md={6} sm={12} xs={12}>
+          {/* <Grid item lg={6} md={6} sm={12} xs={12}>
             <FormControlLabel
               variant="outlined"
               size="small"
@@ -417,7 +416,7 @@ class ReagentInformation extends Component {
               />}
               label={<span className="font">{t("reagent.healthDepartmentDirectory")}</span>}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </React.Fragment>
     );

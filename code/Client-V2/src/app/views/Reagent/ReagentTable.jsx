@@ -450,29 +450,29 @@ class ReagentTable extends Component {
             ""
           )
       },
-      {
-        title: t("reagent.healthDepartmentDirectory"),
-        field: "healthDepartmentDirectory",
-        align: "left",
-        width: "150",
-        headerStyle: {
-          minWidth:"175px",
-          paddingLeft: "10px",
-          paddingRight: "0px",
-        },
-        cellStyle: {
-          minWidth:"175px",
-          paddingLeft: "10px",
-          paddingRight: "0px",
-          textAlign: "center",
-        },
-        render: rowData =>  <Radio name="radSelected" value={rowData.healthDepartmentDirectory} checked={rowData.healthDepartmentDirectory} ></Radio>
-          // rowData.healthDepartmentDirectory ? (
-          //   <Checkbox disabled checked={true}></Checkbox>
-          // ) : (
-          //   <Checkbox disabled checked={false}></Checkbox>
-          // )
-      },
+      // {
+      //   title: t("reagent.healthDepartmentDirectory"),
+      //   field: "healthDepartmentDirectory",
+      //   align: "left",
+      //   width: "150",
+      //   headerStyle: {
+      //     minWidth:"175px",
+      //     paddingLeft: "10px",
+      //     paddingRight: "0px",
+      //   },
+      //   cellStyle: {
+      //     minWidth:"175px",
+      //     paddingLeft: "10px",
+      //     paddingRight: "0px",
+      //     textAlign: "center",
+      //   },
+      //   render: rowData =>  <Radio name="radSelected" value={rowData.healthDepartmentDirectory} checked={rowData.healthDepartmentDirectory} ></Radio>
+      //     // rowData.healthDepartmentDirectory ? (
+      //     //   <Checkbox disabled checked={true}></Checkbox>
+      //     // ) : (
+      //     //   <Checkbox disabled checked={false}></Checkbox>
+      //     // )
+      // },
       
     ];
 
