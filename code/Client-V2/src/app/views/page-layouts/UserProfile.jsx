@@ -37,12 +37,6 @@ import authService from "../../services/jwtAuthService";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { searchByPage as getHealthOrg } from "../EQAHealthOrg/EQAHealthOrgService";
-import {
-  checkEmail,
-  saveItem as saveItemHealthOrg,
-  getItemById,
-} from "../EQAHealthOrg/EQAHealthOrgService";
 import "../../../styles/views/_style.scss";
 const API_PATH = ConstantList.API_ENPOINT + "/api/fileUpload/";
 
@@ -55,44 +49,17 @@ class UserProfile extends Component {
   state = {
     open: true,
     user: {},
-    healthOrg: {},
     shouldOpenImageDialog: false,
     shouldOpenPasswordDialog: false,
-    checkHealthOrg: false,
-    name: "",
-    taxCodeOfTheUnit: "",
-    code: "",
-    specifyTestPurpose: "",
-    address: "",
-    specifyLevel: "",
     positiveAffirmativeRight: true,
     shouldOpenSearchDialog: false,
     shouldOpenConfirmationDialog: false,
-    qualificationSelect: [],
-    qualification: {},
-    officerPosion: "",
-    unitCodeOfProgramPEQAS: "",
-    testpurposeSelect: [],
-    testPurpose1: {},
-    testPurpose2: {},
-    testPurpose3: {},
-    testPurpose4: {},
-    levelHealOrg: [],
-    healthOrgTypeSelect: [],
-    healthOrgType: [],
-    administrativeUnit: "",
-    fax: "",
     isView: false,
     shouldOpenAdministrativeUnitsPopup: false,
     level: {},
     sampleReceiptDate: new Date(),
     sampleRecipient: "",
     specifySampleStatus: "",
-    specifyQualification: "",
-    isManualSetCode: false,
-    hasErrorLever: false,
-    levelId: "",
-    loading: false,
   };
 
   windowResizeListener;
@@ -112,27 +79,9 @@ class UserProfile extends Component {
   };
 
   componentDidMount() {
-    let checkHealthOrg = false;
-    let { healthOrg } = this.state;
+ 
     getCurrentUser().then(({ data }) => {
-      data.roles.forEach((res) => {
-        if (
-          res.name == "ROLE_HEALTH_ORG" &&
-          res.authority == "ROLE_HEALTH_ORG"
-        ) {
-          checkHealthOrg = true;
-        }
-      });
-      if (checkHealthOrg) {
-        getListHealthOrgByUser(data.id).then((listHealthOrg) => {
-          healthOrg = listHealthOrg.data[0];
-          this.setState({ healthOrg: healthOrg }, () => {});
-        });
-      }
-
-      this.setState({ user: data, checkHealthOrg: checkHealthOrg }, () => {
-        // console.log(this.state.user)
-      });
+      this.setState({ user: data }, () => {});
       this.setState({ ...data });
     });
     //let user = localStorageService.getLoginUser();
@@ -145,13 +94,13 @@ class UserProfile extends Component {
           this.setState({ open: false });
         } else this.setState({ open: true });
       });
-    getHealthOrg({ pageSize: 1000000, pageIndex: 0 }).then((res) => {
-      getItemById(res.data.content[0].id).then((data) => {
-        this.setState({
-          ...data.data,
-        });
-      });
-    });
+    // getHealthOrg({ pageSize: 1000000, pageIndex: 0 }).then((res) => {
+    //   getItemById(res.data.content[0].id).then((data) => {
+    //     this.setState({
+    //       ...data.data,
+    //     });
+    //   });
+    // });
   }
   handleChange = (event, source) => {
     event.persist();
@@ -165,7 +114,7 @@ class UserProfile extends Component {
       return;
     }
     if (source === "firstName") {
-      let { person, displayName, healthOrg } = this.state;
+      let { person, displayName } = this.state;
       if (
         this.state.person != null &&
         this.state.person.lastName != null &&
@@ -179,20 +128,16 @@ class UserProfile extends Component {
         displayName = event.target.value + "";
       }
       person = person ? person : {};
-      healthOrg = healthOrg ? healthOrg : {};
       person.firstName = event.target.value;
-      healthOrg.name = displayName;
       this.setState({
-        healthOrg: healthOrg,
         person: person,
         displayName: displayName,
       });
       return;
     }
     if (source === "lastName") {
-      let { person, displayName, healthOrg } = this.state;
+      let { person, displayName } = this.state;
       person = person ? person : {};
-      healthOrg = healthOrg ? healthOrg : {};
       if (
         this.state.person != null &&
         this.state.person.firstName != null &&
@@ -206,9 +151,7 @@ class UserProfile extends Component {
         displayName = "" + event.target.value;
       }
       person.lastName = event.target.value;
-      healthOrg.name = displayName;
       this.setState({
-        healthOrg: healthOrg,
         person: person,
         displayName: displayName,
       });
@@ -284,10 +227,8 @@ class UserProfile extends Component {
       });
   };
   handleFormSubmit = () => {
-    let { id, healthOrg, checkHealthOrg } = this.state;
+    let { id } = this.state;
     let { t } = this.props;
-    // console.log(healthOrg, checkHealthOrg);
-    // this.setState({isView: true});
     if (id) {
       saveOrUpdateUser({
         ...this.state,
@@ -302,50 +243,39 @@ class UserProfile extends Component {
         toast.success(t("mess_add"));
       });
     }
-
-    if (checkHealthOrg && healthOrg != null) {
-      saveItem(healthOrg).then(() => {});
-    }
   };
-  handleFormSubmitAdmin = () => {
-    let {
-      id,
-      code,
-      isManualSetCode,
-      email,
-      hasErrorLever,
-      levelId,
-    } = this.state;
-    let { t } = this.props;
-    this.setState({ loading: true });
+  // handleFormSubmitAdmin = () => {
+  //   let {
+  //     id,
+  //     code,
+  //     isManualSetCode,
+  //     email,
+  //     hasErrorLever,
+  //     levelId,
+  //   } = this.state;
+  //   let { t } = this.props;
+  //   this.setState({ loading: true });
 
-    // if(levelId == "" ){
-    //   this.setState({hasErrorLever: true, loading:false});
-    //   return
-    // }
-    if (email != null) {
-      checkEmail(id, email).then((res) => {
-        if (res.data) {
-          toast.warning(t("sign_up.duplicate_email"));
-          this.setState({ loading: false });
-          return;
-        } else {
-          if (id) {
-            saveItemHealthOrg({
-              ...this.state,
-            }).then(() => {
-              // this.props.handleOKEditClose();
-              this.setState({ loading: false });
-              toast.success(t("mess_edit"));
-            });
-          }
-          // console.log(123);
-        }
-      });
-    }
-
-    // console.log(this.state);
-  };
+  //   if (email != null) {
+  //     checkEmail(id, email).then((res) => {
+  //       if (res.data) {
+  //         toast.warning(t("sign_up.duplicate_email"));
+  //         this.setState({ loading: false });
+  //         return;
+  //       } else {
+  //         if (id) {
+  //           saveItemHealthOrg({
+  //             ...this.state,
+  //           }).then(() => {
+  //             // this.props.handleOKEditClose();
+  //             this.setState({ loading: false });
+  //             toast.success(t("mess_edit"));
+  //           });
+  //         }
+  //       }
+  //     });
+  //   }
+  // };
   render() {
     let {
       open,
@@ -356,7 +286,6 @@ class UserProfile extends Component {
       healthOrg,
       shouldOpenImageDialog,
       shouldOpenPasswordDialog,
-      checkHealthOrg,
       name,
       taxCodeOfTheUnit,
       code,
@@ -371,14 +300,11 @@ class UserProfile extends Component {
     } = this.state;
     let { theme } = this.props;
     let { t, i18n } = this.props;
-    // console.log(checkHealthOrg);
     const genders = [
       { id: "M", name: "Nam" },
       { id: "F", name: "Nữ" },
       { id: "U", name: "Không rõ" },
     ];
-    // console.log(user);
-    //alert('Render');
     return (
       <div className="m-sm-30">
         {this.state.shouldOpenImageDialog && (
@@ -407,7 +333,7 @@ class UserProfile extends Component {
         <div>
           {
             <span className="styleColor">
-              {checkHealthOrg ? t("user.healthOrg") : t("user.person_info")}
+              {t("user.person_info")}
             </span>
           }
         </div>
@@ -437,341 +363,172 @@ class UserProfile extends Component {
             </span>
           }
         </div>
-        {!checkHealthOrg && (
-          <ValidatorForm
-            ref="form"
-            onSubmit={this.handleFormSubmit}
-            style={{
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <div className="m-sm-30" t={t} i18n={i18n}>
-              <Grid className="mb-8 mt-8" container spacing={3}>
-                <Grid item item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    id="standard-basic"
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("user.firstName")}
-                      </span>
-                    }
-                    value={
-                      this.state.person != null
-                        ? this.state.person.firstName
-                        : ""
-                    }
-                    onChange={(firstName) =>
-                      this.handleChange(firstName, "firstName")
-                    }
-                    size="small"
-                    variant="outlined"
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    className="w-100"
-                  />
-                </Grid>
-
-                <Grid item item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    id="standard-basic"
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("user.lastName")}
-                      </span>
-                    }
-                    size="small"
-                    variant="outlined"
-                    value={
-                      this.state.person != null
-                        ? this.state.person.lastName
-                        : ""
-                    }
-                    onChange={(lastName) =>
-                      this.handleChange(lastName, "lastName")
-                    }
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    className="w-100"
-                  />
-                </Grid>
-
-                <Grid item item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    id="standard-basic"
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("user.displayName")}
-                      </span>
-                    }
-                    size="small"
-                    variant="outlined"
-                    value={
-                      this.state.displayName != null
-                        ? this.state.displayName
-                        : ""
-                    }
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    className="w-100"
-                  />
-                </Grid>
+        <ValidatorForm
+          ref="form"
+          onSubmit={this.handleFormSubmit}
+          style={{
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div className="m-sm-30" t={t} i18n={i18n}>
+            <Grid className="mb-8 mt-8" container spacing={3}>
+              <Grid item item lg={4} md={4} sm={12} xs={12}>
+                <TextValidator
+                  id="standard-basic"
+                  label={
+                    <span className="font">
+                      <span style={{ color: "red" }}> * </span>
+                      {t("user.firstName")}
+                    </span>
+                  }
+                  value={
+                    this.state.person != null
+                      ? this.state.person.firstName
+                      : ""
+                  }
+                  onChange={(firstName) =>
+                    this.handleChange(firstName, "firstName")
+                  }
+                  size="small"
+                  variant="outlined"
+                  validators={["required"]}
+                  errorMessages={[t("general.errorMessages_required")]}
+                  className="w-100"
+                />
               </Grid>
 
-              <Grid className="mb-10" container spacing={3}>
-                {/* <Grid item md={4} sm={12} xs={12}>
-            <FormControl fullWidth={true}>
-              <TextField id="standard-basic"  label={t('user.email')} value={this.state.email != null ? user.email : ''} 
-                onChange={this.handleChange}
-              />
-            </FormControl>
-          </Grid> */}
-
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100"
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("user.email")}
-                      </span>
-                    }
-                    size="small"
-                    variant="outlined"
-                    onChange={this.handleChange}
-                    type="text"
-                    name="email"
-                    value={this.state.email ? this.state.email : ""}
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                  />
-                </Grid>
-
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100"
-                    size="small"
-                    variant="outlined"
-                    label={<span className="font">{t("user.username")}</span>}
-                    onChange={this.handleChange}
-                    type="text"
-                    name="username"
-                    value={this.state.username ? this.state.username : ""}
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    disabled
-                  />
-                </Grid>
-
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <FormControl fullWidth={true} size="small" variant="outlined">
-                    <InputLabel htmlFor="gender-simple">
-                      {<span className="font">{t("user.gender")}</span>}
-                    </InputLabel>
-                    <Select
-                      value={this.state.person ? this.state.person.gender : ""}
-                      onChange={(gender) => this.handleChange(gender, "gender")}
-                      inputProps={{
-                        name: "gender",
-                        id: "gender-simple",
-                      }}
-                    >
-                      {genders.map((item) => {
-                        return (
-                          <MenuItem key={item.id} value={item.id}>
-                            {item.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Grid>
+              <Grid item item lg={4} md={4} sm={12} xs={12}>
+                <TextValidator
+                  id="standard-basic"
+                  label={
+                    <span className="font">
+                      <span style={{ color: "red" }}> * </span>
+                      {t("user.lastName")}
+                    </span>
+                  }
+                  size="small"
+                  variant="outlined"
+                  value={
+                    this.state.person != null
+                      ? this.state.person.lastName
+                      : ""
+                  }
+                  onChange={(lastName) =>
+                    this.handleChange(lastName, "lastName")
+                  }
+                  validators={["required"]}
+                  errorMessages={[t("general.errorMessages_required")]}
+                  className="w-100"
+                />
               </Grid>
 
-              <Grid className="mb-10" style={{ textAlign: "right" }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  className="mr-16"
-                >
-                  {t("general.update")}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  onClick={() => this.openPasswordDialog()}
-                >
-                  {t("user.changePass")}
-                </Button>
+              <Grid item item lg={4} md={4} sm={12} xs={12}>
+                <TextValidator
+                  id="standard-basic"
+                  label={
+                    <span className="font">
+                      <span style={{ color: "red" }}> * </span>
+                      {t("user.displayName")}
+                    </span>
+                  }
+                  size="small"
+                  variant="outlined"
+                  value={
+                    this.state.displayName != null
+                      ? this.state.displayName
+                      : ""
+                  }
+                  validators={["required"]}
+                  errorMessages={[t("general.errorMessages_required")]}
+                  className="w-100"
+                />
               </Grid>
-            </div>
-          </ValidatorForm>
-        )}
-        {checkHealthOrg && (
-          <div>
-            <ValidatorForm ref="form" onSubmit={this.handleFormSubmitAdmin}>
-              <Grid className="" container spacing={2}>
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("EQAHealthOrg.Name")}
-                      </span>
-                    }
-                    onChange={this.handleChange}
-                    type="text"
-                    name="name"
-                    value={name}
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
-                <Grid item lg={4} md={4} sm={6} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">{t("EQAHealthOrg.Code")}</span>
-                    }
-                    onChange={this.handleChange}
-                    disabled={!isManualSetCode}
-                    type="text"
-                    name="code"
-                    value={code}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("EQAHealthOrg.Address")}
-                      </span>
-                    }
-                    onChange={this.handleChange}
-                    type="text"
-                    name="address"
-                    value={address}
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
+            </Grid>
 
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">
-                        {t("EQAHealthOrg.contactPhone")}
-                      </span>
-                    }
-                    onChange={this.handleChange}
-                    type="number"
-                    name="contactPhone"
-                    value={contactPhone ? contactPhone : ""}
-                    variant="outlined"
-                    size="small"
-                    // validators={[ "matchRegexp:^[0-9]*$", "isLengthNumber"]}
-                    // errorMessages={[ t("general.errorMessages_phone_number_invalid"),
-                    // t("general.errorMessages_phone_number_invalid")]}
-                  />
-                </Grid>
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">
-                        <span style={{ color: "red" }}> * </span>
-                        {t("EQAHealthOrg.email")}
-                      </span>
-                    }
-                    onChange={this.handleChange}
-                    type="text"
-                    name="email"
-                    value={email ? email : ""}
-                    validators={["required", "isEmail"]}
-                    errorMessages={[
-                      t("general.errorMessages_required"),
-                      t("general.errorMessages_email_valid"),
-                    ]}
-                    variant="outlined"
-                    size="small"
-                  />
-                </Grid>
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <TextValidator
-                    className="w-100 "
-                    label={
-                      <span className="font">
-                        {t("EQAHealthOrg.ContactName")}
-                      </span>
-                    }
-                    onChange={this.handleChange}
-                    type="text"
-                    name="contactName"
-                    value={contactName ? contactName : ""}
-                    variant="outlined"
-                    size="small"
-                    validators={["required"]}
-                    errorMessages={[t("general.errorMessages_required")]}
-                  />
-                </Grid>
-                <Grid item lg={4} md={4} sm={12} xs={12}>
-                  <FormControlLabel
-                    disabled
-                    variant="outlined"
-                    size="small"
-                    label={
-                      <span style={{ fontSize: "115%" }} className="font">
-                        {t("EQAHealthOrg.positiveAffirmativeRight")}
-                      </span>
-                    }
-                    control={
-                      <Checkbox
-                        checked={positiveAffirmativeRight}
-                        onChange={
-                          (positiveAffirmativeRight) =>
-                            this.handleChange(
-                              positiveAffirmativeRight,
-                              "positiveAffirmativeRight"
-                            )
-                          // this.handleChange(isFinalResult, 'isFinalResult')
-                        }
-                      />
-                    }
-                  />
-                </Grid>
+            <Grid className="mb-10" container spacing={3}>
+              <Grid item lg={4} md={4} sm={12} xs={12}>
+                <TextValidator
+                  className="w-100"
+                  label={
+                    <span className="font">
+                      <span style={{ color: "red" }}> * </span>
+                      {t("user.email")}
+                    </span>
+                  }
+                  size="small"
+                  variant="outlined"
+                  onChange={this.handleChange}
+                  type="text"
+                  name="email"
+                  value={this.state.email ? this.state.email : ""}
+                  validators={["required"]}
+                  errorMessages={[t("general.errorMessages_required")]}
+                />
               </Grid>
-              <Grid className="flex flex-end flex-middle" container spacing={4}>
-                <Button variant="contained" color="primary" type="submit" className="mr-16">
-                  {t("update")}
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  type="button"
-                  onClick={() => this.openPasswordDialog()}
-                >
-                  {t("user.changePass")}
-                </Button>
+
+              <Grid item lg={4} md={4} sm={12} xs={12}>
+                <TextValidator
+                  className="w-100"
+                  size="small"
+                  variant="outlined"
+                  label={<span className="font">{t("user.username")}</span>}
+                  onChange={this.handleChange}
+                  type="text"
+                  name="username"
+                  value={this.state.username ? this.state.username : ""}
+                  validators={["required"]}
+                  errorMessages={[t("general.errorMessages_required")]}
+                  disabled
+                />
               </Grid>
-            </ValidatorForm>
+
+              <Grid item lg={4} md={4} sm={12} xs={12}>
+                <FormControl fullWidth={true} size="small" variant="outlined">
+                  <InputLabel htmlFor="gender-simple">
+                    {<span className="font">{t("user.gender")}</span>}
+                  </InputLabel>
+                  <Select
+                    value={this.state.person ? this.state.person.gender : ""}
+                    onChange={(gender) => this.handleChange(gender, "gender")}
+                    inputProps={{
+                      name: "gender",
+                      id: "gender-simple",
+                    }}
+                  >
+                    {genders.map((item) => {
+                      return (
+                        <MenuItem key={item.id} value={item.id}>
+                          {item.name}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+
+            <Grid className="mb-10" style={{ textAlign: "right" }}>
+              <Button
+                variant="contained"
+                color="primary"
+                type="submit"
+                className="mr-16"
+              >
+                {t("general.update")}
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                type="button"
+                onClick={() => this.openPasswordDialog()}
+              >
+                {t("user.changePass")}
+              </Button>
+            </Grid>
           </div>
-        )}
+        </ValidatorForm>
       </div>
     );
   }

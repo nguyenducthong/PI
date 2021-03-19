@@ -1281,3 +1281,75 @@
 2021-03-15 00:52:47,239 [Stop Help Server] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@298838bf{HTTP/1.1, (http/1.1)}{127.0.0.1:0}
 2021-03-15 00:52:47,240 [Stop Help Server] INFO  org.eclipse.jetty.server.session - node0 Stopped scavenging
 2021-03-15 00:52:47,261 [Stop Help Server] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@657f7c2c{/help,null,UNAVAILABLE}
+2021-03-16 07:15:22,234 [Worker-2: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is out-of-date. Trying to update.
+2021-03-16 07:49:06,820 [Start Help Server] INFO  org.eclipse.jetty.util.log - Logging initialized @2069091ms to org.eclipse.jetty.util.log.Slf4jLog
+2021-03-16 07:49:07,195 [Start Help Server] INFO  org.eclipse.jetty.server.Server - jetty-9.4.27.v20200227; built: 2020-03-02T14:40:42.212Z; git: a304fd9f351f337e7c0e2a7c28878dd536149c6c; jvm 1.8.0_265-b01
+2021-03-16 07:49:07,220 [Start Help Server] INFO  org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2021-03-16 07:49:07,220 [Start Help Server] INFO  org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2021-03-16 07:49:07,222 [Start Help Server] INFO  org.eclipse.jetty.server.session - node0 Scavenging every 600000ms
+2021-03-16 07:49:07,267 [Start Help Server] INFO  o.e.j.server.handler.ContextHandler - Started o.e.j.s.ServletContextHandler@2b6391ee{/help,null,AVAILABLE}
+2021-03-16 07:49:07,303 [Start Help Server] INFO  o.e.jetty.server.AbstractConnector - Started ServerConnector@5a2af00{HTTP/1.1, (http/1.1)}{127.0.0.1:50412}
+2021-03-16 07:49:07,304 [Start Help Server] INFO  org.eclipse.jetty.server.Server - Started @2069579ms
+2021-03-16 07:49:07,304 [Start Help Server] INFO  org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2021-03-16 07:49:19,741 [Worker-14: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-16 07:49:24,604 [Worker-14: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier null to /PI-api/target/classes
+2021-03-16 09:22:11,830 [Worker-39: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier null to /PI-api/target/classes
+2021-03-16 11:02:04,964 [Stop Help Server] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@5a2af00{HTTP/1.1, (http/1.1)}{127.0.0.1:0}
+2021-03-16 11:02:04,968 [Stop Help Server] INFO  org.eclipse.jetty.server.session - node0 Stopped scavenging
+2021-03-16 11:02:05,045 [Stop Help Server] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@2b6391ee{/help,null,UNAVAILABLE}
+2021-03-19 22:59:31,530 [Worker-1: Loading available Gradle versions] INFO  o.e.b.c.i.u.g.PublishedGradleVersions - Gradle version information cache is up-to-date. Trying to read.
+2021-03-19 23:22:35,003 [Worker-19: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:22:40,271 [Worker-19: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier null to /PI-api/target/classes
+2021-03-19 23:31:27,879 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-app\src\main\java added.
+2021-03-19 23:31:28,389 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:31:28,397 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2021-03-19 23:31:28,449 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 6 resources
+2021-03-19 23:31:28,456 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:31:28,456 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-app\src\test\resources
+2021-03-19 23:31:37,494 [Worker-23: Building] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:31:37,806 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-keycloak-app\src\main\java added.
+2021-03-19 23:31:37,811 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:31:37,812 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2021-03-19 23:31:37,829 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2021-03-19 23:31:37,869 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:31:37,869 [Worker-23: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-keycloak-app\src\test\resources
+2021-03-19 23:34:56,710 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update started
+2021-03-19 23:35:06,385 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using NULL lifecycle mapping for MavenProject: com.globits:PI:1.0.0-SNAPSHOT @ E:\DoAnTotNghiep\code\pom.xml.
+2021-03-19 23:35:10,433 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.globits:PI-api:1.0.0-SNAPSHOT @ E:\DoAnTotNghiep\code\PI-api\pom.xml.
+2021-03-19 23:35:12,759 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.globits:PI-app:1.0.0-SNAPSHOT @ E:\DoAnTotNghiep\code\PI-app\pom.xml.
+2021-03-19 23:35:13,664 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:35:15,158 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: com.globits:PI-keycloak-app:1.0.0-SNAPSHOT @ E:\DoAnTotNghiep\code\PI-keycloak-app\pom.xml.
+2021-03-19 23:35:15,798 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:35:23,828 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-api/src/main/java
+2021-03-19 23:35:23,829 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-api/src/test/java
+2021-03-19 23:35:24,643 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-app\src\main\java added.
+2021-03-19 23:35:24,648 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-app/src/main/java
+2021-03-19 23:35:24,648 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /PI-app/src/main/resources
+2021-03-19 23:35:24,649 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /PI-app/src/main/resources
+2021-03-19 23:35:24,649 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-app/src/test/java
+2021-03-19 23:35:25,039 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-keycloak-app\src\main\java added.
+2021-03-19 23:35:25,042 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-keycloak-app/src/main/java
+2021-03-19 23:35:25,044 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /PI-keycloak-app/src/main/resources
+2021-03-19 23:35:25,045 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding resource folder /PI-keycloak-app/src/main/resources
+2021-03-19 23:35:25,047 [Worker-21: Updating Maven Project] INFO  o.e.m.j.i.AbstractJavaProjectConfigurator - Adding source folder /PI-keycloak-app/src/test/java
+2021-03-19 23:35:26,555 [Worker-21: Updating Maven Project] INFO  o.e.m.c.i.p.ProjectConfigurationManager - Update completed: 29 sec
+2021-03-19 23:35:32,885 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:32,886 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-api\src\main\resources
+2021-03-19 23:35:32,886 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-api\src\main\resources
+2021-03-19 23:35:32,890 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:32,890 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-api\src\test\resources
+2021-03-19 23:35:34,735 [Worker-27: Building] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:35:34,916 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-app\src\main\java added.
+2021-03-19 23:35:34,926 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:34,930 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2021-03-19 23:35:34,974 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 6 resources
+2021-03-19 23:35:35,113 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:35,113 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-app\src\test\resources
+2021-03-19 23:35:37,333 [Worker-27: Building] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier  to /PI-api/target/classes
+2021-03-19 23:35:37,613 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Source directory: E:\DoAnTotNghiep\code\PI-keycloak-app\src\main\java added.
+2021-03-19 23:35:37,616 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:37,617 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2021-03-19 23:35:37,621 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 2 resources
+2021-03-19 23:35:37,632 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - Using 'UTF-8' encoding to copy filtered resources.
+2021-03-19 23:35:37,632 [Worker-27: Building] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory E:\DoAnTotNghiep\code\PI-keycloak-app\src\test\resources
+2021-03-19 23:37:16,728 [Worker-21: Launching PIApplication] INFO  o.e.m.c.i.p.WorkspaceClassifierResolverManager - Resolving P/PI-api: com.globits:PI-api:1.0.0-SNAPSHOT with classifier null to /PI-api/target/classes
