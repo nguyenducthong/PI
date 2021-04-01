@@ -70,7 +70,7 @@ NumberFormatCustom.propTypes = {
 class EQAPlanningDialog extends Component {
   constructor(props) {
     super(props);
- 
+
   }
   state = {
     name: "",
@@ -124,48 +124,20 @@ class EQAPlanningDialog extends Component {
     let { id, code, personnel, isManualSetCode } = this.state;
 
     let { t } = this.props;
-    if (personnel != "") {
-        if (isManualSetCode) {
-          checkCode(id, code).then(res => {
-            if (res.data) {
-              toast.warning(t("EQAPlanning.duplicateCode"));
-            } else {
-              if (id) {
-                this.setState({ isView: true });
-                updateEQAPlanning({
-                  ...this.state
-                }).then((response) => {
-                  this.state.id = response?.data?.id;
-                  this.setState({ ...this.state, isView: false })
-                  // this.props.handleClose();
-                  toast.success(t('mess_edit'));
-                }).catch(() => {
-                  this.setState({ isView: false });
-                });
-              } else {
-                this.setState({ isView: true });
-                addNewEQAPlanning({
-                  ...this.state
-                }).then((response) => {
-                  // this.props.handleClose();
-                  this.state.id = response?.data?.id;
-                  this.setState({ ...this.state, isView: false })
-                  toast.success(t('mess_add'));
-                }).catch(() => {
-                  this.setState({ isView: false })
-                });
-              }
-            }
-          })
+
+    if (isManualSetCode) {
+      checkCode(id, code).then(res => {
+        if (res.data) {
+          toast.warning(t("EQAPlanning.duplicateCode"));
         } else {
           if (id) {
             this.setState({ isView: true });
             updateEQAPlanning({
               ...this.state
             }).then((response) => {
-              // this.props.handleClose();
               this.state.id = response?.data?.id;
               this.setState({ ...this.state, isView: false })
+              // this.props.handleClose();
               toast.success(t('mess_edit'));
             }).catch(() => {
               this.setState({ isView: false });
@@ -180,40 +152,103 @@ class EQAPlanningDialog extends Component {
               this.setState({ ...this.state, isView: false })
               toast.success(t('mess_add'));
             }).catch(() => {
-              this.setState({ isView: false });
+              this.setState({ isView: false })
             });
           }
         }
+      })
     } else {
-      this.setState({  isView: false })
+      if (id) {
+        this.setState({ isView: true });
+        updateEQAPlanning({
+          ...this.state
+        }).then((response) => {
+          // this.props.handleClose();
+          this.state.id = response?.data?.id;
+          this.setState({ ...this.state, isView: false })
+          toast.success(t('mess_edit'));
+        }).catch(() => {
+          this.setState({ isView: false });
+        });
+      } else {
+        this.setState({ isView: true });
+        addNewEQAPlanning({
+          ...this.state
+        }).then((response) => {
+          // this.props.handleClose();
+          this.state.id = response?.data?.id;
+          this.setState({ ...this.state, isView: false })
+          toast.success(t('mess_add'));
+        }).catch(() => {
+          this.setState({ isView: false });
+        });
+      }
     }
   };
- 
 
-  handleStartDateChange = (event) => {
+
+  handleStartDateChange = (event, source) => {
     if (event != null) {
       event.setHours("00");
       event.setMinutes("00");
       event.setSeconds("00");
     }
+    // if (source === 'startDate') {
+    //   if (this.state.endDate != null) {
+    //     try {
+    //       if (event != null) {
+    //         let date = event.getTime() - this.state.endDate.getTime();
+    //         if (date > 0) {
+    //           toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+    //           return
+    //         }
+    //       }
+    //     } catch (error) {
+    //       let date = event.getTime() - this.state.endDate;
+    //       if (date > 0) {
+    //         toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+    //         return
+    //       }
+    //     }
+    //   }
+    // }
     this.setState({ startDate: event });
-    ;
+  
   };
 
-  handleEndDateChange = (event) => {
+  handleEndDateChange = (event, source) => {
     if (event != null) {
       event.setHours("23");
       event.setMinutes("59");
       event.setSeconds("00");
+    }
+    if (source === 'endDate') {
+      if (this.state.startDate != null) {
+        try {
+          if (event != null) {
+            let date = event.getTime() - this.state.startDate.getTime();
+            if (date < 0) {
+              toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+              return
+            }
+          }
+        } catch (error) {
+          let date = event.getTime() - this.state.startDate;
+          if (date < 0) {
+            toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+            return
+          }
+        }
+      }
     }
     this.setState({ endDate: event });
   };
 
   componentWillMount() {
     let { open, handleClose, item } = this.props;
-    
-    this.setState({...this.props.item}, function () {
-   
+
+    this.setState({ ...this.props.item }, function () {
+
     });
   }
 
@@ -378,7 +413,7 @@ class EQAPlanningDialog extends Component {
                     format="dd/MM/yyyy"
                     invalidDateMessage={t("Invalid_Date_Format")}
                     value={startDate}
-                    onChange={event => this.handleStartDateChange(event)}
+                    onChange={event => this.handleStartDateChange(event, 'startDate')}
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
@@ -401,12 +436,12 @@ class EQAPlanningDialog extends Component {
                     format="dd/MM/yyyy"
                     invalidDateMessage={t("Invalid_Date_Format")}
                     value={endDate}
-                    onChange={event => this.handleEndDateChange(event)}
+                    onChange={event => this.handleEndDateChange(event, 'endDate')}
                   // fullWidth
                   />
                 </MuiPickersUtilsProvider>
               </Grid>
-              <Grid item lg={4} md={4} sm={6} xs={12}>
+              {/* <Grid item lg={4} md={4} sm={6} xs={12}>
                 <TextValidator
                   className="w-100"
                   label={
@@ -420,11 +455,9 @@ class EQAPlanningDialog extends Component {
                   value={personnel}
                   variant="outlined"
                   size="small"
-                  // validators={["required"]}
-                  // errorMessages={[t("general.errorMessages_required")]}
                   
                 />
-              </Grid>
+              </Grid> */}
             </Grid>
           </DialogContent>
 

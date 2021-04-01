@@ -74,7 +74,7 @@ class ReagentEditorDialog extends Component {
       item["hasTestType"]=true
       this.setState({ item: item });
     } else {
-      this.setState({ isView: true });
+      // this.setState({ isView: true });
       checkCode(id, item.code).then((result) => {
         //Nếu trả về true là code đã được sử dụng
         if (result.data) {

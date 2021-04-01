@@ -82,4 +82,10 @@ public class RestEQASampleController {
 		return new ResponseEntity<List<EQASampleDto>>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
 	}
 
+	@Secured({Constants.ROLE_ADMIN,"ROLE_STUDENT_MANAGERMENT", PIConst.ROLE_STAFF,PIConst.ROLE_SAMPLE_ADMIN})
+	@RequestMapping(value = "countByRoundId/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Integer> countByRoundId(@PathVariable("id") String id) {
+		Integer result = service.countByRoundId(UUID.fromString(id));
+		return new ResponseEntity<Integer>(result, (result != null) ? HttpStatus.OK : HttpStatus.BAD_REQUEST);
+	}
 }

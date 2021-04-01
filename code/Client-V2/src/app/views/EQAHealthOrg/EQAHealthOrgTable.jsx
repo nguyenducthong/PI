@@ -52,13 +52,13 @@ function MaterialButton(props) {
   const item = props.item;
   return (
     <div>
-      {!props.isHealthOrg && (
+      {/* {!props.isHealthOrg && (
         <IconButton size="small" onClick={() => props.onSelect(item, 0)}>
           <Icon fontSize="small" color="primary">
             add
           </Icon>
         </IconButton>
-      )}
+      )} */}
       <IconButton size="small" onClick={() => props.onSelect(item, 1)}>
         <Icon fontSize="small" color="primary">
           edit

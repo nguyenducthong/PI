@@ -423,7 +423,7 @@ class EQAHealthOrgRoundRegisterEditorMultipleDialog extends Component {
                   />
                 </Grid>
               )}
-              {eqaRoundId != "" && round != null && sampleSet != null && sampleSet != "" && (
+              {/* {eqaRoundId != "" && round != null && sampleSet != null && sampleSet != "" && (
                 <Grid item lg={4} md={4} sm={12} xs={12}>
                   <FormControlLabel
                     label={<span className="font">{t('EQAHealthOrgRoundRegister.sendMore')}</span>}
@@ -435,7 +435,7 @@ class EQAHealthOrgRoundRegisterEditorMultipleDialog extends Component {
 
                   />
                 </Grid>
-              )}
+              )} */}
               {/* </Grid> */}
 
               <Grid item lg={4} md={4} sm={12} xs={12}>

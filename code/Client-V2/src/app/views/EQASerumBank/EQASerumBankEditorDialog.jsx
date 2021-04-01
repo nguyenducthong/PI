@@ -95,6 +95,14 @@ class EQASerumBankEditorDialog extends Component {
       this.setState({ isManualSetCode: event.target.checked })
     }
 
+    if(source === "numberBottle"){
+      if(this.state.originalVolume != 0 ){
+        let volume = this.state.originalVolume / event.target.value
+        console.log(volume)
+        this.setState({ bottleVolume: volume})
+      }
+    }
+
     this.setState({
       [event.target.name]: event.target.value
     });
@@ -110,20 +118,26 @@ class EQASerumBankEditorDialog extends Component {
 
   handleDivideToBottle = () => {
     let serumBottles = [];
-    let { numberBottle } = this.state;
-    for (let i = 0; i < numberBottle; i++) {
-      serumBottles.push({
-        code:
-          this.state.serumCode != ""
-            ? this.state.serumCode + "-" + i + 1
-            : i + 1,
-        hivStatus: this.state.hivStatus,
-        bottleQuality: this.state.bottleQuality,
-        bottleVolume: this.state.bottleVolume,
-        localSaveBottle: this.state.localSaveBottle,
-        note: this.state.noteBottle
-      });
+    let { numberBottle, localSaveBottle } = this.state;
+    console.log(localSaveBottle);
+    if(typeof localSaveBottle != "undefined"){
+      for (let i = 0; i < numberBottle; i++) {
+        serumBottles.push({
+          code:
+            this.state.serumCode != ""
+              ? this.state.serumCode + "-" + i + 1
+              : i + 1,
+          hivStatus: this.state.hivStatus,
+          bottleQuality: this.state.bottleQuality,
+          bottleVolume: this.state.bottleVolume,
+          localSaveBottle: this.state.localSaveBottle,
+          note: this.state.noteBottle
+        });
+      }
+    }else{
+      toast.warning("Bạnh cần nhập vị trí lưu ống")
     }
+    
     this.setState({
       serumBottles: serumBottles, numberBottlesRemaining: numberBottle
     });
@@ -832,7 +846,7 @@ class EQASerumBankEditorDialog extends Component {
                       </span>
                       }
                       size="small"
-                      onChange={this.handleChange}
+                      onChange={event => this.handleChange(event, "numberBottle")}
                       type="number"
                       variant="outlined"
                       name="numberBottle"
@@ -914,7 +928,7 @@ class EQASerumBankEditorDialog extends Component {
                       type="number"
                       variant="outlined"
                       name="bottleVolume"
-                      value={bottleVolume}
+                      value={bottleVolume ? bottleVolume : ''}
                       validators={["required"]}
                       errorMessages={[t("general.errorMessages_required")]}
                     />

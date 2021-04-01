@@ -10,7 +10,7 @@ import {
     Input,
     InputLabel,
     MenuItem,
-    FormControl,TextField,
+    FormControl, TextField,
     Select, FormHelperText, IconButton, Icon
 } from "@material-ui/core";
 import {
@@ -22,7 +22,7 @@ import MaterialTable, { MTableToolbar, Chip, MTableBody, MTableHeader } from 'ma
 import DateFnsUtils from "@date-io/date-fns";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
-import { checkCode, deleteItem, saveItem, getItemById,updateEQASampleList,addNewEQASampleList } from "./EQASampleListService";
+import { checkCode, deleteItem, saveItem, getItemById, updateEQASampleList, addNewEQASampleList, countByRoundId } from "./EQASampleListService";
 import { searchByPage as searchByPageEQARound } from "../EQARound/EQARoundService";
 import Draggable from 'react-draggable';
 import EQASerumBottleSelectMultiple from '../Component/EQASerumBottle/EQASerumBottleSelectMultiple';
@@ -36,8 +36,8 @@ import { result } from "lodash";
 toast.configure({
     autoClose: 1000,
     draggable: false,
-    limit:3
-  });
+    limit: 3
+});
 function PaperComponent(props) {
     return (
         <Draggable handle="#draggable-dialog-title" cancel={'[class*="MuiDialogContent-root"]'}>
@@ -48,13 +48,13 @@ function PaperComponent(props) {
 function MaterialButton(props) {
     const item = props.item;
     return (
-      <div>
-        <IconButton size="small" onClick={() => props.onSelect(item, 1)}>
-          <Icon fontSize="small" color="error">delete</Icon>
-        </IconButton>
-      </div>
+        <div>
+            <IconButton size="small" onClick={() => props.onSelect(item, 1)}>
+                <Icon fontSize="small" color="error">delete</Icon>
+            </IconButton>
+        </div>
     );
-  }
+}
 function OriginnalResult(props) {
     const { t, i18n } = useTranslation();
     const item = props.item;
@@ -74,9 +74,9 @@ function OriginnalResult(props) {
 }
 
 class EQASampleEditorDialog extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-      }
+    }
     state = {
         name: "",
         code: "",
@@ -86,8 +86,8 @@ class EQASampleEditorDialog extends Component {
         centrifugeDate: new Date(),
         shouldOpenConfirmationDialog: false,
         shouldOpenPopupSelectEQASerumBottle: false,
-        errMessageBottle : "",
-        errMessageCode : "",
+        errMessageBottle: "",
+        errMessageCode: "",
         round: [],
         result: null,
         isView: false
@@ -96,10 +96,10 @@ class EQASampleEditorDialog extends Component {
     handleChange = (event, source) => {
         event.persist();
         if (source === "active") {
-            this.setState({hasErrorResult: false});
+            this.setState({ hasErrorResult: false });
         }
         if (source === "hasErrorSample") {
-            this.setState({hasErrorSample: false});
+            this.setState({ hasErrorSample: false });
         }
         this.setState({
             [event.target.name]: event.target.value
@@ -111,127 +111,151 @@ class EQASampleEditorDialog extends Component {
         for (let index = 0; index < eqaSampleBottles.length; index++) {
             const item = eqaSampleBottles[index]
             if (
-              rowData &&
-              item &&
-              rowData.id === item.id
+                rowData &&
+                item &&
+                rowData.id === item.id
             ) {
                 eqaSampleBottles.splice(index, 1)
-              this.setState({ eqaSampleBottles })
-              break
+                this.setState({ eqaSampleBottles })
+                break
             }
-          }
-     
-      };
+        }
+
+    };
     handleSelectEQARound = (item) => {
         this.setState({ round: item });
         let numberSampleList = [];
-        if(item != null && item.numberSampleList != null){
-            for(let i = 0 ; i < item.numberSampleList; i++){
-                numberSampleList.push({id: i+1,
-                name: i+1});
+        if (item != null && item.numberSampleList != null) {
+            for (let i = 0; i < item.numberSampleList; i++) {
+                numberSampleList.push({
+                    id: i + 1,
+                    name: i + 1
+                });
             }
-            this.setState({numberSampleList:numberSampleList});
-        }else{
-            this.setState({numberSampleList: null});
+            this.setState({ numberSampleList: numberSampleList });
+        } else {
+            this.setState({ numberSampleList: null });
         }
-        
-      }
+
+    }
     handleFormSubmit = () => {
         const { t, i18n } = this.props;
-        let { id, item} = this.state;
-        this.setState({hasErrorResult: false,hasErrorSample: false, hasErrorPerson: false});
-        if( (typeof this.state.item.result == "undefined") || this.state.item.result === null){
+        let { id, item } = this.state;
+        let checkNumberSample = false
+        if (item != null && item.sampleNumber != null && item.countSampleList != null) {
+            if (item.sampleNumber > item.countSampleList) {
+                checkNumberSample = true
+            }
+        }
+        console.log(checkNumberSample)
+        this.setState({ hasErrorResult: false, hasErrorSample: false, hasErrorPerson: false });
+        if ((typeof this.state.item.result == "undefined") || this.state.item.result === null) {
             item["hasErrorResult"] = true;
-            this.setState({item: item});
+            this.setState({ item: item });
             return;
-        } else 
-        if(typeof this.state.item.inactiveVirus == "undefined" || this.state.item.inactiveVirus === null){
-            item["hasErrorVirus"] = true;
-            this.setState({item: item});
-            return;
-        }else {
-            if(item != null && item.eqaSampleBottles != null && item.eqaSampleBottles.length >0) {
-                if(typeof item.isManualSetCode != "undefined" && item.isManualSetCode){
-                    checkCode(id, item.code).then(res =>{
-                        if (res.data) {
-                            toast.warning(t("mess_code"));
-                          } else{
-                            if (id) {
-                                // this.setState({isView: true});
-                                saveItem({
-                                    ...this.state.item
-                                }).then((response) => {
-                                    if(response.data != null && response.status == 200){
-                                        this.setState({...item})
-                                        toast.success(t('mess_edit'));
-                                    }
-                                    // this.props.handleOKEditClose();
-                                }).catch(err =>{
-                                   if(err.data == null) {
-                                    toast.warning(t("mess_edit_error"));
-                                   }
-                                })
+        } else
+            if (typeof this.state.item.inactiveVirus == "undefined" || this.state.item.inactiveVirus === null) {
+                item["hasErrorVirus"] = true;
+                this.setState({ item: item });
+                return;
+            } else {
+                if (item != null && item.eqaSampleBottles != null && item.eqaSampleBottles.length > 0) {
+                    if (typeof item.isManualSetCode != "undefined" && item.isManualSetCode) {
+                        checkCode(id, item.code).then(res => {
+                            if (res.data) {
+                                toast.warning(t("mess_code"));
+                            } else {
+                                if (id) {
+                                    // this.setState({isView: true});
+
+                                    saveItem({
+                                        ...this.state.item
+                                    }).then((response) => {
+                                        if (response.data != null && response.status == 200) {
+                                            this.setState({ ...item })
+                                            toast.success(t('mess_edit'));
+                                        }
+                                        // this.props.handleOKEditClose();
+                                    }).catch(err => {
+                                        if (err.data == null) {
+                                            toast.warning(t("mess_edit_error"));
+                                        }
+                                    })
+
+                                }
+
+                                else {
+                                    // this.setState({isView: true});
+                                    if (this.state.item)
+                                        if (checkNumberSample) {
+                                            saveItem({
+                                                ...this.state.item
+                                            }).then((response) => {
+                                                if (response.data != null && response.status == 200) {
+                                                    item.id = response.data.id
+                                                    this.setState({ ...item })
+                                                    toast.success(t('mess_add'));
+                                                }
+                                                // this.props.handleOKEditClose();
+                                            }).catch(err => {
+                                                if (err.data == null) {
+                                                    toast.warning(t("mess_add_error"));
+                                                }
+                                            });
+                                        } else {
+                                            toast.warning("Số mẫu của kế hoạch này đã đủ")
+                                        }
+
+                                }
                             }
-                            
-                            else {
-                            // this.setState({isView: true});
+                        })
+                    } else {
+                        if (id) {
+
                             saveItem({
                                 ...this.state.item
                             }).then((response) => {
-                                if(response.data != null && response.status == 200){
-                                    item.id = response.data.id
-                                    this.setState({...item})
-                                    toast.success(t('mess_add'));
+                                if (response.data != null && response.status == 200) {
+                                    this.setState({ ...item })
+                                    toast.success(t('mess_edit'));
                                 }
                                 // this.props.handleOKEditClose();
-                            }).catch(err =>{
-                                if(err.data == null) {
-                                 toast.warning(t("mess_add_error"));
+                            }).catch(err => {
+                                if (err.data == null) {
+                                    toast.warning(t("mess_edit_error"));
                                 }
-                            });
-                            }
-                          }
-                    })
-                }else{
-                    if (id) {
-                        // this.setState({isView: true});
-                        saveItem({
-                            ...this.state.item
-                        }).then((response) => {
-                            if(response.data != null && response.status == 200){
-                                this.setState({...item})
-                                toast.success(t('mess_edit'));
-                            }
-                            // this.props.handleOKEditClose();
-                        }).catch(err =>{
-                           if(err.data == null) {
-                            toast.warning(t("mess_edit_error"));
-                           }
-                        })
-                    }
-                    else {
-                    // this.setState({isView: true});
-                    saveItem({
-                        ...this.state.item
-                    }).then((response) => {
-                        // this.props.handleOKEditClose();
-                        if(response.data != null && response.status == 200){
-                            item.id = response.data.id
-                            this.setState({...item})
-                            toast.success(t('mess_add'));
+                            })
+
+
                         }
-                    }).catch(err =>{
-                        if(err.data == null) {
-                         toast.warning(t("mess_add_error"));
+                        else {
+                            // this.setState({isView: true});
+                            if (checkNumberSample) {
+                                saveItem({
+                                    ...this.state.item
+                                }).then((response) => {
+                                    // this.props.handleOKEditClose();
+                                    if (response.data != null && response.status == 200) {
+                                        item.id = response.data.id
+                                        this.setState({ ...item })
+                                        toast.success(t('mess_add'));
+                                    }
+                                }).catch(err => {
+                                    if (err.data == null) {
+                                        toast.warning(t("mess_add_error"));
+                                    }
+                                });
+                            } else {
+                                toast.warning("Số mẫu của kế hoạch này đã đủ")
+                            }
+
                         }
-                    });
                     }
+                } else {
+                    toast.warning(t("SampleManagement.eqaSampleBottlesisNull"));
                 }
-            } else{
-                toast.warning(t("SampleManagement.eqaSampleBottlesisNull"));
             }
-        }
-       
+
     };
 
     componentDidMount() {
@@ -240,24 +264,26 @@ class EQASampleEditorDialog extends Component {
     componentWillMount() {
         let { open, handleClose, item } = this.props;
         this.setState({
-            item:item
-        }); 
+            item: item
+        });
         let numberSampleList = [];
         if (item && item.eqaSampleBottles && item.eqaSampleBottles.length > 0) {
             item.eqaSampleBottles.sort((a, b) => (a.eQASerumBottle.code > b.eQASerumBottle.code) ? 1 : -1);
         }
-        if(item.round != null && item.round.numberSampleList != null){
-            for(let i = 0 ; i < item.round.numberSampleList; i++){
-                numberSampleList.push({id: i+1,
-                name: i+1});
+        if (item.round != null && item.round.numberSampleList != null) {
+            for (let i = 0; i < item.round.numberSampleList; i++) {
+                numberSampleList.push({
+                    id: i + 1,
+                    name: i + 1
+                });
             }
-            this.setState({numberSampleList:numberSampleList});
-        }else{
-            this.setState({numberSampleList: null});
+            this.setState({ numberSampleList: numberSampleList });
+        } else {
+            this.setState({ numberSampleList: null });
         }
         this.setState({
             ...item
-        });     
+        });
     }
 
     handleThrombinAddedDateChange = (date) => {
@@ -290,14 +316,14 @@ class EQASampleEditorDialog extends Component {
         // this.setState({ eqaSampleBottles: item }, function () {
         //     this.handleClosePopupSelectEQASerumBottle();
         // });
-        
+
         let data = item.map(row => ({ ...row }));
         this.setState({ eqaSampleBottles: data });
         this.handleClosePopupSelectEQASerumBottle();
     }
 
     render() {
-        let {i18n,t,handleClose,open }= this.props
+        let { i18n, t, handleClose, open } = this.props
         let {
             id,
             name,
@@ -313,7 +339,7 @@ class EQASampleEditorDialog extends Component {
             volumeAfterCentrifuge,
             centrifugeDate,
             volumeOfProclinAdded,
-            note,orderNumberSample,
+            note, orderNumberSample,
             numberSampleList,
             numberSample,
             hasErrorSample,
@@ -322,15 +348,15 @@ class EQASampleEditorDialog extends Component {
             shouldOpenPopupSelectEQASerumBottle
         } = this.state;
 
-        
+
 
         return (
             <Dialog open={open} PaperComponent={PaperComponent} maxWidth={'lg'} fullWidth={true}>
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
-                <span className="mb-20 styleColor"> {(id ? t("update") : t("Add")) + " " + t("SampleManagement.sample-list.title")} </span>
-                <IconButton style={{ position: "absolute", right: "10px", top: "10px" }} onClick={() => handleClose()}><Icon color="error"
-                    title={t("close")}>
-                    close
+                    <span className="mb-20 styleColor"> {(id ? t("update") : t("Add")) + " " + t("SampleManagement.sample-list.title")} </span>
+                    <IconButton style={{ position: "absolute", right: "10px", top: "10px" }} onClick={() => handleClose()}><Icon color="error"
+                        title={t("close")}>
+                        close
                     </Icon>
                     </IconButton>
                 </DialogTitle>
@@ -340,25 +366,25 @@ class EQASampleEditorDialog extends Component {
                     flexDirection: "column"
                 }}>
                     <DialogContent dividers>
-                        <Grid item  xs={12}>
-                            <TabsSample 
-                                t={t} i18n={i18n} 
-                                item={this.state.item} 
+                        <Grid item xs={12}>
+                            <TabsSample
+                                t={t} i18n={i18n}
+                                item={this.state.item}
                             />
                         </Grid>
                     </DialogContent>
-                        
+
                     <DialogActions spacing={4} className="flex flex-end flex-middle">
-                        <Button 
-                            variant="contained" 
-                            className="mr-16" 
-                            color="secondary" 
+                        <Button
+                            variant="contained"
+                            className="mr-16"
+                            color="secondary"
                             type="button" onClick={() => handleClose()}> {t('Cancel')}</Button>
-                        <Button 
-                            disabled = {isView}
-                            variant="contained" 
-                            color="primary" 
-                            className=" mr-16 align-bottom" 
+                        <Button
+                            disabled={isView}
+                            variant="contained"
+                            color="primary"
+                            className=" mr-16 align-bottom"
                             type="submit">
                             {t('Save')}
                         </Button>

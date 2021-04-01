@@ -417,7 +417,7 @@ class EQAHealthOrgRoundRegisterEditorDialog extends Component {
                   />
                 </Grid>
               )}
-              {round != null && round.id != '' && sampleSet != null && (
+              {/* {round != null && round.id != '' && sampleSet != null && (
                 <Grid item lg={3} md={3} sm={12} xs={12}>
                   <FormControlLabel
                     label={<span className="font">{t('EQAHealthOrgRoundRegister.sendMore')}</span>}
@@ -429,7 +429,7 @@ class EQAHealthOrgRoundRegisterEditorDialog extends Component {
 
                   />
                 </Grid>
-              )}
+              )} */}
               {/* </Grid> */}
               
               <Grid item lg={3} md={3} sm={12} xs={12}>

@@ -129,7 +129,7 @@ class HealthOrgLevelTable extends Component {
                 <TableHead style ={{backgroundColor: '#358600',
                   color:'#fff',}}>
                   <TableRow style ={{color:'#fff',}}>
-                  <TableCell style ={{color:'#fff', width: "90px"}}>{t("LabelPrinting.export_to_excel")}</TableCell>
+                  {/* <TableCell style ={{color:'#fff', width: "90px"}}>{t("LabelPrinting.export_to_excel")}</TableCell> */}
                     <TableCell style ={{color:'#fff',}}>{t("LabelPrinting.sample_set_name")}</TableCell>
                     <TableCell style ={{color:'#fff',}} align="left">
                       {t("LabelPrinting.sample_set_detail_code")}
@@ -146,7 +146,7 @@ class HealthOrgLevelTable extends Component {
                   
                     {sampleSetList.map(data => (
                       <TableRow key={data.id}>
-                      <TableCell>
+                      {/* <TableCell>
                           <IconButton size="small"
                             onClick={() => this.handleExportToExcel(data.id)}
                           >
@@ -157,7 +157,7 @@ class HealthOrgLevelTable extends Component {
                               get_app
                             </Icon>
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell component="th" scope="row">
                           {data.name}
                         </TableCell>

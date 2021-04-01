@@ -26,4 +26,6 @@ public interface EQASampleService extends GenericService<EQASample, UUID> {
 	
 	List<EQASampleDto> getByRoundId(UUID id);
 
+	Integer countByRoundId(UUID id);
+
 }

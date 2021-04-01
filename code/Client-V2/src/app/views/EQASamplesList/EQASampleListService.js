@@ -15,7 +15,11 @@ export const searchByPage = (searchObject) => {
 //   var url = API_PATH+params;
 //   return axios.get(url);  
 // };
-
+// countByRoundId/{id}
+export const countByRoundId = id => {
+  var url = API_PATH+"/countByRoundId/"+id;
+  return axios.get(url);
+};
 export const getItemById = id => {
   var url = API_PATH+"/getById/"+id;
   return axios.get(url);

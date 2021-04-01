@@ -23,6 +23,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { checkCode, deleteItem, saveItem, getItemById, updateEQASampleList, addNewEQASampleList } from "./EQASampleListService";
 import { searchByPage as searchByPageEQARound } from "../EQARound/EQARoundService";
+import { countByRoundId } from "./EQASampleListService"
 import Draggable from 'react-draggable';
 import EQASerumBottleSelectMultiple from './EQASerumBottleSelectMultiple';
 import AsynchronousAutocomplete from "../utilities/AsynchronousAutocomplete";
@@ -141,6 +142,12 @@ class EQASampleInformation extends Component {
     handleSelectEQARound = (items) => {
         let { item } = this.state;
         item["round"] = items;
+        if(items != null && items.id != null) {
+            item["sampleNumber"] = items.sampleNumber
+            countByRoundId(items.id).then(({data})=>{
+                item["countSampleList"] = data
+            })
+        }
         this.setState({ item: item });
         // let numberSampleList = [];
         // if(items != null && items.numberSampleList != null){

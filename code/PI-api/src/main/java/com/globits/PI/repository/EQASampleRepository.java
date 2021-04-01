@@ -21,4 +21,7 @@ public interface EQASampleRepository extends JpaRepository<EQASample, UUID> {
 
 	@Query("select new com.globits.PI.dto.EQASampleDto(entity) FROM EQASample entity where entity.round.id =?1 ORDER BY entity.code ASC")
 	List<EQASampleDto> getRoundId(UUID id);
+	
+	@Query("select count(entity.id) FROM EQASample entity where entity.round.id =?1 ")
+	Integer countByRoundId(UUID id);
 }

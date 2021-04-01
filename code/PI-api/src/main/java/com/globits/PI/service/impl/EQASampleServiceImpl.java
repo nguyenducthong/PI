@@ -312,5 +312,10 @@ public class EQASampleServiceImpl extends GenericServiceImpl<EQASample, UUID> im
 		// TODO Auto-generated method stub
 		return eQASampleRepository.getRoundId(id);
 	}
+	
+	@Override
+	public Integer countByRoundId(UUID id) {
+		return eQASampleRepository.countByRoundId(id);
+	}
 
 }

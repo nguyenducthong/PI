@@ -100,6 +100,23 @@ class EQARoundInformation extends React.Component {
           date.setHours("23");
           date.setMinutes("59");
           date.setSeconds("00");
+        if (this.state.startDate != null) {
+            try {
+            if (date != null) {
+                let date1 = date.getTime() - this.state.startDate.getTime();
+                if (date1 < 0) {
+                toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+                return
+                }
+            }
+            } catch (error) {
+            let date1 = date.getTime() - this.state.startDate;
+            if (date1 < 0) {
+                toast.warning("Ngày kết thúc phải lớn hon ngày bắt đầu")
+                return
+            }
+            }
+        }
         }
         if(name === "registrationStartDate" && date != null){
           date.setHours("00");
@@ -110,6 +127,25 @@ class EQARoundInformation extends React.Component {
           date.setHours("23");
           date.setMinutes("59");
           date.setSeconds("00");
+         
+            if (this.state.registrationStartDate != null) {
+              try {
+                if (date != null) {
+                  let date1 = date.getTime() - this.state.registrationStartDate.getTime();
+                  if (date1 < 0) {
+                    toast.warning("Ngày kết thúc đăng kí phải lớn hon ngày bắt đầu")
+                    return
+                  }
+                }
+              } catch (error) {
+                let date1 = date.getTime() - this.state.registrationStartDate;
+                if (date1 < 0) {
+                  toast.warning("Ngày kết thúc đăng kí phải lớn hon ngày bắt đầu")
+                  return
+                }
+              }
+            }
+          
         }
         if(name === "sampleSubmissionDeadline" && date != null){
           date.setHours("23");
